@@ -97,7 +97,7 @@ export async function fetchPointWeatherAndFlood({ lat, lng }) {
     fetch(floodUrl, { signal: AbortSignal.timeout(3500) }).then((r) => (r.ok ? r.json() : null)),
     fetch(geocodeUrl, {
       signal: AbortSignal.timeout(3500),
-      headers: { "User-Agent": "WareeGuard/2.0" },
+      headers: { "User-Agent": "UTOK/2.0" },
     }).then((r) => (r.ok ? r.json() : null)),
   ]);
 

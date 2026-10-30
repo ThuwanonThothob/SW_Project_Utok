@@ -43,7 +43,7 @@ export default function NotificationModal({
     if (next === "granted") {
       playAlertSound("warning");
       await sendSystemNotification({
-        title: "เปิดระบบแจ้งเตือน วารีการ์ด (WareeGuard) สำเร็จ",
+        title: "เปิดระบบแจ้งเตือน UTOK (อุทก) สำเร็จ",
         body: "อุปกรณ์ของคุณพร้อมรับสัญญาณเตือนภัยน้ำท่วมแบบ Real-time แล้ว",
         level: "warning",
       });

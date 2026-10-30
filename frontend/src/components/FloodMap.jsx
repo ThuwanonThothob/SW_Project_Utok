@@ -87,7 +87,7 @@ export default function FloodMap({
     L.control.zoom({ position: "bottomright" }).addTo(map);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
       maxZoom: 18,
-      attribution: "&copy; OpenStreetMap contributors | วารีการ์ด (มศว)",
+      attribution: "&copy; OpenStreetMap contributors | UTOK อุทก (มศว)",
     }).addTo(map);
 
     provinceLayerRef.current = L.layerGroup().addTo(map);

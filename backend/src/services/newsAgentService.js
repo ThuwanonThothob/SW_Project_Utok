@@ -97,7 +97,7 @@ export async function getFloodNews({ forceRefresh = false } = {}) {
     const response = await fetch(GOOGLE_NEWS_RSS_URL, {
       signal: AbortSignal.timeout(isTestRun ? 400 : 3500),
       headers: {
-        "User-Agent": "WareeGuard-NewsIntelligenceAgent/2.0",
+        "User-Agent": "UTOK-NewsIntelligenceAgent/2.0",
         Accept: "application/rss+xml, application/xml, text/xml;q=0.9, */*;q=0.8",
       },
     });

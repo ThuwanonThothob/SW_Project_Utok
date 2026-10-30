@@ -99,6 +99,6 @@ export function analyzeIncidentClient({
     label,
     tags,
     recommendation,
-    model: "WareeGuard-AI-Triage-v2",
+    model: "UTOK-AI-Triage-v2",
   };
 }

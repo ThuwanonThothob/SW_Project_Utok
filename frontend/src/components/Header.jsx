@@ -28,11 +28,11 @@ export default function Header({
 
   return (
     <header className="topbar">
-      <a className="brand" href="#top" aria-label="วารีการ์ด WareeGuard หน้าแรก">
+      <a className="brand" href="#top" aria-label="UTOK อุทก หน้าแรก">
         <span className="brand-mark"><Waves /></span>
         <span className="brand-title">
-          <b>วารีการ์ด</b>
-          <small>WAREEGUARD</small>
+          <b>UTOK</b>
+          <small>อุทก · FLOOD WATCH</small>
         </span>
         <SWULogo />
       </a>

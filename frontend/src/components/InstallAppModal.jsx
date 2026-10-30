@@ -62,7 +62,7 @@ export default function InstallAppModal({ open, deferredPrompt, onInstallPrompt,
           <Smartphone />
         </span>
         <span className="eyebrow">Mobile Application (PWA)</span>
-        <h2>ติดตั้งแอป วารีการ์ด (WareeGuard) ลงมือถือ</h2>
+        <h2>ติดตั้งแอป UTOK (อุทก) ลงมือถือ</h2>
         <p>ใช้งานได้เหมือนแอปพลิเคชันจริง เต็มหน้าจอ (Standalone) พร้อมไอคอนบนหน้าจอโฮมและระบบแจ้งเตือนฉุกเฉิน</p>
 
         {installed && (
@@ -114,7 +114,7 @@ export default function InstallAppModal({ open, deferredPrompt, onInstallPrompt,
               <li>
                 เลื่อนลงแล้วเลือก <b>“เพิ่มไปยังหน้าจอโฮม” (Add to Home Screen)</b>
               </li>
-              <li>แตะ <b>เพิ่ม (Add)</b> ที่มุมขวาบน จะได้ไอคอนแอป วารีการ์ด บนหน้าจอมือถือทันที</li>
+              <li>แตะ <b>เพิ่ม (Add)</b> ที่มุมขวาบน จะได้ไอคอนแอป UTOK บนหน้าจอมือถือทันที</li>
             </ol>
           </article>
 

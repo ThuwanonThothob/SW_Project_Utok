@@ -45,7 +45,7 @@ router.post("/test-notification", async (req, res, next) => {
       province = "กรุงเทพมหานคร",
       headline = "ทดสอบระบบแจ้งเตือนภัยน้ำท่วม (Test Alert)",
       advisory = "นี่คือการทดสอบส่งสัญญาณแจ้งเตือนแบบ Real-time ไปยังแอปพลิเคชันและเบราว์เซอร์",
-      sender = "ระบบทดสอบการแจ้งเตือน วารีการ์ด (WareeGuard)",
+      sender = "ระบบทดสอบการแจ้งเตือน UTOK (อุทก)",
     } = req.body || {};
 
     const payload = {
@@ -54,7 +54,7 @@ router.post("/test-notification", async (req, res, next) => {
       province: sanitizeText(province, 100) || "กรุงเทพมหานคร",
       headline: sanitizeText(headline, 255) || "ทดสอบระบบแจ้งเตือนภัยน้ำท่วม (Test Alert)",
       advisory: sanitizeText(advisory, 2000) || "นี่คือการทดสอบส่งสัญญาณแจ้งเตือนแบบ Real-time ไปยังแอปพลิเคชันและเบราว์เซอร์",
-      sender: sanitizeText(sender, 150) || "ระบบทดสอบการแจ้งเตือน วารีการ์ด (WareeGuard)",
+      sender: sanitizeText(sender, 150) || "ระบบทดสอบการแจ้งเตือน UTOK (อุทก)",
       isTest: true,
       createdAt: new Date().toISOString(),
     };

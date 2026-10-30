@@ -1,4 +1,4 @@
-# วารีการ์ด (WareeGuard) — Thailand Flood Risk Assessment & Incident Reporting Platform
+# UTOK (อุทก) — Thailand Flood Risk Assessment & Incident Reporting Platform
 
 [![Agentic SDLC](https://img.shields.io/badge/Agentic_SDLC-18_AI_Agents_Approved-success.svg)](file:///Users/thuwanon/Documents/cpe_sw/SW_Project/docs/AGENTIC_SDLC.md)
 [![Automated Tests](https://img.shields.io/badge/Tests-18%2F18_Passing-brightgreen.svg)](file:///Users/thuwanon/Documents/cpe_sw/SW_Project/backend/test)
@@ -24,7 +24,7 @@
 
 ## 1. ชื่อโครงการและสัญลักษณ์ระบบ (Project Name & Logo)
 
-* **ชื่อระบบ**: **วารีการ์ด (WareeGuard)**
+* **ชื่อระบบ**: **UTOK (อุทก)**
 * **คำจำกัดความ**: แพลตฟอร์มประเมินความเสี่ยงและคัดกรองเหตุน้ำท่วมอัจฉริยะแบบ Real-Time ด้วย Multi-AI Agent ภาควิชาวิศวกรรมคอมพิวเตอร์ มศว
 * **สัญลักษณ์ระบบ (Logo)**: ตราสัญลักษณ์คลื่นน้ำท่วมคู่กับตราสัญลักษณ์ทางการของมหาวิทยาลัยศรีนครินทรวิโรฒ (กราฟโค้งการเจริญงอกงาม เทา-แดง และ SWU CPE Badge) สื่อถึงระบบเทคโนโลยีวิศวกรรมคอมพิวเตอร์ที่พร้อมพิทักษ์และเตือนภัยประชาชนอย่างยั่งยืน
 

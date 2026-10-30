@@ -129,7 +129,7 @@ export default function App() {
     deferredPrompt.prompt();
     const choice = await deferredPrompt.userChoice.catch(() => null);
     if (choice?.outcome === "accepted") {
-      toast("ติดตั้งแอปสำเร็จ", "เพิ่ม วารีการ์ด (WareeGuard) ลงบนอุปกรณ์เรียบร้อยแล้ว", "success");
+      toast("ติดตั้งแอปสำเร็จ", "เพิ่ม UTOK (อุทก) ลงบนอุปกรณ์เรียบร้อยแล้ว", "success");
       setDeferredPrompt(null);
       setInstallOpen(false);
     }

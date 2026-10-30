@@ -5,7 +5,7 @@ import { databaseStatus, pool } from "./config/database.js";
 const port = Number(process.env.PORT || 4000);
 const server = app.listen(port, async () => {
   const database = await databaseStatus();
-  console.log(`WareeGuard API: http://localhost:${port}`);
+  console.log(`UTOK API: http://localhost:${port}`);
   console.log(`Data mode: ${database.mode}${database.connected ? "" : " (disconnected)"}`);
 });
 
