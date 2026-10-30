@@ -61,6 +61,7 @@ export default function App() {
   const [mode, setMode] = useState(() => (loadStoredUser()?.role === "authority" ? "authority" : "citizen"));
   const [provinces, setProvinces] = useState([]);
   const provincesRef = useRef([]);
+  const lastNotifiedProvinceRef = useRef("");
   const [reports, setReports] = useState([]);
   const [broadcasts, setBroadcasts] = useState([]);
   const [news, setNews] = useState({ updatedAt: null, items: [] });
@@ -152,18 +153,24 @@ export default function App() {
       setCoordinate((prev) => prev || { lat, lng });
 
       const currentProvinces = provincesRef.current;
-      if (currentProvinces.length) {
-        const nearest = currentProvinces.reduce((best, item) => {
-          const distance = Math.hypot(item.lat - lat, item.lng - lng);
-          return !best || distance < best.distance ? { ...item, distance } : best;
-        }, null);
-        if (nearest) setSelectedProvince(nearest);
-      }
+      const nearest = currentProvinces.length
+        ? currentProvinces.reduce((best, item) => {
+            const distance = Math.hypot(item.lat - lat, item.lng - lng);
+            return !best || distance < best.distance ? { ...item, distance } : best;
+          }, null)
+        : null;
 
       const liveTelemetry = await fetchUserLocationWeatherAndAddress(lat, lng);
+      const detectedProvince = liveTelemetry.provinceName || (nearest ? nearest.name : "");
+      const matched = currentProvinces.find(
+        (item) => item.name === detectedProvince || (detectedProvince && (detectedProvince.includes(item.name) || item.name.includes(detectedProvince))),
+      ) || nearest;
+
       setUserLocation((prev) => ({
         ...prev,
         ...liveTelemetry,
+        provinceName: matched?.name || liveTelemetry.provinceName || "",
+        districtName: liveTelemetry.districtName || matched?.district || "",
         lat,
         lng,
         accuracy,
@@ -171,14 +178,32 @@ export default function App() {
         error: "",
       }));
 
-      if (liveTelemetry.provinceName && provincesRef.current.length) {
-        const matched = provincesRef.current.find(
-          (item) => item.name === liveTelemetry.provinceName || liveTelemetry.provinceName.includes(item.name),
-        );
-        if (matched) setSelectedProvince(matched);
-      }
+      if (matched) setSelectedProvince(matched);
 
-      if (!silent) {
+      // 🚨 Province Boundary Crossing & Entry Alert
+      if (matched?.name && matched.name !== lastNotifiedProvinceRef.current) {
+        const previous = lastNotifiedProvinceRef.current;
+        lastNotifiedProvinceRef.current = matched.name;
+
+        const riskTh = matched.risk === "high" ? "เสี่ยงสูง" : matched.risk === "medium" ? "เสี่ยงปานกลาง" : "ปกติ";
+        const rainInfo = matched.rain !== null && matched.rain !== undefined ? ` · ปริมาณฝน ${matched.rain} มม.` : "";
+        const alertHeadline = previous
+          ? `ข้ามเขตเข้าสู่พื้นที่ จ.${matched.name}`
+          : `เข้าสู่พื้นที่ จ.${matched.name}`;
+        const alertDetail = `สถานะพื้นที่: ${riskTh}${rainInfo} (ระบบล็อกสิทธิ์ให้รายงานเหตุน้ำท่วมเฉพาะใน จ.${matched.name})`;
+
+        toast(
+          `📍 ${alertHeadline}`,
+          alertDetail,
+          matched.risk === "high" ? "error" : matched.risk === "medium" ? "warning" : "info",
+        );
+        playAlertSound(matched.risk === "high" ? "critical" : "warning");
+        sendSystemNotification({
+          title: `📍 UTOK: ${alertHeadline}`,
+          body: alertDetail,
+          level: matched.risk === "high" ? "red" : "warning",
+        }).catch(() => {});
+      } else if (!silent) {
         toast(
           "เชื่อมต่อพิกัดปัจจุบันสำเร็จ",
           liveTelemetry.address || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
@@ -426,13 +451,43 @@ export default function App() {
     return () => events.close();
   }, [toast]);
 
+  const simulateProvince = useCallback(
+    (provinceName) => {
+      const target = provinces.find((p) => p.name === provinceName || p.name.includes(provinceName));
+      if (!target) return;
+      updateFromCoords({ latitude: target.lat, longitude: target.lng, accuracy: 15 }, false);
+      setSelectedProvince(target);
+      setCoordinate({ lat: target.lat, lng: target.lng });
+    },
+    [provinces, updateFromCoords],
+  );
+
   const onReportAt = useCallback(
     (point) => {
-      const fallbackPoint =
-        point ||
-        (userLocation?.lat ? { lat: userLocation.lat, lng: userLocation.lng } : null) ||
-        (selectedProvince ? { lat: selectedProvince.lat, lng: selectedProvince.lng } : { lat: 13.736717, lng: 100.523186 });
-      setCoordinate(fallbackPoint);
+      let targetPoint = point;
+      if (userLocation?.lat && userLocation?.provinceName) {
+        if (point) {
+          const distKm = Math.hypot(point.lat - userLocation.lat, point.lng - userLocation.lng) * 111;
+          if (distKm > 120) {
+            toast(
+              "ป้องกันรายงานเท็จ",
+              `ระบบล็อกพิกัดแจ้งเหตุให้อยู่ใน จ.${userLocation.provinceName} ตามตำแหน่ง GPS จริงของคุณ`,
+              "warning",
+            );
+            targetPoint = { lat: userLocation.lat, lng: userLocation.lng };
+          }
+        } else {
+          targetPoint = { lat: userLocation.lat, lng: userLocation.lng };
+        }
+      } else {
+        locate(true);
+        targetPoint =
+          point ||
+          (userLocation?.lat ? { lat: userLocation.lat, lng: userLocation.lng } : null) ||
+          (selectedProvince ? { lat: selectedProvince.lat, lng: selectedProvince.lng } : { lat: 13.736717, lng: 100.523186 });
+      }
+
+      setCoordinate(targetPoint);
       if (!token) {
         setLoginIntent("citizen");
         setLoginOpen(true);
@@ -440,7 +495,7 @@ export default function App() {
       }
       setReportOpen(true);
     },
-    [token, userLocation, selectedProvince],
+    [token, userLocation, selectedProvince, locate, toast],
   );
   const onSelectProvince = useCallback((province) => setSelectedProvince(province), []);
 
@@ -726,6 +781,7 @@ export default function App() {
           setReportOpen(false);
         }}
         onSubmit={submitReport}
+        onLocate={() => locate(false)}
         busy={busy}
       />
       <LoginModal
@@ -753,6 +809,7 @@ export default function App() {
         onToggleSound={() => setSoundEnabled((prev) => !prev)}
         onSendTestNotification={sendTestNotification}
         onLocalTestNotification={handleLocalTestNotification}
+        onSimulateProvince={simulateProvince}
         onClose={() => setNotificationOpen(false)}
         busy={busy}
       />

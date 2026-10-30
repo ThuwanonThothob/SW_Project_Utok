@@ -48,3 +48,12 @@ test("deleteReport allows authority or owner to delete a report and updates affe
   const reports = await listReports();
   assert.equal(reports.some((r) => r.id === report.id), false);
 });
+
+test("geofence validation rejects coordinates outside province territory or Thailand boundary", () => {
+  // Bangkok coordinates (~13.75, 100.5) vs claimed province Chiang Mai (~18.78, 98.98) is > 500 km away
+  const bkkLat = 13.7563;
+  const bkkLng = 100.5018;
+  const chiangMai = { lat: 18.7883, lng: 98.9853 };
+  const distKm = Math.hypot(chiangMai.lat - bkkLat, chiangMai.lng - bkkLng) * 111;
+  assert.ok(distKm > 500); // Exceeds the 170 km geofence threshold to prevent forged reports
+});

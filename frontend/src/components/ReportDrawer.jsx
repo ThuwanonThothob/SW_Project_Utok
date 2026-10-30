@@ -1,4 +1,4 @@
-import { Bot, ImagePlus, MapPinCheck, Send, Siren, Sparkles, X } from "lucide-react";
+import { Bot, ImagePlus, LocateFixed, MapPinCheck, Send, ShieldCheck, Siren, Sparkles, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { analyzeIncidentClient } from "../services/aiTriage.js";
 
@@ -11,7 +11,7 @@ const quickTags = [
   { label: "+ รถเล็กผ่านไม่ได้", text: "น้ำท่วมผิวการจราจร รถเล็กไม่สามารถผ่านได้ " },
 ];
 
-export default function ReportDrawer({ open, coordinate, provinces, userLocation, onClose, onSubmit, busy }) {
+export default function ReportDrawer({ open, coordinate, provinces, userLocation, onClose, onSubmit, busy, onLocate }) {
   const [level, setLevel] = useState(levels[0]);
   const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
@@ -21,7 +21,19 @@ export default function ReportDrawer({ open, coordinate, provinces, userLocation
   const [photoPreview, setPhotoPreview] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
 
+  const verifiedProvince = userLocation?.provinceName || "";
+  const isGpsVerified = Boolean(userLocation?.lat && verifiedProvince);
+
   useEffect(() => {
+    if (!open) return;
+    if (verifiedProvince) {
+      setProvince(verifiedProvince);
+      if (userLocation?.districtName) {
+        setDistrict(userLocation.districtName);
+      }
+      return;
+    }
+
     if (!coordinate || !provinces.length) return;
     const nearest = provinces.reduce((best, item) => {
       const distance = Math.hypot(item.lat - coordinate.lat, item.lng - coordinate.lng);
@@ -35,7 +47,7 @@ export default function ReportDrawer({ open, coordinate, provinces, userLocation
     } else if (nearest?.district) {
       setDistrict(nearest.district);
     }
-  }, [coordinate, provinces, userLocation]);
+  }, [open, coordinate, provinces, userLocation, verifiedProvince]);
 
   useEffect(() => {
     if (!photo) {
@@ -127,32 +139,43 @@ export default function ReportDrawer({ open, coordinate, provinces, userLocation
           </fieldset>
 
           <div className="report-location-fields">
-            <label>
-              <span>จังหวัด / พื้นที่</span>
-              <select
-                value={province}
-                onChange={(event) => {
-                  const nextProv = event.target.value;
-                  setProvince(nextProv);
-                  const matched = provinces.find((p) => p.name === nextProv);
-                  if (matched?.district) setDistrict(matched.district);
-                }}
-              >
-                {provinces.map((item) => (
-                  <option key={item.id} value={item.name}>
-                    {item.name} ({item.district})
-                  </option>
-                ))}
-              </select>
-            </label>
+            {isGpsVerified ? (
+              <div className="geofence-lock-banner">
+                <div className="geofence-lock-icon">
+                  <MapPinCheck />
+                </div>
+                <div className="geofence-lock-text">
+                  <div className="geofence-lock-title">
+                    <b>ล็อกพื้นที่ตาม GPS: จ.{province}</b>
+                    <span className="geofence-badge">GPS VERIFIED</span>
+                  </div>
+                  <small>ระบบป้องกันรายงานเท็จ อนุญาตให้ส่งรายงานเฉพาะจังหวัดที่ท่านอยู่จริง (ไม่อนุญาตให้เลือกจังหวัดอื่น)</small>
+                </div>
+              </div>
+            ) : (
+              <div className="geofence-warning-banner">
+                <div className="geofence-warning-text">
+                  <b>⚠️ ยังไม่พบการยืนยันพิกัด GPS ในพื้นที่</b>
+                  <small>เพื่อป้องกันข้อมูลเท็จและการมั่วเหตุน้ำท่วม ระบบจำเป็นต้องตรวจจับพิกัดจริงของคุณก่อนรับรายงาน</small>
+                </div>
+                {onLocate && (
+                  <button type="button" className="chip-button primary" onClick={onLocate}>
+                    <LocateFixed /> กดเปิด GPS เพื่อยืนยันพิกัดปัจจุบัน
+                  </button>
+                )}
+              </div>
+            )}
+
+            <input type="hidden" name="province" value={province} />
 
             <label>
-              <span>อำเภอ / เขต / ชุมชน</span>
+              <span>อำเภอ / เขต / ชุมชน {province ? `(ใน จ.${province})` : ""}</span>
               <input
                 type="text"
                 value={district}
                 onChange={(event) => setDistrict(event.target.value)}
-                placeholder="เช่น อ.เมือง หรือ คลองหลวง"
+                placeholder={userLocation?.districtName || `เช่น ${selectedProvinceObj?.district || "อ.เมือง"}`}
+                required
               />
             </label>
           </div>
@@ -236,8 +259,8 @@ export default function ReportDrawer({ open, coordinate, provinces, userLocation
             </span>
           </label>
 
-          <button className="primary-button" disabled={busy}>
-            <Send /> {busy ? "กำลังส่ง..." : "ส่งรายงานพร้อมผลวิเคราะห์ AI"}
+          <button className="primary-button" type="submit" disabled={busy || !isGpsVerified}>
+            <Send /> {busy ? "กำลังส่ง..." : isGpsVerified ? `ส่งรายงานน้ำท่วม (จ.${province})` : "กรุณายืนยัน GPS ก่อนส่ง"}
           </button>
         </form>
       </aside>

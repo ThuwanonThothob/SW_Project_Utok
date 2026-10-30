@@ -1,7 +1,7 @@
 # UTOK (อุทก) — Thailand Flood Risk Assessment & Incident Reporting Platform
 
 [![Agentic SDLC](https://img.shields.io/badge/Agentic_SDLC-18_AI_Agents_Approved-success.svg)](file:///Users/thuwanon/Documents/cpe_sw/SW_Project/docs/AGENTIC_SDLC.md)
-[![Automated Tests](https://img.shields.io/badge/Tests-18%2F18_Passing-brightgreen.svg)](file:///Users/thuwanon/Documents/cpe_sw/SW_Project/backend/test)
+[![Automated Tests](https://img.shields.io/badge/Tests-19%2F19_Passing-brightgreen.svg)](file:///Users/thuwanon/Documents/cpe_sw/SW_Project/backend/test)
 [![Security Hardened](https://img.shields.io/badge/Security-OWASP_Top_10-blue.svg)](file:///Users/thuwanon/Documents/cpe_sw/SW_Project/docs/SECURITY_GUIDE.md)
 [![PWA Ready](https://img.shields.io/badge/Mobile-PWA_Standalone-orange.svg)](file:///Users/thuwanon/Documents/cpe_sw/SW_Project/docs/USER_MANUAL.md)
 
@@ -80,7 +80,7 @@
 | **3. Design** | • UX & Accessibility Agent<br>• GIS & Map Experience Agent | ออกแบบหน้าจอตามมาตรฐาน WCAG 2.1 AA และระบบแสดงผลแผนที่เชิงพื้นที่ |
 | **4. Architecture** | • Solution Architect Agent<br>• Database & GIS Architect Agent<br>• Security & API Contract Agent | ออกแบบสถาปัตยกรรม Full-stack Monorepo, สกีมา PostGIS, และสัญญา API OpenAPI |
 | **5. Implementation** | • Citizen Portal Frontend Agent<br>• Authority Dashboard Frontend Agent<br>• Identity & Access Backend Agent<br>• Incident, Broadcast & Realtime Agent<br>• Flood Risk & Data Engineering Agent<br>• Flood News & Intelligence Agent | เขียนโค้ดระบบจริงทั้ง Frontend (React/PWA), Backend (Express/SSE), AI Triage Engine, Weather Sync 77 จังหวัด |
-| **6. Validation** | • QA Automation Agent<br>• Security & Privacy Review Agent<br>• Accessibility & Performance Agent | ตรวจสอบคุณภาพด้วย Unit Test 18/18 ชุด, ทดสอบเจาะช่องโหว่ OWASP, วัดความเร็ว Performance |
+| **6. Validation** | • QA Automation Agent<br>• Security & Privacy Review Agent<br>• Accessibility & Performance Agent | ตรวจสอบคุณภาพด้วย Unit Test 19/19 ชุด, ทดสอบเจาะช่องโหว่ OWASP, วัดความเร็ว Performance |
 | **7. Operations** | • DevOps & Release Agent | กำหนดคอนฟิก Docker Compose, PWA Service Worker, และคู่มือส่งมอบงาน |
 
 *มีจุดตรวจสอบโดยมนุษย์ (**5 Human Checkpoints**) ทุกครั้งก่อนเปลี่ยนผ่านระหว่างเฟส*
@@ -131,14 +131,15 @@ npm run dev
 * **Frontend Web & PWA**: เข้าใช้งานที่ <http://localhost:5173>
 * **Backend REST API**: ตรวจสอบสถานะที่ <http://localhost:4000/api/health>
 
-### 2. บัญชีทดสอบสำหรับตรวจงาน (Test Accounts)
-* **ประชาชน (Citizen)**: `citizen@example.com` / รหัสผ่าน: `citizen123`
-* **เจ้าหน้าที่ (Authority)**: `admin@flood.go.th` / รหัสผ่าน: `admin123`
-* *(หรือกดปุ่มสมัครสมาชิกใหม่ได้ทันที รหัสยืนยันเจ้าหน้าที่คือ `1784` หรือ `SWU-CPE-2026`)*
+### 2. การเข้าใช้งานระบบและบทบาทผู้ใช้ (User Roles & Access)
+* **การสมัครสมาชิกและเข้าสู่ระบบจริง**: รองรับระบบสมาชิกถาวร (Persistent Authentication) พร้อมเข้ารหัสความปลอดภัยมาตรฐาน OWASP
+* **กลุ่มประชาชน (Citizen)**: สามารถกดปุ่ม "เข้าสู่ระบบ / สมัคร" บนหน้าเว็บ แล้วเลือกแท็บ **"สมัครสมาชิกจริง"** เพื่อเริ่มใช้งานได้ทันที
+* **กลุ่มเจ้าหน้าที่ (Authority)**: สลับเป็นโหมดเจ้าหน้าที่และลงทะเบียนด้วยรหัสความปลอดภัยของหน่วยงาน
+* **ระบบความปลอดภัยทางภูมิศาสตร์ (Geofencing)**: บังคับให้ผู้ใช้รายงานเหตุได้เฉพาะในจังหวัดที่ตรวจพบตำแหน่งพิกัด GPS จริงเท่านั้น เพื่อป้องกันการแจ้งข้อมูลเท็จข้ามพื้นที่
 
 ### 3. รันชุดทดสอบความปลอดภัยและการทำงาน
 ```bash
-# รันชุดทดสอบ Backend & Security ทั้งหมด (18 Tests)
+# รันชุดทดสอบ Backend & Security ทั้งหมด (19 Tests)
 npm test
 
 # Build โปรดักชันบันเดิลสำหรับ Web และ PWA

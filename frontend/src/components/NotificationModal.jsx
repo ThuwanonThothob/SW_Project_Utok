@@ -1,4 +1,4 @@
-import { Bell, BellRing, CheckCircle2, RadioTower, Siren, Volume2, VolumeX, X } from "lucide-react";
+import { Bell, BellRing, CheckCircle2, Navigation, RadioTower, Siren, Volume2, VolumeX, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getNotificationPermission, playAlertSound, requestNotificationPermission, sendSystemNotification } from "../services/notifications.js";
 
@@ -17,6 +17,7 @@ export default function NotificationModal({
   onToggleSound,
   onSendTestNotification,
   onLocalTestNotification,
+  onSimulateProvince,
   onClose,
   busy,
 }) {
@@ -178,6 +179,60 @@ export default function NotificationModal({
             </button>
           </div>
         </form>
+
+        <div className="geofence-test-box">
+          <div className="notif-lab-head">
+            <span>
+              <Navigation /> <b>ทดสอบแจ้งเตือนเมื่อเดินทางเข้า/ผ่านจังหวัด (Geofence Province Alert)</b>
+            </span>
+            <small>ระบบป้องกันรายงานเท็จ</small>
+          </div>
+          <p className="geofence-test-desc">
+            เมื่อผู้ใช้เดินทางเข้าหรือข้ามเขตจังหวัด ระบบจะส่งเสียงไซเรนแจ้งเตือนระดับความเสี่ยงของจังหวัดนั้น และเปิดสิทธิ์การส่งรายงานเหตุน้ำท่วมเฉพาะในจังหวัดที่ท่านอยู่จริง
+          </p>
+          <div className="geofence-btn-group">
+            <button
+              type="button"
+              className="chip-button"
+              onClick={() => {
+                onSimulateProvince?.("อุบลราชธานี");
+                onClose();
+              }}
+            >
+              📍 จำลองเข้า จ.อุบลราชธานี
+            </button>
+            <button
+              type="button"
+              className="chip-button"
+              onClick={() => {
+                onSimulateProvince?.("เชียงใหม่");
+                onClose();
+              }}
+            >
+              📍 จำลองเข้า จ.เชียงใหม่
+            </button>
+            <button
+              type="button"
+              className="chip-button"
+              onClick={() => {
+                onSimulateProvince?.("สงขลา");
+                onClose();
+              }}
+            >
+              📍 จำลองเข้า จ.สงขลา
+            </button>
+            <button
+              type="button"
+              className="chip-button"
+              onClick={() => {
+                onSimulateProvince?.("กรุงเทพมหานคร");
+                onClose();
+              }}
+            >
+              📍 จำลองเข้า กรุงเทพมหานคร
+            </button>
+          </div>
+        </div>
 
         <div className="notif-feed-section">
           <div className="card-head">

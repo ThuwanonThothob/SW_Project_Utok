@@ -15,6 +15,7 @@ import {
   Navigation,
   Newspaper,
   RefreshCw,
+  ShieldCheck,
   Smartphone,
   Thermometer,
   TriangleAlert,
@@ -137,6 +138,11 @@ export default function CitizenView({
                     พิกัดจริง: {userLocation.lat.toFixed(5)}, {userLocation.lng.toFixed(5)} (ความแม่นยำ ±
                     {userLocation.accuracy || 15} ม.)
                   </small>
+                  {userLocation.provinceName && (
+                    <div className="geofence-citizen-pill">
+                      <ShieldCheck /> สิทธิ์การแจ้งเหตุ: <b>เปิดเฉพาะใน จ.{userLocation.provinceName} (ป้องกันรายงานเท็จ)</b>
+                    </div>
+                  )}
                 </div>
                 <div className="live-gps-metrics">
                   <div>

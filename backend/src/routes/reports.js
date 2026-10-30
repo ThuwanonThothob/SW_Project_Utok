@@ -4,6 +4,7 @@ import { Router } from "express";
 import multer from "multer";
 import rateLimit from "express-rate-limit";
 import { createReport, deleteReport, listReports, updateReportStatus } from "../data/repository.js";
+import { provinceCatalog } from "../data/provinceCatalog.js";
 import { requireAuth, requireAuthority } from "../middleware/auth.js";
 import { publishEvent } from "../services/eventBus.js";
 import { sanitizeFileName, sanitizeText } from "../utils/sanitize.js";
@@ -54,6 +55,33 @@ router.post("/", requireAuth, reportPostLimiter, upload.single("photo"), async (
   try {
     const required = ["province", "level", "description", "lat", "lng"];
     if (required.some((key) => !String(req.body[key] ?? "").trim())) return res.status(400).json({ message: "ข้อมูลรายงานไม่ครบถ้วน" });
+
+    const lat = Number(req.body.lat);
+    const lng = Number(req.body.lng);
+    if (Number.isNaN(lat) || Number.isNaN(lng) || lat < 5.0 || lat > 21.0 || lng < 97.0 || lng > 106.0) {
+      return res.status(400).json({ message: "พิกัดที่ระบุอยู่นอกขอบเขตประเทศไทย" });
+    }
+
+    const claimedProvince = sanitizeText(req.body.province, 100);
+    const matchedCatalog = provinceCatalog.find(
+      (p) => p.name === claimedProvince || claimedProvince.includes(p.name) || p.name.includes(claimedProvince)
+    );
+    if (!matchedCatalog) {
+      return res.status(400).json({ message: "ไม่พบจังหวัดที่ระบุในฐานข้อมูลประเทศไทย" });
+    }
+
+    // Geofence check: Ensure coordinates correspond to claimed province territory (~160 km radius threshold)
+    const distDeg = Math.hypot(matchedCatalog.lat - lat, matchedCatalog.lng - lng);
+    if (distDeg * 111 > 170) {
+      const nearest = provinceCatalog.reduce((best, item) => {
+        const d = Math.hypot(item.lat - lat, item.lng - lng);
+        return !best || d < best.d ? { ...item, d } : best;
+      }, null);
+      return res.status(403).json({
+        message: `พิกัด GPS ของคุณไม่ได้อยู่ในพื้นที่ จ.${claimedProvince} (ตรวจพบพิกัดใกล้เคียง จ.${nearest?.name || "ไม่ทราบ"}) เพื่อป้องกันข้อมูลเท็จ ระบบอนุญาตให้รายงานได้เฉพาะในจังหวัดที่ท่านอยู่จริงเท่านั้น`
+      });
+    }
+
     const report = await createReport({
       ...req.body,
       province: sanitizeText(req.body.province, 100),
