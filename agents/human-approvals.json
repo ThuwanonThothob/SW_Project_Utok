@@ -1,0 +1,40 @@
+{
+  "requirements": {
+    "status": "approved",
+    "actor": "Project owner request",
+    "approvedAt": "2026-10-08T00:00:00+07:00",
+    "note": "อนุมัติขอบเขตระบบสมาชิก Citizen และ Authority สำหรับแพลตฟอร์มความเสี่ยงน้ำท่วม"
+  },
+  "experience": {
+    "status": "approved",
+    "actor": "Project owner request",
+    "approvedAt": "2026-10-11T00:00:00+07:00",
+    "note": "อนุมัติให้แยก UX, Accessibility และ GIS map experience เป็นงานเฉพาะทาง"
+  },
+  "architecture": {
+    "status": "approved",
+    "actor": "Human-in-the-loop implementation authorization",
+    "approvedAt": "2026-10-08T00:00:00+07:00",
+    "note": "อนุมัติสถาปัตยกรรม React, Express และ PostgreSQL/PostGIS"
+  },
+  "integration": {
+    "status": "approved",
+    "actor": "Human-in-the-loop browser acceptance",
+    "approvedAt": "2026-10-08T01:27:00+07:00",
+    "note": "ทดสอบ Citizen registration, incident submission, Authority moderation และ responsive layout แล้ว"
+  },
+  "release": {
+    "status": "approved",
+    "actor": "Thuwanon",
+    "approvedAt": "2026-10-19T17:21:52.730Z",
+    "note": "อนุมัติระบบเวอร์ชันใช้งานจริง สมัครจริง ทดสอบแจ้งเตือน และรองรับแอปมือถือ PWA"
+  },
+  "releaseHistory": [
+    {
+      "status": "approved",
+      "actor": "Thuwa",
+      "approvedAt": "2026-10-11T08:45:19.647Z",
+      "note": "อนุมัติระบบเวอร์ชันก่อนเพิ่มข้อมูล 77 จังหวัด"
+    }
+  ]
+}

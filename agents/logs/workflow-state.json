@@ -1,0 +1,1367 @@
+{
+  "executionId": "b5f6a9c9-67c2-4e14-b3c2-de9d734ea15e",
+  "team": "ThaiFlood Specialized Software Engineering Agent Team",
+  "topology": {
+    "agentCount": 18,
+    "phaseCount": 7
+  },
+  "provider": "local-artifact-verifier",
+  "startedAt": "2026-10-30T05:38:02.454Z",
+  "status": "completed",
+  "phases": [
+    {
+      "phase": "discovery",
+      "status": "completed",
+      "agents": [
+        {
+          "runId": "404b6f3c-046c-42ee-885b-444d380a70d1",
+          "agentId": "business-requirements",
+          "agentName": "Business Requirements Agent",
+          "phase": "discovery",
+          "workstream": "Product discovery",
+          "responsibilities": [
+            "Identify stakeholders and user groups",
+            "Define functional and non-functional requirements",
+            "Record assumptions and scope boundaries"
+          ],
+          "inputs": [
+            "Project brief",
+            "Instructor rubric"
+          ],
+          "dependsOn": [],
+          "handoffTo": [
+            "product-manager",
+            "security-api-architect"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.458Z",
+          "completedAt": "2026-10-30T05:38:02.459Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/stakeholder-requirements.md",
+              "bytes": 1723,
+              "sha256": "eb87bc9deda2361e6165aafe9cf74263219edd0982dab79a9eb75db2a4cf8384"
+            }
+          ],
+          "review": "Business Requirements Agent verified 1 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "29baff18-eeb5-45c3-92e2-95d6c41af4cd",
+          "agentId": "flood-domain-data",
+          "agentName": "Flood Domain & Data Agent",
+          "phase": "discovery",
+          "workstream": "Flood-domain analysis",
+          "responsibilities": [
+            "Define flood-risk factors",
+            "Catalogue hydrology and geospatial data",
+            "Document safety and data-quality limitations"
+          ],
+          "inputs": [
+            "Project brief",
+            "Thailand flood-risk context"
+          ],
+          "dependsOn": [],
+          "handoffTo": [
+            "product-manager",
+            "gis-ui-design",
+            "data-gis-architect",
+            "risk-data-engineer"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.460Z",
+          "completedAt": "2026-10-30T05:38:02.460Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/flood-domain-data.md",
+              "bytes": 1454,
+              "sha256": "fd458758eb737e624855919c25a66a128148951d85d8c15a9f80ba7fe4bf72a5"
+            }
+          ],
+          "review": "Flood Domain & Data Agent verified 1 required output(s) with SHA-256 traceability."
+        }
+      ]
+    },
+    {
+      "phase": "product",
+      "status": "completed",
+      "agents": [
+        {
+          "runId": "89e74886-0b66-4d16-b090-b797e3d965c6",
+          "agentId": "product-manager",
+          "agentName": "Product Manager Agent",
+          "phase": "product",
+          "workstream": "Product planning",
+          "responsibilities": [
+            "Prioritize MVP scope",
+            "Write user stories and acceptance criteria",
+            "Define delivery milestones"
+          ],
+          "inputs": [
+            "Stakeholder requirements",
+            "Flood-domain rules"
+          ],
+          "dependsOn": [
+            "business-requirements",
+            "flood-domain-data"
+          ],
+          "handoffTo": [
+            "ux-accessibility",
+            "gis-ui-design",
+            "solution-architect",
+            "data-gis-architect",
+            "security-api-architect"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.460Z",
+          "completedAt": "2026-10-30T05:38:02.461Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/PRD.md",
+              "bytes": 9273,
+              "sha256": "dec7f2ebd2e6c67e0996d5a21647bade65deaf630883cf094289aa50a45a9830"
+            },
+            {
+              "path": "agents/artifacts/user-stories.md",
+              "bytes": 6958,
+              "sha256": "55098fc4e17f884815930fe8c1dc8670442d6eb137262a44a26aaf520eb92704"
+            },
+            {
+              "path": "agents/artifacts/presentation-guide.md",
+              "bytes": 13550,
+              "sha256": "4840654755bf33c993f16eaa72171becc5a093efbbf3d46ced3e3c9da67ea2d6"
+            }
+          ],
+          "review": "Product Manager Agent verified 3 required output(s) with SHA-256 traceability."
+        }
+      ]
+    },
+    {
+      "phase": "design",
+      "status": "completed",
+      "agents": [
+        {
+          "runId": "ebaffcd5-5085-43c5-b100-7d23bcbc4740",
+          "agentId": "ux-accessibility",
+          "agentName": "UX & Accessibility Agent",
+          "phase": "design",
+          "workstream": "Citizen and authority experience",
+          "responsibilities": [
+            "Design user journeys",
+            "Define responsive interaction states",
+            "Specify WCAG-oriented accessibility requirements"
+          ],
+          "inputs": [
+            "PRD",
+            "User stories"
+          ],
+          "dependsOn": [
+            "product-manager"
+          ],
+          "handoffTo": [
+            "solution-architect",
+            "citizen-frontend",
+            "authority-frontend",
+            "qa-automation"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.461Z",
+          "completedAt": "2026-10-30T05:38:02.462Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/ux-accessibility-spec.md",
+              "bytes": 1197,
+              "sha256": "018e223ae4d045757474ea30721027c387d9537c334e21f223be72c744fd7d24"
+            }
+          ],
+          "review": "UX & Accessibility Agent verified 1 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "32fc1500-df7b-47a3-8aa0-b1039581045e",
+          "agentId": "gis-ui-design",
+          "agentName": "GIS & Map Experience Agent",
+          "phase": "design",
+          "workstream": "Geospatial visualization",
+          "responsibilities": [
+            "Define map layers and markers",
+            "Specify flood-risk color semantics",
+            "Design location and incident-reporting interactions"
+          ],
+          "inputs": [
+            "Flood-domain rules",
+            "PRD"
+          ],
+          "dependsOn": [
+            "product-manager",
+            "flood-domain-data"
+          ],
+          "handoffTo": [
+            "solution-architect",
+            "data-gis-architect",
+            "citizen-frontend"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.462Z",
+          "completedAt": "2026-10-30T05:38:02.462Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/gis-visual-spec.md",
+              "bytes": 1106,
+              "sha256": "4ec00a609f0569dabd1ad62b574ca098e142af2b69a34e05d3318ce5515a8ea3"
+            }
+          ],
+          "review": "GIS & Map Experience Agent verified 1 required output(s) with SHA-256 traceability."
+        }
+      ]
+    },
+    {
+      "phase": "architecture",
+      "status": "completed",
+      "agents": [
+        {
+          "runId": "c58a1e28-4a39-4747-b166-f4eb71566462",
+          "agentId": "solution-architect",
+          "agentName": "Solution Architect Agent",
+          "phase": "architecture",
+          "workstream": "System architecture",
+          "responsibilities": [
+            "Define system boundaries and runtime topology",
+            "Select technology and integration patterns",
+            "Define component ownership"
+          ],
+          "inputs": [
+            "PRD",
+            "UX specification",
+            "GIS visual specification"
+          ],
+          "dependsOn": [
+            "product-manager",
+            "ux-accessibility",
+            "gis-ui-design"
+          ],
+          "handoffTo": [
+            "citizen-frontend",
+            "authority-frontend",
+            "incident-realtime-backend",
+            "risk-data-engineer",
+            "devops-release"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.462Z",
+          "completedAt": "2026-10-30T05:38:02.463Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/architecture.md",
+              "bytes": 3169,
+              "sha256": "aff83d6b1b8472710c3bddac41452642cef2c482316f3ce8cd57b2d3ed4ef269"
+            }
+          ],
+          "review": "Solution Architect Agent verified 1 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "ac1fd1b7-c546-4efb-9f43-2f983ec4b835",
+          "agentId": "data-gis-architect",
+          "agentName": "Database & GIS Architect Agent",
+          "phase": "architecture",
+          "workstream": "Data architecture",
+          "responsibilities": [
+            "Model users, reports, broadcasts and risk zones",
+            "Define PostGIS spatial types and indexes",
+            "Plan migrations and data retention"
+          ],
+          "inputs": [
+            "Flood-domain rules",
+            "PRD",
+            "GIS visual specification"
+          ],
+          "dependsOn": [
+            "product-manager",
+            "flood-domain-data",
+            "gis-ui-design"
+          ],
+          "handoffTo": [
+            "identity-backend",
+            "incident-realtime-backend",
+            "risk-data-engineer"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.463Z",
+          "completedAt": "2026-10-30T05:38:02.463Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/data-gis-design.md",
+              "bytes": 1183,
+              "sha256": "f7401bbc205bc1130715e17b8b5eba17b95db0c6e3db81f79ef4dad419b7e67f"
+            },
+            {
+              "path": "database/schema.sql",
+              "bytes": 3570,
+              "sha256": "61f30e2b4848416a1b6a3505307bcfa3e4bd3298770c6d642bdecf26b2483452"
+            }
+          ],
+          "review": "Database & GIS Architect Agent verified 2 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "88f9f827-90ec-4200-91f6-565f9345534d",
+          "agentId": "security-api-architect",
+          "agentName": "Security & API Contract Agent",
+          "phase": "architecture",
+          "workstream": "API and trust boundaries",
+          "responsibilities": [
+            "Define REST contracts",
+            "Design JWT and role authorization",
+            "Threat-model public reporting and authority actions"
+          ],
+          "inputs": [
+            "Stakeholder requirements",
+            "PRD"
+          ],
+          "dependsOn": [
+            "business-requirements",
+            "product-manager"
+          ],
+          "handoffTo": [
+            "citizen-frontend",
+            "authority-frontend",
+            "identity-backend",
+            "incident-realtime-backend",
+            "security-privacy-review"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.463Z",
+          "completedAt": "2026-10-30T05:38:02.464Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/api-spec.yaml",
+              "bytes": 5095,
+              "sha256": "e8846889bc9cf6b2b391b0b349a3eb78afc1946d71c3a5799f40fd535b1b9f58"
+            },
+            {
+              "path": "agents/artifacts/threat-model.md",
+              "bytes": 1246,
+              "sha256": "37b6c0b048833d00d53e2423d7b5da3dd2a95767f17422b0f70f5bafa5343317"
+            }
+          ],
+          "review": "Security & API Contract Agent verified 2 required output(s) with SHA-256 traceability."
+        }
+      ]
+    },
+    {
+      "phase": "implementation",
+      "status": "completed",
+      "agents": [
+        {
+          "runId": "1e68dce5-230b-4cea-a2db-af9c295e565c",
+          "agentId": "citizen-frontend",
+          "agentName": "Citizen Portal Frontend Agent",
+          "phase": "implementation",
+          "workstream": "Citizen web application",
+          "responsibilities": [
+            "Implement Citizen registration and login",
+            "Build risk map and personal-risk experience",
+            "Build crowdsourced incident reporting",
+            "Implement installable Mobile PWA and Notification Test Lab"
+          ],
+          "inputs": [
+            "UX specification",
+            "GIS visual specification",
+            "API contract",
+            "System architecture"
+          ],
+          "dependsOn": [
+            "ux-accessibility",
+            "gis-ui-design",
+            "solution-architect",
+            "security-api-architect"
+          ],
+          "handoffTo": [
+            "qa-automation",
+            "accessibility-performance"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.464Z",
+          "completedAt": "2026-10-30T05:38:02.466Z",
+          "evidence": [
+            {
+              "path": "frontend/src/components/CitizenView.jsx",
+              "bytes": 20071,
+              "sha256": "03d60d2005b82546d9a1aa8abf10155577c1f1536e652da0f2492f8acb211289"
+            },
+            {
+              "path": "frontend/src/components/LoginModal.jsx",
+              "bytes": 9193,
+              "sha256": "f588ee54fba0f0d759a1ecddc247df232e06e2cb813335b5a3b104ac5a6b658f"
+            },
+            {
+              "path": "frontend/src/components/ReportDrawer.jsx",
+              "bytes": 10166,
+              "sha256": "7a0ea80fa94faaf2c4d9a87da69a2defdf884989a204aeec0d1704577b46aa47"
+            },
+            {
+              "path": "frontend/src/components/NotificationModal.jsx",
+              "bytes": 9315,
+              "sha256": "64895dce6221434adca148aabd9b9f64ac190f0dfd088942e9a3b08738f7878a"
+            },
+            {
+              "path": "frontend/src/components/InstallAppModal.jsx",
+              "bytes": 6614,
+              "sha256": "9709cae70b2d626e8581de57b6e2e63bec6202606fc5846631ef64bd21bdf2b1"
+            },
+            {
+              "path": "frontend/public/manifest.webmanifest",
+              "bytes": 1797,
+              "sha256": "190c91cec08d64a4a73083fcd4da74cddcd114c9976ac85e8b04b30ff1e28076"
+            },
+            {
+              "path": "frontend/public/sw.js",
+              "bytes": 2128,
+              "sha256": "9dae3fc1a59f29211207216d0d7113174db22a28d036ae39b317831f0cf13f8d"
+            }
+          ],
+          "review": "Citizen Portal Frontend Agent verified 7 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "7ec68d6c-fe56-42c9-9fe1-434bf41b0b3c",
+          "agentId": "authority-frontend",
+          "agentName": "Authority Dashboard Frontend Agent",
+          "phase": "implementation",
+          "workstream": "Authority operations console",
+          "responsibilities": [
+            "Implement authority metrics and moderation queue",
+            "Build emergency broadcasting controls",
+            "Build province risk management"
+          ],
+          "inputs": [
+            "UX specification",
+            "API contract",
+            "System architecture"
+          ],
+          "dependsOn": [
+            "ux-accessibility",
+            "solution-architect",
+            "security-api-architect"
+          ],
+          "handoffTo": [
+            "qa-automation",
+            "accessibility-performance"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.466Z",
+          "completedAt": "2026-10-30T05:38:02.467Z",
+          "evidence": [
+            {
+              "path": "frontend/src/components/AuthorityView.jsx",
+              "bytes": 18147,
+              "sha256": "4932a33136be3278b8ef85f1e2ba7c297ad2f60482ffa43fa77daf9e15ac5c71"
+            },
+            {
+              "path": "frontend/src/components/BroadcastModal.jsx",
+              "bytes": 2466,
+              "sha256": "1c20845129397be2a017447f8bb5e9a416446a068fe7a477f05e0cb6b288bef4"
+            }
+          ],
+          "review": "Authority Dashboard Frontend Agent verified 2 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "e18d7bad-14ea-4f2f-b940-a59adc65cc4e",
+          "agentId": "identity-backend",
+          "agentName": "Identity & Access Backend Agent",
+          "phase": "implementation",
+          "workstream": "Authentication and RBAC",
+          "responsibilities": [
+            "Implement Citizen registration and authentication",
+            "Issue and verify JWTs",
+            "Enforce Citizen and Authority permissions"
+          ],
+          "inputs": [
+            "API contract",
+            "Threat model",
+            "Data model"
+          ],
+          "dependsOn": [
+            "data-gis-architect",
+            "security-api-architect"
+          ],
+          "handoffTo": [
+            "qa-automation",
+            "security-privacy-review"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.467Z",
+          "completedAt": "2026-10-30T05:38:02.468Z",
+          "evidence": [
+            {
+              "path": "backend/src/routes/auth.js",
+              "bytes": 5814,
+              "sha256": "f901fd2c55cdb673451c206cb82719626aba7e1fa77c9a458cbd56eed7248892"
+            },
+            {
+              "path": "backend/src/middleware/auth.js",
+              "bytes": 1346,
+              "sha256": "f2be1328f6f7ecd1c46fa20a877cfe3def6e41d515507bcb8a90c7b547534af6"
+            },
+            {
+              "path": "backend/test/auth.test.js",
+              "bytes": 4608,
+              "sha256": "db56eec10445accf603e3ed34e4662d469d0c833447c06a0d40aee9738f818c7"
+            }
+          ],
+          "review": "Identity & Access Backend Agent verified 3 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "82b51a6e-9be7-42d6-8d25-dad6619f3e1a",
+          "agentId": "incident-realtime-backend",
+          "agentName": "Incident, Broadcast & Realtime Agent",
+          "phase": "implementation",
+          "workstream": "Operational APIs and events",
+          "responsibilities": [
+            "Implement incident lifecycle APIs",
+            "Implement emergency broadcasts",
+            "Publish live Server-Sent Events"
+          ],
+          "inputs": [
+            "API contract",
+            "Data model",
+            "System architecture"
+          ],
+          "dependsOn": [
+            "solution-architect",
+            "data-gis-architect",
+            "security-api-architect"
+          ],
+          "handoffTo": [
+            "qa-automation",
+            "security-privacy-review",
+            "devops-release"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.468Z",
+          "completedAt": "2026-10-30T05:38:02.469Z",
+          "evidence": [
+            {
+              "path": "backend/src/routes/reports.js",
+              "bytes": 4297,
+              "sha256": "084f372ee5df8f1a7ea34e52132a9551719c1b1b55b383774a4c740d907ad88f"
+            },
+            {
+              "path": "backend/src/routes/broadcasts.js",
+              "bytes": 3320,
+              "sha256": "cc8e444981f251ef0b32ed106936e8fdd863738cb188a6b9d0e599e2c5d060e4"
+            },
+            {
+              "path": "backend/src/routes/events.js",
+              "bytes": 740,
+              "sha256": "489604f7b6b2e5ab12a917f5c39f242c8585051dfbeb417a73ecf01f066a6814"
+            },
+            {
+              "path": "backend/src/services/eventBus.js",
+              "bytes": 342,
+              "sha256": "23ad5c9990813d6eebe4d8b43a7e64c96e5ee8763465ab8e8798fe1f9b7f5f57"
+            }
+          ],
+          "review": "Incident, Broadcast & Realtime Agent verified 4 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "06ff5dd9-9dc7-45c9-a1bf-e8d6a12a23b6",
+          "agentId": "risk-data-engineer",
+          "agentName": "Flood Risk & Data Engineering Agent",
+          "phase": "implementation",
+          "workstream": "Risk calculation and geospatial data",
+          "responsibilities": [
+            "Implement explainable flood-risk scoring",
+            "Normalize province and incident data",
+            "Support persistent runtime and PostgreSQL repositories",
+            "Export 77-province dataset"
+          ],
+          "inputs": [
+            "Flood-domain rules",
+            "Data model",
+            "System architecture"
+          ],
+          "dependsOn": [
+            "flood-domain-data",
+            "solution-architect",
+            "data-gis-architect"
+          ],
+          "handoffTo": [
+            "qa-automation",
+            "security-privacy-review"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.469Z",
+          "completedAt": "2026-10-30T05:38:02.470Z",
+          "evidence": [
+            {
+              "path": "backend/src/services/riskService.js",
+              "bytes": 626,
+              "sha256": "30cabed8b58af677b87b6f0a6b400e17eeac007318d86b6229c5fb65d2e4e597"
+            },
+            {
+              "path": "backend/src/data/repository.js",
+              "bytes": 21430,
+              "sha256": "fbe2cf01d5c091c61a2d6e8eaae03409c69da9101e74e75fc53d1a54f1a12ed3"
+            },
+            {
+              "path": "backend/src/routes/provinces.js",
+              "bytes": 1373,
+              "sha256": "e1db2006c524496ccbf7567966933e180a6c7a367965eef4e69fa10f17c09c46"
+            },
+            {
+              "path": "dataset/thailand_flood_risk_77_provinces.json",
+              "bytes": 33204,
+              "sha256": "b03058704b4ca782925ab5bd5e775d6c62bd7f7f0c8e6914b12b6058a41821ea"
+            },
+            {
+              "path": "dataset/thailand_flood_risk_77_provinces.csv",
+              "bytes": 13926,
+              "sha256": "23eaf02a42885144389a5556acc155c671a212c259ee3b8471f6f3f011f68817"
+            }
+          ],
+          "review": "Flood Risk & Data Engineering Agent verified 5 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "d1e6b518-714a-44f4-b944-07dd4fdbaeb4",
+          "agentId": "flood-news-intelligence",
+          "agentName": "Flood News & Situational Intelligence Agent",
+          "phase": "implementation",
+          "workstream": "Real-time Thailand flood news & AI incident triage",
+          "responsibilities": [
+            "Ingest and analyze real-time Thailand flood news",
+            "Classify incident urgency with AI Triage (P1-P4)",
+            "Generate automated rescue recommendations and push SSE news updates",
+            "Sync live Open-Meteo weather, GloFAS river discharge, and user GPS telemetry"
+          ],
+          "inputs": [
+            "Flood-domain rules",
+            "PRD",
+            "System architecture"
+          ],
+          "dependsOn": [
+            "flood-domain-data",
+            "product-manager",
+            "solution-architect"
+          ],
+          "handoffTo": [
+            "qa-automation",
+            "devops-release"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.470Z",
+          "completedAt": "2026-10-30T05:38:02.472Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/flood-news-intelligence.md",
+              "bytes": 4648,
+              "sha256": "84f8537c7727bf841fac0091a69efe09e5f0698fad3dc6d8b84711b8f53c3fc7"
+            },
+            {
+              "path": "backend/src/services/newsAgentService.js",
+              "bytes": 5320,
+              "sha256": "60944db48449e69f979bc5e6630fc9ffa60b5ac5d1f94094d6230c258faceb94"
+            },
+            {
+              "path": "backend/src/services/aiTriageService.js",
+              "bytes": 6581,
+              "sha256": "eaa911029622e870de8bce7131b64b761a3b52643f507e98afc6fa6bae71177f"
+            },
+            {
+              "path": "backend/src/services/weatherService.js",
+              "bytes": 5991,
+              "sha256": "6715466cc390db178e12612e57f2e89743299b953ec28b8b6cc835650f25cbd1"
+            },
+            {
+              "path": "backend/src/routes/intelligence.js",
+              "bytes": 2423,
+              "sha256": "4f21131b3ad92f5a273d93003d53b4251ab32348f3e7510c740e58c019cc9c5d"
+            },
+            {
+              "path": "frontend/src/services/aiTriage.js",
+              "bytes": 4652,
+              "sha256": "ac4460e1d0142ad8082140c85970dac8bf3a59cb39ffad6e11f63fc7d2232e23"
+            },
+            {
+              "path": "frontend/src/services/liveData.js",
+              "bytes": 7547,
+              "sha256": "e1d68a280763ff17d2449e1f4c0b597bf9ac11862e47724efd532a5692fbc105"
+            }
+          ],
+          "review": "Flood News & Situational Intelligence Agent verified 7 required output(s) with SHA-256 traceability."
+        }
+      ]
+    },
+    {
+      "phase": "validation",
+      "status": "completed",
+      "agents": [
+        {
+          "runId": "06601a21-965a-4db2-8cc6-99efc2606a1b",
+          "agentId": "qa-automation",
+          "agentName": "QA Automation Agent",
+          "phase": "validation",
+          "workstream": "Functional and integration quality",
+          "responsibilities": [
+            "Test acceptance criteria and role boundaries",
+            "Verify production build and responsive flows",
+            "Publish traceable test evidence"
+          ],
+          "inputs": [
+            "User stories",
+            "Frontend implementations",
+            "Backend implementations"
+          ],
+          "dependsOn": [
+            "citizen-frontend",
+            "authority-frontend",
+            "identity-backend",
+            "incident-realtime-backend",
+            "risk-data-engineer",
+            "flood-news-intelligence"
+          ],
+          "handoffTo": [
+            "devops-release"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.472Z",
+          "completedAt": "2026-10-30T05:38:02.473Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/test-report.md",
+              "bytes": 3022,
+              "sha256": "0fcc1cdd4fc583d90b272ddba40502e249c19ab374a0f335c8fe7ba786faf5f0"
+            },
+            {
+              "path": "backend/test/riskService.test.js",
+              "bytes": 3412,
+              "sha256": "d7fd514868653b1073f42d3cda160bb2847b09ca24f49cc6b05a44c9fbcd0973"
+            },
+            {
+              "path": "backend/test/auth.test.js",
+              "bytes": 4608,
+              "sha256": "db56eec10445accf603e3ed34e4662d469d0c833447c06a0d40aee9738f818c7"
+            }
+          ],
+          "review": "QA Automation Agent verified 3 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "01d2f827-a1c1-40d0-a519-87ba3ef50d7c",
+          "agentId": "security-privacy-review",
+          "agentName": "Security & Privacy Review Agent",
+          "phase": "validation",
+          "workstream": "Application security",
+          "responsibilities": [
+            "Review authentication and authorization controls",
+            "Check privacy and upload risks",
+            "Document residual risk and mitigations"
+          ],
+          "inputs": [
+            "Threat model",
+            "Identity implementation",
+            "Operational APIs"
+          ],
+          "dependsOn": [
+            "security-api-architect",
+            "identity-backend",
+            "incident-realtime-backend",
+            "risk-data-engineer"
+          ],
+          "handoffTo": [
+            "devops-release"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.473Z",
+          "completedAt": "2026-10-30T05:38:02.473Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/security-review.md",
+              "bytes": 1276,
+              "sha256": "7a235282b5d7bb134d2fa978b0f9c7656543dc1a5a61c2caa2e869494606e215"
+            }
+          ],
+          "review": "Security & Privacy Review Agent verified 1 required output(s) with SHA-256 traceability."
+        },
+        {
+          "runId": "0c53a24a-517e-46ec-8b9e-276083bd2ac6",
+          "agentId": "accessibility-performance",
+          "agentName": "Accessibility & Performance Agent",
+          "phase": "validation",
+          "workstream": "Inclusive and responsive quality",
+          "responsibilities": [
+            "Check keyboard and semantic UI behavior",
+            "Verify mobile responsiveness",
+            "Review frontend bundle and map performance"
+          ],
+          "inputs": [
+            "Accessibility specification",
+            "Citizen portal",
+            "Authority dashboard"
+          ],
+          "dependsOn": [
+            "ux-accessibility",
+            "citizen-frontend",
+            "authority-frontend"
+          ],
+          "handoffTo": [
+            "devops-release"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.473Z",
+          "completedAt": "2026-10-30T05:38:02.474Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/accessibility-performance-report.md",
+              "bytes": 2252,
+              "sha256": "debd15085a62d115c5b984a955a71041da94eb4a928affa42bace4ebc8b1e0e0"
+            },
+            {
+              "path": "scripts/performance-check.mjs",
+              "bytes": 1971,
+              "sha256": "5e67e233f0eab6f8cef373afc0772501ba660b965430333ea4c7ef2d594ec1f9"
+            }
+          ],
+          "review": "Accessibility & Performance Agent verified 2 required output(s) with SHA-256 traceability."
+        }
+      ]
+    },
+    {
+      "phase": "operations",
+      "status": "completed",
+      "agents": [
+        {
+          "runId": "37156f8e-be73-46f0-b612-5af4bd0875b0",
+          "agentId": "devops-release",
+          "agentName": "DevOps & Release Agent",
+          "phase": "operations",
+          "workstream": "Build, deployment and release",
+          "responsibilities": [
+            "Define local and container runbooks",
+            "Verify environment and release gates",
+            "Prepare rollback and operational readiness"
+          ],
+          "inputs": [
+            "Architecture",
+            "Test report",
+            "Security review",
+            "Performance review"
+          ],
+          "dependsOn": [
+            "solution-architect",
+            "qa-automation",
+            "security-privacy-review",
+            "accessibility-performance"
+          ],
+          "handoffTo": [
+            "human-orchestrator"
+          ],
+          "provider": "local-artifact-verifier",
+          "status": "completed",
+          "startedAt": "2026-10-30T05:38:02.474Z",
+          "completedAt": "2026-10-30T05:38:02.475Z",
+          "evidence": [
+            {
+              "path": "agents/artifacts/deployment-runbook.md",
+              "bytes": 1122,
+              "sha256": "9da40ee1f2a84538c015833fd905f640f84ffd94b0b53e380aea98c6d4136de0"
+            },
+            {
+              "path": "agents/artifacts/agent-operating-model.md",
+              "bytes": 2192,
+              "sha256": "fe7b6f4592fed322668b88d221d05374184971e6d85ab4b4dec07dc5d899be72"
+            },
+            {
+              "path": "docker-compose.yml",
+              "bytes": 654,
+              "sha256": "66212625f69f73ad3184721b7d79a2f40c3338a2dc6ea2c5b1a8b4c17d09664c"
+            },
+            {
+              "path": "README.md",
+              "bytes": 19480,
+              "sha256": "049b09d610f9204da9847265c34ef01ceaf8afca003ff9905520217ffa4fd826"
+            }
+          ],
+          "review": "DevOps & Release Agent verified 4 required output(s) with SHA-256 traceability."
+        }
+      ]
+    }
+  ],
+  "handoffs": [
+    {
+      "from": "business-requirements",
+      "to": "product-manager",
+      "outputs": [
+        "artifacts/stakeholder-requirements.md"
+      ],
+      "at": "2026-10-30T05:38:02.459Z"
+    },
+    {
+      "from": "business-requirements",
+      "to": "security-api-architect",
+      "outputs": [
+        "artifacts/stakeholder-requirements.md"
+      ],
+      "at": "2026-10-30T05:38:02.459Z"
+    },
+    {
+      "from": "flood-domain-data",
+      "to": "product-manager",
+      "outputs": [
+        "artifacts/flood-domain-data.md"
+      ],
+      "at": "2026-10-30T05:38:02.460Z"
+    },
+    {
+      "from": "flood-domain-data",
+      "to": "gis-ui-design",
+      "outputs": [
+        "artifacts/flood-domain-data.md"
+      ],
+      "at": "2026-10-30T05:38:02.460Z"
+    },
+    {
+      "from": "flood-domain-data",
+      "to": "data-gis-architect",
+      "outputs": [
+        "artifacts/flood-domain-data.md"
+      ],
+      "at": "2026-10-30T05:38:02.460Z"
+    },
+    {
+      "from": "flood-domain-data",
+      "to": "risk-data-engineer",
+      "outputs": [
+        "artifacts/flood-domain-data.md"
+      ],
+      "at": "2026-10-30T05:38:02.460Z"
+    },
+    {
+      "from": "product-manager",
+      "to": "ux-accessibility",
+      "outputs": [
+        "artifacts/PRD.md",
+        "artifacts/user-stories.md",
+        "artifacts/presentation-guide.md"
+      ],
+      "at": "2026-10-30T05:38:02.461Z"
+    },
+    {
+      "from": "product-manager",
+      "to": "gis-ui-design",
+      "outputs": [
+        "artifacts/PRD.md",
+        "artifacts/user-stories.md",
+        "artifacts/presentation-guide.md"
+      ],
+      "at": "2026-10-30T05:38:02.461Z"
+    },
+    {
+      "from": "product-manager",
+      "to": "solution-architect",
+      "outputs": [
+        "artifacts/PRD.md",
+        "artifacts/user-stories.md",
+        "artifacts/presentation-guide.md"
+      ],
+      "at": "2026-10-30T05:38:02.461Z"
+    },
+    {
+      "from": "product-manager",
+      "to": "data-gis-architect",
+      "outputs": [
+        "artifacts/PRD.md",
+        "artifacts/user-stories.md",
+        "artifacts/presentation-guide.md"
+      ],
+      "at": "2026-10-30T05:38:02.461Z"
+    },
+    {
+      "from": "product-manager",
+      "to": "security-api-architect",
+      "outputs": [
+        "artifacts/PRD.md",
+        "artifacts/user-stories.md",
+        "artifacts/presentation-guide.md"
+      ],
+      "at": "2026-10-30T05:38:02.461Z"
+    },
+    {
+      "from": "ux-accessibility",
+      "to": "solution-architect",
+      "outputs": [
+        "artifacts/ux-accessibility-spec.md"
+      ],
+      "at": "2026-10-30T05:38:02.462Z"
+    },
+    {
+      "from": "ux-accessibility",
+      "to": "citizen-frontend",
+      "outputs": [
+        "artifacts/ux-accessibility-spec.md"
+      ],
+      "at": "2026-10-30T05:38:02.462Z"
+    },
+    {
+      "from": "ux-accessibility",
+      "to": "authority-frontend",
+      "outputs": [
+        "artifacts/ux-accessibility-spec.md"
+      ],
+      "at": "2026-10-30T05:38:02.462Z"
+    },
+    {
+      "from": "ux-accessibility",
+      "to": "qa-automation",
+      "outputs": [
+        "artifacts/ux-accessibility-spec.md"
+      ],
+      "at": "2026-10-30T05:38:02.462Z"
+    },
+    {
+      "from": "gis-ui-design",
+      "to": "solution-architect",
+      "outputs": [
+        "artifacts/gis-visual-spec.md"
+      ],
+      "at": "2026-10-30T05:38:02.462Z"
+    },
+    {
+      "from": "gis-ui-design",
+      "to": "data-gis-architect",
+      "outputs": [
+        "artifacts/gis-visual-spec.md"
+      ],
+      "at": "2026-10-30T05:38:02.462Z"
+    },
+    {
+      "from": "gis-ui-design",
+      "to": "citizen-frontend",
+      "outputs": [
+        "artifacts/gis-visual-spec.md"
+      ],
+      "at": "2026-10-30T05:38:02.462Z"
+    },
+    {
+      "from": "solution-architect",
+      "to": "citizen-frontend",
+      "outputs": [
+        "artifacts/architecture.md"
+      ],
+      "at": "2026-10-30T05:38:02.463Z"
+    },
+    {
+      "from": "solution-architect",
+      "to": "authority-frontend",
+      "outputs": [
+        "artifacts/architecture.md"
+      ],
+      "at": "2026-10-30T05:38:02.463Z"
+    },
+    {
+      "from": "solution-architect",
+      "to": "incident-realtime-backend",
+      "outputs": [
+        "artifacts/architecture.md"
+      ],
+      "at": "2026-10-30T05:38:02.463Z"
+    },
+    {
+      "from": "solution-architect",
+      "to": "risk-data-engineer",
+      "outputs": [
+        "artifacts/architecture.md"
+      ],
+      "at": "2026-10-30T05:38:02.463Z"
+    },
+    {
+      "from": "solution-architect",
+      "to": "devops-release",
+      "outputs": [
+        "artifacts/architecture.md"
+      ],
+      "at": "2026-10-30T05:38:02.463Z"
+    },
+    {
+      "from": "data-gis-architect",
+      "to": "identity-backend",
+      "outputs": [
+        "artifacts/data-gis-design.md",
+        "../database/schema.sql"
+      ],
+      "at": "2026-10-30T05:38:02.463Z"
+    },
+    {
+      "from": "data-gis-architect",
+      "to": "incident-realtime-backend",
+      "outputs": [
+        "artifacts/data-gis-design.md",
+        "../database/schema.sql"
+      ],
+      "at": "2026-10-30T05:38:02.463Z"
+    },
+    {
+      "from": "data-gis-architect",
+      "to": "risk-data-engineer",
+      "outputs": [
+        "artifacts/data-gis-design.md",
+        "../database/schema.sql"
+      ],
+      "at": "2026-10-30T05:38:02.463Z"
+    },
+    {
+      "from": "security-api-architect",
+      "to": "citizen-frontend",
+      "outputs": [
+        "artifacts/api-spec.yaml",
+        "artifacts/threat-model.md"
+      ],
+      "at": "2026-10-30T05:38:02.464Z"
+    },
+    {
+      "from": "security-api-architect",
+      "to": "authority-frontend",
+      "outputs": [
+        "artifacts/api-spec.yaml",
+        "artifacts/threat-model.md"
+      ],
+      "at": "2026-10-30T05:38:02.464Z"
+    },
+    {
+      "from": "security-api-architect",
+      "to": "identity-backend",
+      "outputs": [
+        "artifacts/api-spec.yaml",
+        "artifacts/threat-model.md"
+      ],
+      "at": "2026-10-30T05:38:02.464Z"
+    },
+    {
+      "from": "security-api-architect",
+      "to": "incident-realtime-backend",
+      "outputs": [
+        "artifacts/api-spec.yaml",
+        "artifacts/threat-model.md"
+      ],
+      "at": "2026-10-30T05:38:02.464Z"
+    },
+    {
+      "from": "security-api-architect",
+      "to": "security-privacy-review",
+      "outputs": [
+        "artifacts/api-spec.yaml",
+        "artifacts/threat-model.md"
+      ],
+      "at": "2026-10-30T05:38:02.464Z"
+    },
+    {
+      "from": "citizen-frontend",
+      "to": "qa-automation",
+      "outputs": [
+        "../frontend/src/components/CitizenView.jsx",
+        "../frontend/src/components/LoginModal.jsx",
+        "../frontend/src/components/ReportDrawer.jsx",
+        "../frontend/src/components/NotificationModal.jsx",
+        "../frontend/src/components/InstallAppModal.jsx",
+        "../frontend/public/manifest.webmanifest",
+        "../frontend/public/sw.js"
+      ],
+      "at": "2026-10-30T05:38:02.466Z"
+    },
+    {
+      "from": "citizen-frontend",
+      "to": "accessibility-performance",
+      "outputs": [
+        "../frontend/src/components/CitizenView.jsx",
+        "../frontend/src/components/LoginModal.jsx",
+        "../frontend/src/components/ReportDrawer.jsx",
+        "../frontend/src/components/NotificationModal.jsx",
+        "../frontend/src/components/InstallAppModal.jsx",
+        "../frontend/public/manifest.webmanifest",
+        "../frontend/public/sw.js"
+      ],
+      "at": "2026-10-30T05:38:02.466Z"
+    },
+    {
+      "from": "authority-frontend",
+      "to": "qa-automation",
+      "outputs": [
+        "../frontend/src/components/AuthorityView.jsx",
+        "../frontend/src/components/BroadcastModal.jsx"
+      ],
+      "at": "2026-10-30T05:38:02.467Z"
+    },
+    {
+      "from": "authority-frontend",
+      "to": "accessibility-performance",
+      "outputs": [
+        "../frontend/src/components/AuthorityView.jsx",
+        "../frontend/src/components/BroadcastModal.jsx"
+      ],
+      "at": "2026-10-30T05:38:02.467Z"
+    },
+    {
+      "from": "identity-backend",
+      "to": "qa-automation",
+      "outputs": [
+        "../backend/src/routes/auth.js",
+        "../backend/src/middleware/auth.js",
+        "../backend/test/auth.test.js"
+      ],
+      "at": "2026-10-30T05:38:02.468Z"
+    },
+    {
+      "from": "identity-backend",
+      "to": "security-privacy-review",
+      "outputs": [
+        "../backend/src/routes/auth.js",
+        "../backend/src/middleware/auth.js",
+        "../backend/test/auth.test.js"
+      ],
+      "at": "2026-10-30T05:38:02.468Z"
+    },
+    {
+      "from": "incident-realtime-backend",
+      "to": "qa-automation",
+      "outputs": [
+        "../backend/src/routes/reports.js",
+        "../backend/src/routes/broadcasts.js",
+        "../backend/src/routes/events.js",
+        "../backend/src/services/eventBus.js"
+      ],
+      "at": "2026-10-30T05:38:02.469Z"
+    },
+    {
+      "from": "incident-realtime-backend",
+      "to": "security-privacy-review",
+      "outputs": [
+        "../backend/src/routes/reports.js",
+        "../backend/src/routes/broadcasts.js",
+        "../backend/src/routes/events.js",
+        "../backend/src/services/eventBus.js"
+      ],
+      "at": "2026-10-30T05:38:02.469Z"
+    },
+    {
+      "from": "incident-realtime-backend",
+      "to": "devops-release",
+      "outputs": [
+        "../backend/src/routes/reports.js",
+        "../backend/src/routes/broadcasts.js",
+        "../backend/src/routes/events.js",
+        "../backend/src/services/eventBus.js"
+      ],
+      "at": "2026-10-30T05:38:02.469Z"
+    },
+    {
+      "from": "risk-data-engineer",
+      "to": "qa-automation",
+      "outputs": [
+        "../backend/src/services/riskService.js",
+        "../backend/src/data/repository.js",
+        "../backend/src/routes/provinces.js",
+        "../dataset/thailand_flood_risk_77_provinces.json",
+        "../dataset/thailand_flood_risk_77_provinces.csv"
+      ],
+      "at": "2026-10-30T05:38:02.470Z"
+    },
+    {
+      "from": "risk-data-engineer",
+      "to": "security-privacy-review",
+      "outputs": [
+        "../backend/src/services/riskService.js",
+        "../backend/src/data/repository.js",
+        "../backend/src/routes/provinces.js",
+        "../dataset/thailand_flood_risk_77_provinces.json",
+        "../dataset/thailand_flood_risk_77_provinces.csv"
+      ],
+      "at": "2026-10-30T05:38:02.470Z"
+    },
+    {
+      "from": "flood-news-intelligence",
+      "to": "qa-automation",
+      "outputs": [
+        "artifacts/flood-news-intelligence.md",
+        "../backend/src/services/newsAgentService.js",
+        "../backend/src/services/aiTriageService.js",
+        "../backend/src/services/weatherService.js",
+        "../backend/src/routes/intelligence.js",
+        "../frontend/src/services/aiTriage.js",
+        "../frontend/src/services/liveData.js"
+      ],
+      "at": "2026-10-30T05:38:02.472Z"
+    },
+    {
+      "from": "flood-news-intelligence",
+      "to": "devops-release",
+      "outputs": [
+        "artifacts/flood-news-intelligence.md",
+        "../backend/src/services/newsAgentService.js",
+        "../backend/src/services/aiTriageService.js",
+        "../backend/src/services/weatherService.js",
+        "../backend/src/routes/intelligence.js",
+        "../frontend/src/services/aiTriage.js",
+        "../frontend/src/services/liveData.js"
+      ],
+      "at": "2026-10-30T05:38:02.472Z"
+    },
+    {
+      "from": "qa-automation",
+      "to": "devops-release",
+      "outputs": [
+        "artifacts/test-report.md",
+        "../backend/test/riskService.test.js",
+        "../backend/test/auth.test.js"
+      ],
+      "at": "2026-10-30T05:38:02.473Z"
+    },
+    {
+      "from": "security-privacy-review",
+      "to": "devops-release",
+      "outputs": [
+        "artifacts/security-review.md"
+      ],
+      "at": "2026-10-30T05:38:02.473Z"
+    },
+    {
+      "from": "accessibility-performance",
+      "to": "devops-release",
+      "outputs": [
+        "artifacts/accessibility-performance-report.md",
+        "../scripts/performance-check.mjs"
+      ],
+      "at": "2026-10-30T05:38:02.474Z"
+    },
+    {
+      "from": "devops-release",
+      "to": "human-orchestrator",
+      "outputs": [
+        "artifacts/deployment-runbook.md",
+        "artifacts/agent-operating-model.md",
+        "../docker-compose.yml",
+        "../README.md"
+      ],
+      "at": "2026-10-30T05:38:02.475Z"
+    }
+  ],
+  "checkpoint": {
+    "id": "release",
+    "status": "approved",
+    "actor": "Thuwanon",
+    "approvedAt": "2026-10-19T17:21:52.730Z",
+    "note": "อนุมัติระบบเวอร์ชันใช้งานจริง สมัครจริง ทดสอบแจ้งเตือน และรองรับแอปมือถือ PWA"
+  },
+  "completedAt": "2026-10-30T05:38:02.475Z"
+}

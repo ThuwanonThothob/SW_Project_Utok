@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#071624" />
+  <meta name="description" content="ThaiFlood Watch — ระบบประเมินความเสี่ยง รายงานเหตุ และประกาศเตือนภัยน้ำท่วมประเทศไทย" />
+  <title>ThaiFlood Watch | รู้ทันน้ำ รับมือไว</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIINfQ3ynhUhJ8YK8QWunKcS8bhEnk6j0nQ=" crossorigin="" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <a href="#" class="brand" aria-label="ThaiFlood Watch หน้าแรก">
+        <span class="brand-mark" aria-hidden="true"><i data-lucide="waves"></i></span>
+        <span><b>THAIFLOOD</b><small>WATCH</small></span>
+      </a>
+
+      <div class="weather-ticker" aria-label="สถานการณ์ฝนล่าสุด">
+        <span class="live-dot"></span>
+        <div class="ticker-copy"><small>สถานการณ์ล่าสุด</small><b>ฝนหนัก 4 จังหวัด · เฝ้าระวังลุ่มน้ำเจ้าพระยา</b></div>
+        <span class="rain-chip"><i data-lucide="cloud-rain"></i> 82 มม.</span>
+      </div>
+
+      <nav class="top-actions" aria-label="เมนูผู้ใช้">
+        <button class="icon-button" id="notificationButton" aria-label="การแจ้งเตือน">
+          <i data-lucide="bell"></i><span class="notification-count" id="notificationCount">2</span>
+        </button>
+        <div class="role-switch" role="group" aria-label="สลับโหมดใช้งาน">
+          <button class="role-option active" data-role="citizen">ประชาชน</button>
+          <button class="role-option" data-role="authority">เจ้าหน้าที่</button>
+        </div>
+        <button class="profile-button" id="profileButton">
+          <span class="avatar" id="userAvatar">ป</span>
+          <span class="profile-copy"><b id="userName">ผู้ใช้งานทั่วไป</b><small id="userStatus">โหมดประชาชน</small></span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="citizenView" class="app-view active" aria-label="หน้าสำหรับประชาชน">
+        <div class="emergency-ribbon" id="emergencyRibbon">
+          <span class="alert-icon"><i data-lucide="triangle-alert"></i></span>
+          <div><small>ประกาศเตือนภัยระดับสูง</small><b id="ribbonTitle">เฝ้าระวังน้ำล้นตลิ่ง จ.พระนครศรีอยุธยา</b></div>
+          <button id="viewAlertButton">ดูรายละเอียด <i data-lucide="arrow-up-right"></i></button>
+          <button class="ribbon-close" id="dismissRibbon" aria-label="ปิดประกาศ"><i data-lucide="x"></i></button>
+        </div>
+
+        <div class="citizen-layout">
+          <aside class="control-panel">
+            <div class="panel-intro">
+              <div><span class="eyebrow">พื้นที่ของคุณ</span><h1>เช็กความเสี่ยง<br/><em>ก่อนน้ำมาถึง</em></h1></div>
+              <button class="locate-orb" id="locateButton" aria-label="ใช้ตำแหน่งปัจจุบัน"><i data-lucide="locate-fixed"></i></button>
+            </div>
+
+            <div class="location-card">
+              <div class="location-head"><span><i data-lucide="map-pin"></i></span><div><small>ตำแหน่งที่กำลังดู</small><b id="currentLocationName">กรุงเทพมหานคร · เขตดุสิต</b></div></div>
+              <div class="risk-summary">
+                <div class="risk-gauge" id="riskGauge" style="--score: 68"><span><b id="riskScore">68</b><small>%</small></span></div>
+                <div class="risk-copy"><span class="severity medium" id="riskBadge">เสี่ยงปานกลาง</span><p id="riskAdvice">ควรติดตามระดับน้ำทุก 3 ชั่วโมง และเตรียมย้ายของขึ้นที่สูง</p></div>
+              </div>
+              <div class="risk-factors">
+                <div><span><i data-lucide="cloud-rain"></i> ปริมาณฝน</span><b id="rainFactor">82 มม.</b></div>
+                <div><span><i data-lucide="waves"></i> ใกล้แม่น้ำ</span><b id="riverFactor">1.8 กม.</b></div>
+                <div><span><i data-lucide="mountain"></i> ความสูง</span><b id="elevationFactor">2.1 ม.</b></div>
+              </div>
+            </div>
+
+            <div class="section-heading compact">
+              <div><span class="eyebrow">รายงานจากพื้นที่</span><h2>เหตุการณ์ล่าสุด</h2></div>
+              <button class="text-button" id="showAllReports">ดูทั้งหมด <i data-lucide="arrow-right"></i></button>
+            </div>
+            <div class="incident-feed" id="incidentFeed"></div>
+          </aside>
+
+          <section class="map-stage">
+            <div id="map" aria-label="แผนที่ความเสี่ยงน้ำท่วมประเทศไทย"></div>
+            <div class="map-top-controls">
+              <div class="map-search">
+                <i data-lucide="search"></i>
+                <input id="mapSearch" type="search" placeholder="ค้นหาจังหวัดหรืออำเภอ" aria-label="ค้นหาพื้นที่" />
+                <kbd>⌘ K</kbd>
+              </div>
+              <button class="map-icon-button" id="mapLocateButton" aria-label="แสดงตำแหน่งของฉัน"><i data-lucide="crosshair"></i></button>
+            </div>
+            <div class="map-context" id="mapContext"><i data-lucide="mouse-pointer-click"></i><span>คลิกบนแผนที่เพื่อรายงานจุดน้ำท่วม</span></div>
+            <div class="map-legend">
+              <b>ระดับความเสี่ยง</b>
+              <span><i class="legend-dot high"></i> สูง</span>
+              <span><i class="legend-dot medium"></i> ปานกลาง</span>
+              <span><i class="legend-dot low"></i> ต่ำ</span>
+              <span class="legend-divider"></span>
+              <span><i class="incident-symbol"></i> รายงานเหตุ</span>
+            </div>
+            <button class="primary-fab" id="reportFab"><i data-lucide="plus"></i><span>แจ้งเหตุน้ำท่วม</span></button>
+          </section>
+        </div>
+      </section>
+
+      <section id="authorityView" class="app-view" aria-label="แดชบอร์ดเจ้าหน้าที่">
+        <div class="authority-wrap">
+          <div class="authority-hero">
+            <div><span class="eyebrow light">ศูนย์บัญชาการสถานการณ์น้ำ</span><h1>ภาพรวมสถานการณ์</h1><p>ข้อมูลจำลองสำหรับฝึกปฏิบัติ · อัปเดตล่าสุด <span id="lastUpdated">08 ต.ค. 2569, 00:38 น.</span></p></div>
+            <div class="hero-actions"><button class="secondary-button" id="refreshDashboard"><i data-lucide="refresh-cw"></i> อัปเดตข้อมูล</button><button class="alert-button" id="openBroadcast"><i data-lucide="radio-tower"></i> สร้างประกาศเตือนภัย</button></div>
+          </div>
+
+          <div class="metric-grid">
+            <article class="metric-card"><span class="metric-icon cyan"><i data-lucide="inbox"></i></span><div><small>รายงานทั้งหมด</small><b id="totalReportsMetric">24</b><span class="metric-trend up">+12% วันนี้</span></div><i class="metric-spark" data-lucide="chart-no-axes-column-increasing"></i></article>
+            <article class="metric-card"><span class="metric-icon amber"><i data-lucide="scan-search"></i></span><div><small>รอตรวจสอบ</small><b id="pendingMetric">7</b><span class="metric-trend">ต้องดำเนินการ</span></div><i class="metric-spark" data-lucide="clock-3"></i></article>
+            <article class="metric-card"><span class="metric-icon red"><i data-lucide="siren"></i></span><div><small>ขอความช่วยเหลือด่วน</small><b id="criticalMetric">3</b><span class="metric-trend danger">เร่งด่วน</span></div><i class="metric-spark" data-lucide="activity"></i></article>
+            <article class="metric-card"><span class="metric-icon violet"><i data-lucide="map-pinned"></i></span><div><small>พื้นที่เสี่ยงสูง</small><b id="highRiskMetric">4</b><span class="metric-trend">จังหวัด</span></div><i class="metric-spark" data-lucide="radar"></i></article>
+          </div>
+
+          <div class="authority-grid">
+            <section class="management-card reports-card">
+              <div class="card-head">
+                <div><span class="eyebrow">ศูนย์ตรวจสอบข้อมูล</span><h2>รายงานจากประชาชน</h2></div>
+                <div class="filter-row">
+                  <label class="mini-search"><i data-lucide="search"></i><input id="adminSearch" placeholder="ค้นหารายงาน" /></label>
+                  <select id="statusFilter" aria-label="กรองตามสถานะ"><option value="all">ทุกสถานะ</option><option value="pending">รอตรวจสอบ</option><option value="verified">ยืนยันแล้ว</option><option value="resolved">แก้ไขแล้ว</option><option value="rejected">ปฏิเสธ</option></select>
+                </div>
+              </div>
+              <div class="report-table-wrap">
+                <table class="report-table">
+                  <thead><tr><th>พื้นที่ / ผู้แจ้ง</th><th>ระดับน้ำ</th><th>เวลา</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+                  <tbody id="reportTableBody"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <aside class="right-stack">
+              <section class="management-card zone-card">
+                <div class="card-head"><div><span class="eyebrow">ตั้งค่าพื้นที่</span><h2>ระดับความเสี่ยงรายจังหวัด</h2></div><button class="icon-button pale" id="resetZones" title="คืนค่าเริ่มต้น"><i data-lucide="rotate-ccw"></i></button></div>
+                <div id="zoneManagement" class="zone-list"></div>
+              </section>
+              <section class="management-card broadcast-history">
+                <div class="card-head"><div><span class="eyebrow">ประกาศล่าสุด</span><h2>Broadcast feed</h2></div><span class="live-pill"><i></i> LIVE</span></div>
+                <div id="broadcastHistory"></div>
+              </section>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+  <aside class="side-drawer" id="reportDrawer" aria-hidden="true">
+    <div class="drawer-head"><div><span class="eyebrow">Crowdsourcing</span><h2>แจ้งสถานการณ์น้ำท่วม</h2></div><button class="close-button" data-close-drawer aria-label="ปิด"><i data-lucide="x"></i></button></div>
+    <div class="selected-coordinate"><span><i data-lucide="map-pin-check"></i></span><div><small>พิกัดที่รายงาน</small><b id="selectedCoords">กรุณาเลือกจุดบนแผนที่</b></div><button type="button" id="useGpsInForm">ใช้ GPS</button></div>
+    <form id="incidentForm" class="stack-form">
+      <fieldset><legend>ระดับน้ำโดยประมาณ</legend><div class="level-grid">
+        <label><input type="radio" name="waterLevel" value="10–30 ซม." checked/><span><i data-lucide="footprints"></i><b>10–30 ซม.</b><small>ระดับข้อเท้า</small></span></label>
+        <label><input type="radio" name="waterLevel" value="30–50 ซม."/><span><i data-lucide="person-standing"></i><b>30–50 ซม.</b><small>ระดับเข่า</small></span></label>
+        <label><input type="radio" name="waterLevel" value="50–100 ซม."/><span><i data-lucide="move-up"></i><b>50–100 ซม.</b><small>ระดับเอว</small></span></label>
+        <label><input type="radio" name="waterLevel" value="มากกว่า 100 ซม."/><span><i data-lucide="triangle-alert"></i><b>&gt; 100 ซม.</b><small>อันตรายสูง</small></span></label>
+      </div></fieldset>
+      <label class="form-field"><span>จังหวัด / พื้นที่</span><select id="reportProvince" required></select></label>
+      <label class="form-field"><span>รายละเอียดสถานการณ์</span><textarea id="reportDescription" rows="4" placeholder="เช่น น้ำไหลเข้าบ้าน รถเล็กไม่สามารถผ่านได้" required></textarea></label>
+      <div class="form-field"><span>ภาพประกอบ</span><div class="upload-row"><label class="upload-button"><i data-lucide="image-plus"></i><span id="uploadText">เลือกภาพจากเครื่อง</span><input id="photoUpload" type="file" accept="image/*" /></label><input id="photoUrl" type="url" placeholder="หรือวาง URL ของรูปภาพ" /></div></div>
+      <label class="urgent-toggle"><input type="checkbox" id="urgentHelp"/><span class="toggle-track"></span><span><b>ต้องการความช่วยเหลือเร่งด่วน</b><small>ข้อมูลจะถูกส่งไปยังศูนย์ประสานงานทันที</small></span><i data-lucide="siren"></i></label>
+      <button type="submit" class="submit-button"><i data-lucide="send"></i> ส่งรายงานให้เจ้าหน้าที่</button>
+      <p class="privacy-note"><i data-lucide="shield-check"></i> ตำแหน่งของคุณใช้เพื่อยืนยันจุดเกิดเหตุเท่านั้น</p>
+    </form>
+  </aside>
+
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <section class="modal" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <button class="close-button modal-close" data-close-modal aria-label="ปิด"><i data-lucide="x"></i></button>
+    <span class="modal-icon"><i data-lucide="shield-check"></i></span>
+    <span class="eyebrow">Authority access</span><h2 id="loginTitle">เข้าสู่ระบบเจ้าหน้าที่</h2><p>สำหรับหน่วยงานรัฐและหน่วยกู้ภัยที่ได้รับสิทธิ์</p>
+    <form id="loginForm" class="stack-form login-form">
+      <label class="form-field"><span>อีเมล</span><div class="input-with-icon"><i data-lucide="mail"></i><input id="loginEmail" type="email" value="admin@flood.go.th" required /></div></label>
+      <label class="form-field"><span>รหัสผ่าน</span><div class="input-with-icon"><i data-lucide="lock-keyhole"></i><input id="loginPassword" type="password" value="admin123" required /><button type="button" id="togglePassword" aria-label="แสดงรหัสผ่าน"><i data-lucide="eye"></i></button></div></label>
+      <p class="login-error" id="loginError"></p>
+      <button class="submit-button" type="submit"><i data-lucide="log-in"></i> เข้าสู่ศูนย์บัญชาการ</button>
+    </form>
+    <div class="demo-credential"><i data-lucide="info"></i><span>บัญชีสาธิต <b>admin@flood.go.th</b> / <b>admin123</b></span></div>
+  </section>
+
+  <section class="modal broadcast-modal" id="broadcastModal" role="dialog" aria-modal="true" aria-labelledby="broadcastTitle">
+    <button class="close-button modal-close" data-close-modal aria-label="ปิด"><i data-lucide="x"></i></button>
+    <span class="modal-icon orange"><i data-lucide="radio-tower"></i></span>
+    <span class="eyebrow">Emergency broadcast</span><h2 id="broadcastTitle">สร้างประกาศเตือนภัย</h2><p>ประกาศจะปรากฏบนหน้าจอของประชาชนทันที</p>
+    <form id="broadcastForm" class="stack-form">
+      <fieldset><legend>ระดับประกาศ</legend><div class="alert-level-grid">
+        <label><input type="radio" name="alertLevel" value="warning" checked/><span><i data-lucide="cloud-rain-wind"></i><b>เฝ้าระวัง</b></span></label>
+        <label><input type="radio" name="alertLevel" value="red"/><span><i data-lucide="triangle-alert"></i><b>เตือนภัยสูง</b></span></label>
+        <label><input type="radio" name="alertLevel" value="evacuation"/><span><i data-lucide="route"></i><b>อพยพ</b></span></label>
+      </div></fieldset>
+      <label class="form-field"><span>พื้นที่เป้าหมาย</span><select id="broadcastProvince" required><option value="ทั่วประเทศ">ทั่วประเทศ</option></select></label>
+      <label class="form-field"><span>หัวข้อประกาศ</span><input id="broadcastHeadline" required placeholder="เช่น เตือนน้ำล้นตลิ่งริมแม่น้ำปิง" /></label>
+      <label class="form-field"><span>คำแนะนำประชาชน</span><textarea id="broadcastAdvisory" rows="4" required placeholder="ระบุสิ่งที่ประชาชนควรปฏิบัติและพื้นที่ปลอดภัย"></textarea></label>
+      <button class="submit-button alert-submit" type="submit"><i data-lucide="send"></i> ส่งประกาศทันที</button>
+    </form>
+  </section>
+
+  <section class="modal alert-detail-modal" id="alertDetailModal" role="dialog" aria-modal="true" aria-labelledby="alertDetailTitle">
+    <button class="close-button modal-close" data-close-modal aria-label="ปิด"><i data-lucide="x"></i></button>
+    <span class="modal-icon orange"><i data-lucide="triangle-alert"></i></span>
+    <span class="severity high">ประกาศเตือนภัย</span><h2 id="alertDetailTitle">เฝ้าระวังน้ำล้นตลิ่ง</h2><p id="alertDetailArea" class="alert-area"><i data-lucide="map-pin"></i> พระนครศรีอยุธยา</p><p id="alertDetailText" class="alert-detail-text"></p>
+    <button class="submit-button" data-close-modal>รับทราบประกาศ</button>
+  </section>
+
+  <div class="notification-popover" id="notificationPopover">
+    <div class="popover-head"><b>การแจ้งเตือน</b><button id="markRead">อ่านทั้งหมด</button></div>
+    <div id="notificationList"></div>
+  </div>
+
+  <div class="profile-popover" id="profilePopover">
+    <button id="guestLogin"><i data-lucide="user-round-check"></i><span><b>เข้าสู่โหมดผู้ใช้งานทั่วไป</b><small>บันทึกพื้นที่และรายงานของคุณ</small></span></button>
+    <button id="adminLoginShortcut"><i data-lucide="shield-check"></i><span><b>เข้าสู่ระบบเจ้าหน้าที่</b><small>จัดการรายงานและประกาศ</small></span></button>
+    <button id="resetDemo"><i data-lucide="database-backup"></i><span><b>คืนค่าข้อมูลตัวอย่าง</b><small>ล้างการเปลี่ยนแปลงบนอุปกรณ์นี้</small></span></button>
+  </div>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Install dependencies",
+      "type": "shell",
+      "command": "npm install",
+      "problemMatcher": []
+    },
+    {
+      "label": "Start full stack",
+      "type": "shell",
+      "command": "npm run dev",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Run tests",
+      "type": "shell",
+      "command": "npm test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Start PostgreSQL",
+      "type": "shell",
+      "command": "docker compose up -d postgres",
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Agentic SDLC",
+      "type": "shell",
+      "command": "npm run agents:run",
+      "problemMatcher": []
+    },
+    {
+      "label": "Show Agent Team Status",
+      "type": "shell",
+      "command": "npm run agents:status",
+      "problemMatcher": []
+    }
+  ]
+}

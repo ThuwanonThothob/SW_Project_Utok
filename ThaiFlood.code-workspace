@@ -1,0 +1,15 @@
+{
+  "folders": [
+    { "name": "ThaiFlood Platform", "path": "." },
+    { "name": "Frontend", "path": "frontend" },
+    { "name": "Backend", "path": "backend" },
+    { "name": "Database", "path": "database" }
+  ],
+  "settings": {
+    "editor.formatOnSave": true,
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/.DS_Store": true
+    }
+  }
+}

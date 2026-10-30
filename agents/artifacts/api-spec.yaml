@@ -1,0 +1,169 @@
+openapi: 3.0.3
+info:
+  title: ThaiFlood Watch API
+  version: 1.0.0
+  description: REST API for citizen flood reports, authority moderation and emergency broadcasts.
+servers:
+  - url: http://localhost:4000/api
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    AuthUser:
+      type: object
+      required: [id, name, email, role]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        email: { type: string, format: email }
+        role: { type: string, enum: [citizen, authority] }
+        homeProvince: { type: string }
+        homeDistrict: { type: string }
+        lat: { type: number, nullable: true }
+        lng: { type: number, nullable: true }
+    Report:
+      type: object
+      properties:
+        id: { type: string, example: FR-1028 }
+        province: { type: string }
+        district: { type: string }
+        reporter: { type: string }
+        level: { type: string }
+        description: { type: string }
+        urgent: { type: boolean }
+        status: { type: string, enum: [pending, verified, resolved, rejected] }
+        lat: { type: number }
+        lng: { type: number }
+    Error:
+      type: object
+      properties:
+        message: { type: string }
+paths:
+  /health:
+    get:
+      summary: API and database health
+      responses:
+        "200": { description: Healthy }
+  /auth/register:
+    post:
+      summary: Register a Citizen member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email, password]
+              properties:
+                name: { type: string }
+                email: { type: string, format: email }
+                password: { type: string, minLength: 8 }
+                homeProvince: { type: string }
+                homeDistrict: { type: string }
+      responses:
+        "201": { description: Account and JWT created }
+        "409": { description: Duplicate email }
+  /auth/login:
+    post:
+      summary: Login Citizen or Authority
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email: { type: string, format: email }
+                password: { type: string }
+      responses:
+        "200": { description: JWT and public user }
+        "401": { description: Invalid credentials }
+  /auth/me:
+    get:
+      summary: Current member profile
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Member profile }
+  /auth/my-reports:
+    get:
+      summary: Current Citizen report history
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200": { description: Array of reports }
+        "403": { description: Citizen role required }
+  /reports:
+    get:
+      summary: List public incident reports
+      responses:
+        "200": { description: Array of reports }
+    post:
+      summary: Create incident report
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [province, level, description, lat, lng]
+              properties:
+                province: { type: string }
+                level: { type: string }
+                description: { type: string }
+                lat: { type: number }
+                lng: { type: number }
+                urgent: { type: boolean }
+                photo: { type: string, format: binary }
+      responses:
+        "201": { description: Pending report created }
+        "401": { description: Membership required }
+  /reports/{id}/status:
+    patch:
+      summary: Moderate report
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Updated report }
+        "403": { description: Authority role required }
+  /provinces:
+    get:
+      summary: List province risk zones
+      responses:
+        "200": { description: Province risk data }
+  /provinces/{id}/risk:
+    patch:
+      summary: Update province risk
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        "200": { description: Updated risk zone }
+        "403": { description: Authority role required }
+  /broadcasts:
+    get:
+      summary: List emergency broadcasts
+      responses:
+        "200": { description: Broadcast feed }
+    post:
+      summary: Publish emergency broadcast
+      security: [{ bearerAuth: [] }]
+      responses:
+        "201": { description: Broadcast published }
+        "403": { description: Authority role required }
+  /events:
+    get:
+      summary: Server-Sent Events stream
+      responses:
+        "200":
+          description: text/event-stream
