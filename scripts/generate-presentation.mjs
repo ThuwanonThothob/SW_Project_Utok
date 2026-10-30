@@ -3,13 +3,14 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const outputPath = path.resolve(__dirname, "../ThaiFlood_Watch_Presentation.pptx");
+const outputPath = path.resolve(__dirname, "../UTOK_Presentation.pptx");
+const logoPath = path.resolve(__dirname, "../frontend/public/swu-eng-logo.jpg");
 
 const pptx = new PptxGenJS();
 pptx.layout = "LAYOUT_16x9";
-pptx.author = "ภาควิชาวิศวกรรมคอมพิวเตอร์ มหาวิทยาลัยศรีนครินทรวิโรฒ";
+pptx.author = "ภาควิชาวิศวกรรมคอมพิวเตอร์ คณะวิศวกรรมศาสตร์ มหาวิทยาลัยศรีนครินทรวิโรฒ";
 pptx.company = "CPE SWU - Software Engineering";
-pptx.title = "ThaiFlood Watch - Software Engineering Presentation";
+pptx.title = "UTOK (อุทก) - Software Engineering Presentation";
 pptx.subject = "Thailand Flood Risk Assessment & Incident Reporting Platform";
 
 // Color Palette
@@ -132,11 +133,15 @@ function addHeader(slide, title, category, slideNum) {
     valign: "middle",
   });
 
-  // Main Project Name
-  s1.addText("ThaiFlood Watch", {
+  // Main Project Name & Logo
+  try {
+    s1.addImage({ path: logoPath, x: 7.2, y: 1.1, w: 1.6, h: 1.6 });
+  } catch (e) {}
+
+  s1.addText("UTOK (อุทก)", {
     x: 1.2,
     y: 1.55,
-    w: 7.6,
+    w: 5.8,
     h: 0.7,
     fontSize: 34,
     fontFace: FONT_TH,
@@ -205,7 +210,7 @@ function addHeader(slide, title, category, slideNum) {
   });
 
   s1.addNotes(`บทพูดนำเสนอ (Slide 1):
-"สวัสดีครับอาจารย์และเพื่อนๆ ทุกคน วันนี้กลุ่มของพวกเราขอเสนองานในรายวิชา Software Engineering โครงงาน ThaiFlood Watch — Thailand Flood Risk Assessment & Incident Reporting Platform หรือระบบประเมินความเสี่ยง รายงานเหตุการณ์ และแจ้งเตือนภัยน้ำท่วมประเทศไทย ครอบคลุมครบทั้ง 77 จังหวัด
+"สวัสดีครับอาจารย์และเพื่อนๆ ทุกคน วันนี้กลุ่มของพวกเราขอเสนองานในรายวิชา Software Engineering โครงงาน UTOK (อุทก) — Thailand Flood Risk Assessment & Incident Reporting Platform หรือระบบประเมินความเสี่ยง คัดกรองเหตุการณ์ และแจ้งเตือนภัยน้ำท่วมประเทศไทย ครอบคลุมครบทั้ง 77 จังหวัด
 โดยโครงงานนี้พัฒนายกระดับด้วยกระบวนการ Multi-Agent AI Software Engineering และระบบสารสนเทศภูมิศาสตร์ GIS แบบ Real-Time โดยมี ผศ.วัชรชัย วิริยะสุทธิวงศ์ เป็นอาจารย์ที่ปรึกษาครับ"`);
 }
 
@@ -1350,12 +1355,16 @@ Phase 6 การตรวจสอบ QA, Security และ Accessibility แ�
     line: { color: C.cardBorder, width: 1, dashType: "dash" },
   });
 
-  s13.addText("📷 [กรอบสำหรับวางภาพถ่ายหมู่สมาชิกกลุ่ม + LOGO มศว]", {
-    x: 6.0,
-    y: 3.9,
-    w: 3.0,
-    h: 0.6,
-    fontSize: 10,
+  try {
+    s13.addImage({ path: logoPath, x: 7.9, y: 3.4, w: 1.15, h: 1.15 });
+  } catch (e) {}
+
+  s13.addText("📷 [วางภาพถ่ายหมู่สมาชิกกลุ่ม]\n+ ตราสัญลักษณ์คณะวิศวกรรมศาสตร์ มศว", {
+    x: 5.9,
+    y: 3.4,
+    w: 1.9,
+    h: 1.2,
+    fontSize: 9.5,
     fontFace: FONT_TH,
     color: C.blueLight,
     align: "center",
