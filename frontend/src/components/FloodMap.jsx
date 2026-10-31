@@ -471,21 +471,20 @@ export default function FloodMap({
             ))}
           </div>
         )}
+        {(!showSuggestions || searchSuggestions.length === 0) && (
+          <div className="map-hint">
+            {isAuthority ? (
+              userLocation?.lat
+                ? `📍 GPS เจ้าหน้าที่: ${userLocation.districtName || userLocation.provinceName || "พิกัดของคุณ"} (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}) · คลิกเขตจังหวัดเพื่อตรวจสอบสถานการณ์`
+                : "คลิกเขตจังหวัดหรือหมุดรายงานเพื่อตรวจสอบสถานการณ์และคัดกรองเหตุ"
+            ) : userLocation?.lat ? (
+              `📍 GPS เปิดอยู่: ${userLocation.districtName || userLocation.provinceName || "พิกัดของคุณ"} (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}) · คลิกปุ่ม + แจ้งเหตุด้านล่าง`
+            ) : (
+              "คลิกปุ่มเป้าเล็งเพื่อเปิดพิกัด GPS หรือคลิกบนแผนที่เพื่อแจ้งเหตุ"
+            )}
+          </div>
+        )}
       </div>
-
-      {(!showSuggestions || searchSuggestions.length === 0) && (
-        <div className="map-hint">
-          {isAuthority ? (
-            userLocation?.lat
-              ? `📍 GPS เจ้าหน้าที่: ${userLocation.districtName || userLocation.provinceName || "พิกัดของคุณ"} (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}) · คลิกเขตจังหวัดเพื่อตรวจสอบสถานการณ์`
-              : "คลิกเขตจังหวัดหรือหมุดรายงานเพื่อตรวจสอบสถานการณ์และคัดกรองเหตุ"
-          ) : userLocation?.lat ? (
-            `📍 GPS เปิดอยู่: ${userLocation.districtName || userLocation.provinceName || "พิกัดของคุณ"} (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}) · คลิกปุ่ม + แจ้งเหตุด้านล่าง`
-          ) : (
-            "คลิกปุ่มเป้าเล็งเพื่อเปิดพิกัด GPS หรือคลิกบนแผนที่เพื่อแจ้งเหตุ"
-          )}
-        </div>
-      )}
 
       {/* Dynamic Map Legend based on mapMode */}
       <div className="map-legend">
