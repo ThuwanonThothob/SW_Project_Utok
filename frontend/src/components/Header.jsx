@@ -1,4 +1,4 @@
-import { Bell, CloudRain, LocateFixed, Smartphone, Waves, Wifi, WifiOff } from "lucide-react";
+import { Bell, CloudRain, LocateFixed, ShieldAlert, ShieldCheck, Smartphone, Waves, Wifi, WifiOff } from "lucide-react";
 import SWULogo from "./SWULogo.jsx";
 
 export default function Header({
@@ -60,15 +60,22 @@ export default function Header({
           <LocateFixed />
           <span>{userLocation?.lat ? "GPS เปิดอยู่" : "เปิด GPS"}</span>
         </button>
-        <button
-          type="button"
-          className="app-pill-button"
-          onClick={onOpenInstall}
-          title="ติดตั้งแอปลงโทรศัพท์มือถือ (PWA)"
-        >
-          <Smartphone />
-          <span>แอปมือถือ</span>
-        </button>
+        {mode === "authority" ? (
+          <span className="authority-role-pill" title="ระบบบัญชาการและคัดกรองเหตุการณ์สำหรับเจ้าหน้าที่">
+            <ShieldCheck />
+            <span>ศูนย์บัญชาการ</span>
+          </span>
+        ) : (
+          <button
+            type="button"
+            className="app-pill-button"
+            onClick={onOpenInstall}
+            title="ติดตั้งแอปลงโทรศัพท์มือถือ (PWA)"
+          >
+            <Smartphone />
+            <span>แอปมือถือ</span>
+          </button>
+        )}
         <button
           type="button"
           className="icon-button"
@@ -80,12 +87,25 @@ export default function Header({
           <span>{notificationCount}</span>
         </button>
         <div className="role-switch" role="group" aria-label="สลับโหมดใช้งาน">
-          <button className={mode === "citizen" ? "active" : ""} onClick={() => onModeChange("citizen")}>ประชาชน</button>
-          <button className={mode === "authority" ? "active" : ""} onClick={() => onModeChange("authority")}>เจ้าหน้าที่</button>
+          <button
+            className={mode === "citizen" ? "active" : ""}
+            onClick={() => onModeChange("citizen")}
+          >
+            {user?.role === "authority" ? "ประชาชน (จำลอง)" : "ประชาชน"}
+          </button>
+          <button
+            className={mode === "authority" ? "active" : ""}
+            onClick={() => onModeChange("authority")}
+          >
+            เจ้าหน้าที่
+          </button>
         </div>
         <button className="user-badge" onClick={onUserClick}>
-          <b>{user ? user.name.slice(0, 1) : "ป"}</b>
-          <span>{user?.name || "เข้าสู่ระบบ / สมัคร"}<small>{user ? (user.role === "authority" ? "เจ้าหน้าที่" : "สมาชิกประชาชน") : "Citizen / Authority"}</small></span>
+          <b>{user ? (user.role === "authority" ? "จ" : user.name.slice(0, 1)) : "ป"}</b>
+          <span>
+            {user?.name || "เข้าสู่ระบบ / สมัคร"}
+            <small>{user ? (user.role === "authority" ? `เจ้าหน้าที่ · ${user.agency || "ปภ."}` : "สมาชิกประชาชน") : "Citizen / Authority"}</small>
+          </span>
         </button>
       </div>
     </header>

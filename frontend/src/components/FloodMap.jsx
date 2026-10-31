@@ -38,6 +38,7 @@ export default function FloodMap({
   onSelectProvince,
   onReportAt,
   onLocate,
+  isAuthority = false,
 }) {
   const nodeRef = useRef(null);
   const mapRef = useRef(null);
@@ -110,7 +111,11 @@ export default function FloodMap({
     reportLayerRef.current = L.layerGroup().addTo(map);
     userLocationLayerRef.current = L.layerGroup().addTo(map);
 
-    map.on("click", ({ latlng }) => reportHandlerRef.current({ lat: latlng.lat, lng: latlng.lng }));
+    map.on("click", ({ latlng }) => {
+      if (!isAuthority && reportHandlerRef.current) {
+        reportHandlerRef.current({ lat: latlng.lat, lng: latlng.lng });
+      }
+    });
     mapRef.current = map;
 
     const resizeObserver = new ResizeObserver(() => {
@@ -470,9 +475,15 @@ export default function FloodMap({
 
       {(!showSuggestions || searchSuggestions.length === 0) && (
         <div className="map-hint">
-          {userLocation?.lat
-            ? `📍 GPS เปิดอยู่: ${userLocation.districtName || userLocation.provinceName || "พิกัดของคุณ"} (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}) · คลิกเขตจังหวัดเพื่อดูรายละเอียด`
-            : "คลิกปุ่มเป้าเล็งเพื่อเปิดพิกัด GPS หรือคลิกบนแผนที่เพื่อแจ้งเหตุ"}
+          {isAuthority ? (
+            userLocation?.lat
+              ? `📍 GPS เจ้าหน้าที่: ${userLocation.districtName || userLocation.provinceName || "พิกัดของคุณ"} (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}) · คลิกเขตจังหวัดเพื่อตรวจสอบสถานการณ์`
+              : "คลิกเขตจังหวัดหรือหมุดรายงานเพื่อตรวจสอบสถานการณ์และคัดกรองเหตุ"
+          ) : userLocation?.lat ? (
+            `📍 GPS เปิดอยู่: ${userLocation.districtName || userLocation.provinceName || "พิกัดของคุณ"} (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}) · คลิกปุ่ม + แจ้งเหตุด้านล่าง`
+          ) : (
+            "คลิกปุ่มเป้าเล็งเพื่อเปิดพิกัด GPS หรือคลิกบนแผนที่เพื่อแจ้งเหตุ"
+          )}
         </div>
       )}
 
@@ -498,9 +509,16 @@ export default function FloodMap({
         )}
       </div>
 
-      <button className="report-fab" onClick={() => onReportAt(defaultReportCoords)}>
-        <Plus /> แจ้งเหตุน้ำท่วม ณ พิกัดจริง
-      </button>
+      {!isAuthority && onReportAt && (
+        <button
+          type="button"
+          className="report-fab"
+          onClick={() => onReportAt(defaultReportCoords)}
+          aria-label="แจ้งเหตุน้ำท่วม ณ จุดนี้"
+        >
+          <Plus /> แจ้งเหตุน้ำท่วม ณ พิกัดจริง
+        </button>
+      )}
     </section>
   );
 }

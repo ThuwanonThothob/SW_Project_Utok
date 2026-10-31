@@ -53,6 +53,12 @@ router.get("/", async (req, res, next) => {
 
 router.post("/", requireAuth, reportPostLimiter, upload.single("photo"), async (req, res, next) => {
   try {
+    if (req.user?.role === "authority") {
+      return res.status(403).json({
+        message: "บัญชีเจ้าหน้าที่ไม่สามารถส่งรายงานเหตุน้ำท่วมในฐานะประชาชนได้ เพื่อความโปร่งใสและถูกต้องของข้อมูล กรุณาใช้บัญชีประชาชนในการแจ้งเหตุ",
+      });
+    }
+
     const required = ["province", "level", "description", "lat", "lng"];
     if (required.some((key) => !String(req.body[key] ?? "").trim())) return res.status(400).json({ message: "ข้อมูลรายงานไม่ครบถ้วน" });
 

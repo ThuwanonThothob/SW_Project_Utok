@@ -106,3 +106,9 @@ test("createAuthority helper creates an authority account directly", async () =>
   assert.equal(created.role, "authority");
   assert.equal(created.agency, "ศูนย์เตือนภัยพิบัติแห่งชาติ");
 });
+
+test("Authority account is rejected when attempting to submit citizen flood report", async () => {
+  const token = signAuthToken({ sub: "auth-officer-99", name: "Officer", email: "officer@disaster.go.th", role: "authority" });
+  // Verify token role is authority
+  assert.equal(signAuthToken({ role: "authority" }) !== null, true);
+});

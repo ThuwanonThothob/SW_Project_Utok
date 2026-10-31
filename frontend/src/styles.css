@@ -173,6 +173,59 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .app-pill-button svg { width: 15px; }
 .app-pill-button:hover { background: rgba(23,191,210,.24); }
 
+.authority-role-pill {
+  height: 34px;
+  padding: 0 11px;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  font-size: 10px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.authority-role-pill svg {
+  width: 15px;
+  height: 15px;
+  color: #f59e0b;
+}
+
+.authority-citizen-preview-banner {
+  margin-bottom: 16px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+}
+.authority-citizen-preview-banner svg {
+  width: 22px;
+  height: 22px;
+  color: #d97706;
+  flex-shrink: 0;
+}
+.authority-citizen-preview-banner div {
+  display: flex;
+  flex-direction: column;
+}
+.authority-citizen-preview-banner b {
+  font-size: 11px;
+  font-weight: 700;
+  color: #78350f;
+}
+.authority-citizen-preview-banner small {
+  font-size: 9px;
+  color: #92400e;
+  line-height: 1.35;
+}
+
 .quick-action-strip { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
 .quick-action-btn { height: 38px; padding: 0 10px; border: 1px solid #cde0df; border-radius: 11px; background: #fff; color: #136d78; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 12px rgba(7,22,36,.05); }
 .quick-action-btn svg { width: 14px; color: var(--orange); }
@@ -282,6 +335,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   }
   .mobile-bottom-nav button svg { width: 17px; height: 17px; }
   .mobile-bottom-nav button.active { color: #67e2ee; background: rgba(23,191,210,.12); }
+  .mobile-bottom-nav.authority-nav button.active { color: #fbbf24; background: rgba(245,158,11,.15); }
   .toast-stack { bottom: 72px; }
 }
 

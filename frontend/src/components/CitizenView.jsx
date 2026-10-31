@@ -15,6 +15,7 @@ import {
   Navigation,
   Newspaper,
   RefreshCw,
+  ShieldAlert,
   ShieldCheck,
   Smartphone,
   Thermometer,
@@ -137,12 +138,20 @@ export default function CitizenView({
             </button>
           </div>
 
-          {user ? (
+          {user?.role === "authority" ? (
+            <div className="authority-citizen-preview-banner">
+              <ShieldAlert />
+              <div>
+                <b>โหมดจำลองมุมมองประชาชน (Read-Only)</b>
+                <small>คุณกำลังใช้งานด้วยบัญชีเจ้าหน้าที่ ({user.name}) ระบบแยกสิทธิ์ชัดเจนและไม่อนุญาตให้ส่งรายงานในฐานะประชาชน</small>
+              </div>
+            </div>
+          ) : user ? (
             <div className="member-strip">
               <UserRoundCheck />
               <div>
                 <small>
-                  {user.role === "authority" ? "เจ้าหน้าที่" : "สมาชิกประชาชน"} ({user.email})
+                  สมาชิกประชาชน ({user.email})
                 </small>
                 <b>{user.name}</b>
                 <span>
@@ -516,7 +525,8 @@ export default function CitizenView({
             selectedProvince={province}
             userLocation={userLocation}
             onSelectProvince={onSelectProvince}
-            onReportAt={onReportAt}
+            onReportAt={user?.role === "authority" ? null : onReportAt}
+            isAuthority={user?.role === "authority"}
             onLocate={() => onLocate(false)}
           />
         </div>

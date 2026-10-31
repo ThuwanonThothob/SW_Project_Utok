@@ -53,7 +53,6 @@ export default function AuthorityView({
   selectedProvince,
   userLocation,
   onSelectProvince,
-  onReportAt,
   onLocate,
 }) {
   const [viewMode, setViewMode] = useState("map"); // "map" | "dashboard"
@@ -383,7 +382,8 @@ export default function AuthorityView({
               selectedProvince={selectedProvince || provinces[0]}
               userLocation={userLocation}
               onSelectProvince={onSelectProvince}
-              onReportAt={onReportAt}
+              onReportAt={null}
+              isAuthority={true}
               onLocate={() => onLocate && onLocate(false)}
             />
           </div>

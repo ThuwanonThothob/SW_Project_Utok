@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Bell, Check, Info, Map, PlusCircle, Smartphone, TriangleAlert, X } from "lucide-react";
+import { Bell, Check, Info, Map, PlusCircle, RadioTower, RefreshCw, Smartphone, TriangleAlert, X } from "lucide-react";
 import { api } from "./services/api.js";
 import {
   fetchLiveProvinceWeather,
@@ -520,6 +520,15 @@ export default function App() {
 
   const onReportAt = useCallback(
     (point) => {
+      if (mode === "authority" || user?.role === "authority") {
+        toast(
+          "สิทธิ์การใช้งานของเจ้าหน้าที่",
+          "บัญชีเจ้าหน้าที่ดูแลระบบและคัดกรองเหตุการณ์ ไม่สามารถส่งรายงานในฐานะประชาชนได้",
+          "info",
+        );
+        return;
+      }
+
       let targetPoint = point;
       if (userLocation?.lat && userLocation?.provinceName) {
         if (point) {
@@ -551,7 +560,7 @@ export default function App() {
       }
       setReportOpen(true);
     },
-    [token, userLocation, selectedProvince, locate, toast],
+    [token, user, mode, userLocation, selectedProvince, locate, toast],
   );
   const onSelectProvince = useCallback((province) => setSelectedProvince(province), []);
 
@@ -560,6 +569,13 @@ export default function App() {
       setLoginIntent("authority");
       setLoginOpen(true);
       return;
+    }
+    if (nextMode === "citizen" && user?.role === "authority") {
+      toast(
+        "โหมดแสดงตัวอย่างประชาชน",
+        "คุณกำลังสลับมาดูมุมมองประชาชนด้วยบัญชีเจ้าหน้าที่ (โหมดดูอย่างเดียว ไม่สามารถส่งรายงานเหตุได้)",
+        "info",
+      );
     }
     setMode(nextMode);
   }
@@ -628,6 +644,10 @@ export default function App() {
   }
 
   async function submitReport(formData) {
+    if (user?.role === "authority") {
+      toast("ไม่สามารถส่งรายงานได้", "บัญชีเจ้าหน้าที่ไม่ได้รับอนุญาตให้ส่งรายงานเหตุน้ำท่วมในฐานะประชาชน", "error");
+      return;
+    }
     setBusy(true);
     try {
       const report = await api.createReport(formData, token);
@@ -797,7 +817,6 @@ export default function App() {
           selectedProvince={selectedProvince}
           userLocation={userLocation}
           onSelectProvince={onSelectProvince}
-          onReportAt={onReportAt}
           onLocate={() => locate(false)}
         />
       )}
@@ -809,44 +828,86 @@ export default function App() {
         </div>
       )}
 
-      <nav className="mobile-bottom-nav" aria-label="เมนูหลักบนมือถือ">
-        <button
-          type="button"
-          className={!reportOpen && !notificationOpen && !installOpen ? "active" : ""}
-          onClick={() => {
-            setReportOpen(false);
-            setNotificationOpen(false);
-            setInstallOpen(false);
-          }}
-        >
-          <Map />
-          <span>แผนที่</span>
-        </button>
-        <button
-          type="button"
-          className={reportOpen ? "active" : ""}
-          onClick={() =>
-            onReportAt(
-              userLocation?.lat
-                ? { lat: userLocation.lat, lng: userLocation.lng }
-                : selectedProvince
-                  ? { lat: selectedProvince.lat, lng: selectedProvince.lng }
-                  : null,
-            )
-          }
-        >
-          <PlusCircle />
-          <span>แจ้งเหตุ</span>
-        </button>
-        <button type="button" className={notificationOpen ? "active" : ""} onClick={() => setNotificationOpen(true)}>
-          <Bell />
-          <span>แจ้งเตือน ({notificationCount})</span>
-        </button>
-        <button type="button" className={installOpen ? "active" : ""} onClick={() => setInstallOpen(true)}>
-          <Smartphone />
-          <span>แอปมือถือ</span>
-        </button>
-      </nav>
+      {mode === "authority" ? (
+        <nav className="mobile-bottom-nav authority-nav" aria-label="เมนูหลักเจ้าหน้าที่">
+          <button
+            type="button"
+            className={!broadcastOpen && !notificationOpen ? "active" : ""}
+            onClick={() => {
+              setBroadcastOpen(false);
+              setNotificationOpen(false);
+            }}
+          >
+            <Map />
+            <span>บัญชาการ GIS</span>
+          </button>
+          <button
+            type="button"
+            className={broadcastOpen ? "active" : ""}
+            onClick={() => setBroadcastOpen(true)}
+          >
+            <RadioTower />
+            <span>สร้างเตือนภัย</span>
+          </button>
+          <button
+            type="button"
+            className={notificationOpen ? "active" : ""}
+            onClick={() => setNotificationOpen(true)}
+          >
+            <Bell />
+            <span>แจ้งเตือน ({notificationCount})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              loadData(false);
+              toast("ซิงค์ข้อมูลจริง", "ดึงข้อมูลตรวจวัดและรายงานล่าสุดเรียบร้อย", "success");
+            }}
+          >
+            <RefreshCw />
+            <span>ซิงค์ข้อมูล</span>
+          </button>
+        </nav>
+      ) : (
+        <nav className="mobile-bottom-nav" aria-label="เมนูหลักบนมือถือ">
+          <button
+            type="button"
+            className={!reportOpen && !notificationOpen && !installOpen ? "active" : ""}
+            onClick={() => {
+              setReportOpen(false);
+              setNotificationOpen(false);
+              setInstallOpen(false);
+            }}
+          >
+            <Map />
+            <span>แผนที่</span>
+          </button>
+          <button
+            type="button"
+            className={reportOpen ? "active" : ""}
+            onClick={() =>
+              onReportAt(
+                userLocation?.lat
+                  ? { lat: userLocation.lat, lng: userLocation.lng }
+                  : selectedProvince
+                    ? { lat: selectedProvince.lat, lng: selectedProvince.lng }
+                    : null,
+              )
+            }
+          >
+            <PlusCircle />
+            <span>แจ้งเหตุ</span>
+          </button>
+          <button type="button" className={notificationOpen ? "active" : ""} onClick={() => setNotificationOpen(true)}>
+            <Bell />
+            <span>แจ้งเตือน ({notificationCount})</span>
+          </button>
+          <button type="button" className={installOpen ? "active" : ""} onClick={() => setInstallOpen(true)}>
+            <Smartphone />
+            <span>แอปมือถือ</span>
+          </button>
+        </nav>
+      )}
 
       <ReportDrawer
         open={reportOpen}
