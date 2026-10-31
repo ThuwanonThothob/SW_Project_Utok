@@ -48,3 +48,20 @@ test("PostgreSQL seed includes the same 77-province catalog", async () => {
     assert.match(sql, new RegExp(`\\('${province.id}','${province.name}'`));
   }
 });
+
+test("createBroadcast and deleteBroadcast allow authorities to manage active alerts lifecycle", async () => {
+  const { createBroadcast, deleteBroadcast, listBroadcasts } = await import("../src/data/repository.js");
+  const created = await createBroadcast({
+    level: "red",
+    province: "เชียงใหม่",
+    headline: "ทดสอบเตือนภัยน้ำท่วม",
+    advisory: "ทดสอบการยกเลิกประกาศ",
+  });
+  assert.ok(created.id);
+  const beforeList = await listBroadcasts();
+  assert.ok(beforeList.some((b) => b.id === created.id));
+  const deleted = await deleteBroadcast(created.id);
+  assert.equal(deleted, true);
+  const afterList = await listBroadcasts();
+  assert.ok(!afterList.some((b) => b.id === created.id));
+});

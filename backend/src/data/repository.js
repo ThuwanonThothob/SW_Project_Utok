@@ -469,6 +469,18 @@ export async function createBroadcast(input, userId = null) {
   return broadcastFromRow(rows[0]);
 }
 
+export async function deleteBroadcast(publicId) {
+  if (!pool) {
+    const idx = memory.broadcasts.findIndex((b) => b.id === publicId);
+    if (idx === -1) return false;
+    memory.broadcasts.splice(idx, 1);
+    saveMemoryStore();
+    return true;
+  }
+  const result = await pool.query(`DELETE FROM broadcasts WHERE public_id = $1`, [publicId]);
+  return (result.rowCount ?? 0) > 0;
+}
+
 export async function findUserByEmail(email) {
   if (!pool) return clone(memory.users.find((user) => user.email.toLowerCase() === email.toLowerCase()) || null);
   const { rows } = await pool.query(`

@@ -10,6 +10,7 @@ const levelLabels = {
 
 export default function NotificationModal({
   open,
+  user,
   provinces = [],
   notifications = [],
   broadcasts = [],
@@ -128,111 +129,115 @@ export default function NotificationModal({
           </div>
         </div>
 
-        <form onSubmit={handleRealtimeBroadcastTest} className="form-stack notif-lab-box">
-          <div className="notif-lab-head">
-            <span>
-              <Siren /> <b>ศูนย์ทดสอบการแจ้งเตือน (Notification Test Lab)</b>
-            </span>
-            <small>ทดสอบได้ทันทีใน 1 คลิก</small>
-          </div>
+        {user?.role === "authority" && (
+          <>
+            <form onSubmit={handleRealtimeBroadcastTest} className="form-stack notif-lab-box">
+              <div className="notif-lab-head">
+                <span>
+                  <Siren /> <b>ศูนย์ทดสอบการแจ้งเตือน (Notification Test Lab · เจ้าหน้าที่)</b>
+                </span>
+                <small>ทดสอบได้ทันทีใน 1 คลิก</small>
+              </div>
 
-          <div className="profile-grid">
-            <label>
-              <span>ระดับความรุนแรง</span>
-              <select value={form.level} onChange={update("level")}>
-                {Object.entries(levelLabels).map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              <span>พื้นที่เป้าหมาย</span>
-              <select value={form.province} onChange={update("province")}>
-                <option value="ทุกพื้นที่ทั่วประเทศ">ทุกพื้นที่ทั่วประเทศ</option>
-                {provinces.map((item) => (
-                  <option key={item.id} value={item.name}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
+              <div className="profile-grid">
+                <label>
+                  <span>ระดับความรุนแรง</span>
+                  <select value={form.level} onChange={update("level")}>
+                    {Object.entries(levelLabels).map(([key, label]) => (
+                      <option key={key} value={key}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label>
+                  <span>พื้นที่เป้าหมาย</span>
+                  <select value={form.province} onChange={update("province")}>
+                    <option value="ทุกพื้นที่ทั่วประเทศ">ทุกพื้นที่ทั่วประเทศ</option>
+                    {provinces.map((item) => (
+                      <option key={item.id} value={item.name}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
 
-          <label>
-            <span>หัวข้อแจ้งเตือน (Headline)</span>
-            <input value={form.headline} onChange={update("headline")} required />
-          </label>
+              <label>
+                <span>หัวข้อแจ้งเตือน (Headline)</span>
+                <input value={form.headline} onChange={update("headline")} required />
+              </label>
 
-          <label>
-            <span>รายละเอียดคำแนะนำ (Advisory)</span>
-            <textarea rows="2" value={form.advisory} onChange={update("advisory")} required />
-          </label>
+              <label>
+                <span>รายละเอียดคำแนะนำ (Advisory)</span>
+                <textarea rows="2" value={form.advisory} onChange={update("advisory")} required />
+              </label>
 
-          <div className="notif-test-buttons">
-            <button type="button" className="primary-button" onClick={handleLocalDeviceTest}>
-              <Volume2 /> ทดสอบแจ้งเตือน + เสียงบนอุปกรณ์นี้ทันที
-            </button>
-            <button type="submit" className="primary-button orange" disabled={busy}>
-              <RadioTower /> {busy ? "กำลังส่งสัญญาณ..." : "ยิงทดสอบ Real-time ไปยังทุกเครื่อง (SSE Broadcast Test)"}
-            </button>
-          </div>
-        </form>
+              <div className="notif-test-buttons">
+                <button type="button" className="primary-button" onClick={handleLocalDeviceTest}>
+                  <Volume2 /> ทดสอบแจ้งเตือน + เสียงบนอุปกรณ์นี้ทันที
+                </button>
+                <button type="submit" className="primary-button orange" disabled={busy}>
+                  <RadioTower /> {busy ? "กำลังส่งสัญญาณ..." : "ยิงทดสอบ Real-time ไปยังทุกเครื่อง (SSE Broadcast Test)"}
+                </button>
+              </div>
+            </form>
 
-        <div className="geofence-test-box">
-          <div className="notif-lab-head">
-            <span>
-              <Navigation /> <b>ทดสอบแจ้งเตือนเมื่อเดินทางเข้า/ผ่านจังหวัด (Geofence Province Alert)</b>
-            </span>
-            <small>ระบบป้องกันรายงานเท็จ</small>
-          </div>
-          <p className="geofence-test-desc">
-            เมื่อผู้ใช้เดินทางเข้าหรือข้ามเขตจังหวัด ระบบจะส่งเสียงไซเรนแจ้งเตือนระดับความเสี่ยงของจังหวัดนั้น และเปิดสิทธิ์การส่งรายงานเหตุน้ำท่วมเฉพาะในจังหวัดที่ท่านอยู่จริง
-          </p>
-          <div className="geofence-btn-group">
-            <button
-              type="button"
-              className="chip-button"
-              onClick={() => {
-                onSimulateProvince?.("อุบลราชธานี");
-                onClose();
-              }}
-            >
-              📍 จำลองเข้า จ.อุบลราชธานี
-            </button>
-            <button
-              type="button"
-              className="chip-button"
-              onClick={() => {
-                onSimulateProvince?.("เชียงใหม่");
-                onClose();
-              }}
-            >
-              📍 จำลองเข้า จ.เชียงใหม่
-            </button>
-            <button
-              type="button"
-              className="chip-button"
-              onClick={() => {
-                onSimulateProvince?.("สงขลา");
-                onClose();
-              }}
-            >
-              📍 จำลองเข้า จ.สงขลา
-            </button>
-            <button
-              type="button"
-              className="chip-button"
-              onClick={() => {
-                onSimulateProvince?.("กรุงเทพมหานคร");
-                onClose();
-              }}
-            >
-              📍 จำลองเข้า กรุงเทพมหานคร
-            </button>
-          </div>
-        </div>
+            <div className="geofence-test-box">
+              <div className="notif-lab-head">
+                <span>
+                  <Navigation /> <b>ทดสอบแจ้งเตือนเมื่อเดินทางเข้า/ผ่านจังหวัด (Geofence Simulation)</b>
+                </span>
+                <small>ระบบป้องกันรายงานเท็จ</small>
+              </div>
+              <p className="geofence-test-desc">
+                เมื่อผู้ใช้เดินทางเข้าหรือข้ามเขตจังหวัด ระบบจะส่งเสียงไซเรนแจ้งเตือนระดับความเสี่ยงของจังหวัดนั้น และเปิดสิทธิ์การส่งรายงานเหตุน้ำท่วมเฉพาะในจังหวัดที่ท่านอยู่จริง
+              </p>
+              <div className="geofence-btn-group">
+                <button
+                  type="button"
+                  className="chip-button"
+                  onClick={() => {
+                    onSimulateProvince?.("อุบลราชธานี");
+                    onClose();
+                  }}
+                >
+                  📍 จำลองเข้า จ.อุบลราชธานี
+                </button>
+                <button
+                  type="button"
+                  className="chip-button"
+                  onClick={() => {
+                    onSimulateProvince?.("เชียงใหม่");
+                    onClose();
+                  }}
+                >
+                  📍 จำลองเข้า จ.เชียงใหม่
+                </button>
+                <button
+                  type="button"
+                  className="chip-button"
+                  onClick={() => {
+                    onSimulateProvince?.("สงขลา");
+                    onClose();
+                  }}
+                >
+                  📍 จำลองเข้า จ.สงขลา
+                </button>
+                <button
+                  type="button"
+                  className="chip-button"
+                  onClick={() => {
+                    onSimulateProvince?.("กรุงเทพมหานคร");
+                    onClose();
+                  }}
+                >
+                  📍 จำลองเข้า กรุงเทพมหานคร
+                </button>
+              </div>
+            </div>
+          </>
+        )}
 
         <div className="notif-feed-section">
           <div className="card-head">

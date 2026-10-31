@@ -1,6 +1,6 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
-import { createBroadcast, listBroadcasts } from "../data/repository.js";
+import { createBroadcast, deleteBroadcast, listBroadcasts } from "../data/repository.js";
 import { requireAuthority } from "../middleware/auth.js";
 import { publishEvent } from "../services/eventBus.js";
 import { sanitizeText } from "../utils/sanitize.js";
@@ -43,6 +43,16 @@ router.post("/", requireAuthority, broadcastLimiter, async (req, res, next) => {
     const broadcast = await createBroadcast(cleanPayload, req.user.sub === "memory-admin" ? null : req.user.sub);
     publishEvent("broadcast.created", broadcast);
     res.status(201).json(broadcast);
+  } catch (error) { next(error); }
+});
+
+router.delete("/:id", requireAuthority, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const ok = await deleteBroadcast(id);
+    if (!ok) return res.status(404).json({ message: "ไม่พบประกาศเตือนภัยนี้หรือถูกยกเลิกแล้ว" });
+    publishEvent("broadcast.deleted", { id });
+    res.json({ success: true, id });
   } catch (error) { next(error); }
 });
 

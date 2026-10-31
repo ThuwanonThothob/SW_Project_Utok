@@ -29,11 +29,18 @@ export async function fetchLiveProvinceWeather(provinces = [], reports = []) {
         (r) => r.province === province.name && r.status !== "rejected" && r.status !== "resolved",
       ).length;
 
-      const rainComponent = Math.min(60, Math.round(rainMm * 1.1 + rainProb * 0.18));
-      const terrainComponent = elevation !== null ? Math.max(0, Math.min(20, Math.round((35 - Math.min(35, elevation)) * 0.45))) : 5;
-      const reportComponent = Math.min(25, activeReports * 9);
-      const score = Math.max(5, Math.min(99, rainComponent + terrainComponent + reportComponent));
-      const risk = score >= 70 ? "high" : score >= 40 ? "medium" : "low";
+      // Real-time flood risk calculation:
+      // Actual measured rainfall (rainMm) is the physical hazard.
+      // Forecast probability (rainProb) is only a minor antecedent factor when actual rain is present.
+      const rainComponent = rainMm > 0
+        ? Math.min(65, Math.round(rainMm * 1.35 + (rainProb >= 80 ? 6 : 0)))
+        : 0;
+      const terrainComponent = (rainMm >= 5 || activeReports > 0) && elevation !== null
+        ? Math.max(0, Math.min(20, Math.round((30 - Math.min(30, elevation)) * 0.5)))
+        : 0;
+      const reportComponent = Math.min(35, activeReports * 12);
+      const score = Math.max(0, Math.min(99, rainComponent + terrainComponent + reportComponent));
+      const risk = score >= 75 ? "high" : score >= 45 ? "medium" : "low";
 
       const isManual = province.dataSource === "manual-authority-update";
 

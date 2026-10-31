@@ -98,7 +98,17 @@ export default function FloodMap({
     map.on("click", ({ latlng }) => reportHandlerRef.current({ lat: latlng.lat, lng: latlng.lng }));
     mapRef.current = map;
 
+    const resizeObserver = new ResizeObserver(() => {
+      if (mapRef.current) {
+        mapRef.current.invalidateSize();
+      }
+    });
+    if (nodeRef.current) {
+      resizeObserver.observe(nodeRef.current);
+    }
+
     return () => {
+      resizeObserver.disconnect();
       map.remove();
       mapRef.current = null;
     };
@@ -122,6 +132,11 @@ export default function FloodMap({
         const radarTile = L.tileLayer(tileUrl, {
           opacity: 0.55,
           zIndex: 350,
+          maxNativeZoom: 12,
+          maxZoom: 18,
+        });
+        radarTile.on("tileerror", (e) => {
+          if (e.tile) e.tile.style.display = "none";
         });
         radarGroup.addLayer(radarTile);
       })
@@ -185,13 +200,15 @@ export default function FloodMap({
             mapMode === "rain"
               ? `<div class="map-polygon-tooltip">
                    <b>${provinceName}</b> <small>(${districtName})</small>
-                   <div>🌧️ ฝนสะสมจริง: <strong>${rainText}</strong></div>
-                   <div>โอกาสฝน: ${p?.rainProbability ?? 0}% · ความเสี่ยง: ${scoreText}%</div>
+                   <div>🌧️ ฝนตรวจวัดสด (Real-time): <strong>${rainText}</strong></div>
+                   <div>📈 โอกาสฝนตกรายวัน (Forecast): <strong>${p?.rainProbability ?? 0}%</strong></div>
+                   <div>🚨 ความเสี่ยงน้ำท่วมฉับพลัน: <strong class="risk-${p?.risk || "low"}">${scoreText}%</strong></div>
                  </div>`
               : `<div class="map-polygon-tooltip">
                    <b>${provinceName}</b> <small>(${districtName})</small>
-                   <div>ระดับความเสี่ยง: <strong class="risk-${p?.risk || "low"}">${scoreText}% (${p?.risk === "high" ? "เสี่ยงสูง" : p?.risk === "medium" ? "ปานกลาง" : "เสี่ยงต่ำ"})</strong></div>
-                   <div>ฝนจริง: ${rainText} · รายงาน: ${affectedCount} เคส</div>
+                   <div>🚨 ความเสี่ยงน้ำท่วมฉับพลัน: <strong class="risk-${p?.risk || "low"}">${scoreText}% (${p?.risk === "high" ? "เสี่ยงสูง" : p?.risk === "medium" ? "ปานกลาง" : "เสี่ยงต่ำ"})</strong></div>
+                   <div>🌧️ ฝนตรวจวัดสด: <strong>${rainText}</strong> · โอกาสฝน: <strong>${p?.rainProbability ?? 0}%</strong></div>
+                   <div>📋 รายงานเหตุการณ์จริง: <strong>${affectedCount} เคส</strong></div>
                  </div>`;
 
           polygonLayer.bindTooltip(tooltipHtml, { sticky: true, opacity: 0.95 });

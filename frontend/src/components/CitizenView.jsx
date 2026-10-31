@@ -23,6 +23,9 @@ import {
   Waves,
   Trash2,
   X,
+  Layers,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
 import { useState } from "react";
 import FloodMap from "./FloodMap.jsx";
@@ -46,6 +49,8 @@ export default function CitizenView({
   newsBusy,
   selectedProvince,
   userLocation,
+  isSimulated = false,
+  onResetRealGps,
   onSelectProvince,
   onReportAt,
   onLocate,
@@ -59,8 +64,28 @@ export default function CitizenView({
 }) {
   const [feedTab, setFeedTab] = useState("all");
   const [previewReport, setPreviewReport] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [dismissedAlerts, setDismissedAlerts] = useState(() => {
+    try {
+      const raw = sessionStorage.getItem("utok_dismissed_alerts");
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
 
-  const latestAlert = broadcasts[0];
+  function dismissAlert(alertId) {
+    setDismissedAlerts((prev) => {
+      const next = [...prev, alertId];
+      try {
+        sessionStorage.setItem("utok_dismissed_alerts", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  }
+
+  const activeBroadcasts = broadcasts.filter((b) => !dismissedAlerts.includes(b.id));
+  const latestAlert = activeBroadcasts[0];
   const province = selectedProvince || provinces[0];
   const advice =
     province?.risk === "high"
@@ -78,15 +103,40 @@ export default function CitizenView({
       {latestAlert && (
         <div className={`alert-ribbon ${latestAlert.level}`}>
           <TriangleAlert />
-          <div>
+          <div className="alert-ribbon-content">
             <small>ประกาศเตือนภัยจริงจากศูนย์บัญชาการ · {latestAlert.province}</small>
             <b>{latestAlert.headline}</b>
           </div>
           <p>{latestAlert.advisory}</p>
+          <button
+            type="button"
+            className="alert-ribbon-close"
+            onClick={() => dismissAlert(latestAlert.id)}
+            title="ปิดการแจ้งเตือนนี้"
+            aria-label="ปิดการแจ้งเตือน"
+          >
+            <X />
+          </button>
         </div>
       )}
-      <div className="citizen-layout">
-        <aside className="control-panel">
+      <div className={`citizen-layout ${sidebarOpen ? "sidebar-expanded" : "sidebar-collapsed"}`}>
+        <aside className={`control-panel ${sidebarOpen ? "open" : "closed"}`}>
+          <div className="sidebar-top-strip">
+            <span className="sidebar-badge-label">
+              <Layers /> แผงข้อมูลสถานการณ์จริง
+            </span>
+            <button
+              type="button"
+              className="sidebar-toggle-btn"
+              onClick={() => setSidebarOpen(false)}
+              title="ซ่อนแถบซ้ายมือเพื่อดูแผนที่เต็มจอ"
+              aria-label="ซ่อนแถบซ้ายมือ"
+            >
+              <PanelLeftClose />
+              <span>ซ่อนแถบ</span>
+            </button>
+          </div>
+
           {user ? (
             <div className="member-strip">
               <UserRoundCheck />
@@ -120,15 +170,36 @@ export default function CitizenView({
           <section className="live-gps-card" aria-live="polite">
             <div className="live-gps-head">
               <div>
-                <span className="eyebrow">Real-time User Location & Live Telemetry</span>
+                <span className="eyebrow">
+                  {isSimulated ? "📍 Simulated Mode (โหมดจำลองพิกัด)" : "Real-time User Location & Live Telemetry"}
+                </span>
                 <h3>
-                  <Navigation className="inline-icon" /> ตำแหน่งปัจจุบันของคุณ
+                  <Navigation className="inline-icon" /> {isSimulated ? "ตำแหน่งที่จำลองไว้" : "ตำแหน่งปัจจุบันของคุณ"}
                 </h3>
               </div>
-              <button type="button" className="chip-button primary" onClick={() => onLocate(false)}>
-                <LocateFixed /> {userLocation?.loading ? "กำลังค้นหา..." : userLocation?.lat ? "อัปเดตพิกัด" : "เปิด GPS ปัจจุบัน"}
-              </button>
+              <div className="live-gps-actions">
+                {isSimulated && (
+                  <button
+                    type="button"
+                    className="chip-button warning"
+                    onClick={onResetRealGps}
+                    title="ยกเลิกการจำลองและกลับสู่ตำแหน่ง GPS จริงของฉัน"
+                  >
+                    <RefreshCw className="inline-icon" /> กลับพิกัดจริง
+                  </button>
+                )}
+                <button type="button" className="chip-button primary" onClick={() => onLocate(false)}>
+                  <LocateFixed /> {userLocation?.loading ? "กำลังค้นหา..." : userLocation?.lat ? "อัปเดตพิกัด" : "เปิด GPS ปัจจุบัน"}
+                </button>
+              </div>
             </div>
+
+            {isSimulated && (
+              <div className="simulated-location-banner">
+                <span>⚠️ กำลังจำลองพิกัดใน <b>จ.{userLocation.provinceName}</b> เพื่อทดสอบระบบ</span>
+                <button type="button" onClick={onResetRealGps}>กลับพิกัด GPS จริง</button>
+              </div>
+            )}
 
             {userLocation?.lat ? (
               <>
@@ -152,8 +223,8 @@ export default function CitizenView({
                   </div>
                   <div>
                     <CloudRain />
-                    <small>ฝนวันนี้ (โอกาส {userLocation.rainProbability ?? 0}%)</small>
-                    <b>{userLocation.rainMm !== null ? `${userLocation.rainMm} มม.` : "0 มม."}</b>
+                    <small>ฝนตรวจวัดสด / โอกาสฝน</small>
+                    <b>{userLocation.rainMm !== null ? `${userLocation.rainMm} มม.` : "0 มม."} (โอกาส {userLocation.rainProbability ?? 0}%)</b>
                   </div>
                   <div>
                     <Mountain />
@@ -180,17 +251,43 @@ export default function CitizenView({
                   {userLocation?.error ||
                     "ระบบกำลังขอสิทธิ์เข้าถึงตำแหน่ง GPS ปัจจุบันของคุณเพื่อแสดงสภาพอากาศ ปริมาณฝน และความเสี่ยงน้ำท่วมจริง ณ จุดที่คุณยืนอยู่"}
                 </p>
-                <button type="button" className="primary-button" onClick={() => onLocate(false)}>
-                  <LocateFixed /> อนุญาตและเปิดตำแหน่งปัจจุบันของฉัน
-                </button>
+                <div className="gps-fallback-group">
+                  <button type="button" className="primary-button" onClick={() => onLocate(false)}>
+                    <LocateFixed /> {userLocation?.loading ? "กำลังค้นหาตำแหน่ง..." : "อนุญาตและเปิดตำแหน่ง GPS ของฉัน"}
+                  </button>
+                  <div className="gps-fallback-select-wrap">
+                    <small>หรือเลือกจังหวัดของคุณจากรายการเพื่อดูข้อมูล:</small>
+                    <select
+                      className="fallback-province-select"
+                      value={selectedProvince?.name || ""}
+                      onChange={(e) => {
+                        const target = provinces.find((p) => p.name === e.target.value);
+                        if (target) onSelectProvince(target);
+                      }}
+                    >
+                      <option value="">-- เลือกจังหวัดเพื่อดูสภาพอากาศและแผนที่ --</option>
+                      {provinces.map((p) => (
+                        <option key={p.id} value={p.name}>
+                          {p.name} ({p.district})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
               </div>
             )}
           </section>
 
           <div className="quick-action-strip">
-            <button type="button" className="quick-action-btn" onClick={onOpenNotifications}>
-              <BellRing /> ทดสอบแจ้งเตือนภัย
-            </button>
+            {user?.role === "authority" ? (
+              <button type="button" className="quick-action-btn" onClick={onOpenNotifications}>
+                <BellRing /> ทดสอบสัญญาณเตือนภัย (Admin)
+              </button>
+            ) : (
+              <button type="button" className="quick-action-btn" onClick={onOpenNotifications}>
+                <BellRing /> ศูนย์แจ้งเตือนภัย
+              </button>
+            )}
             <button type="button" className="quick-action-btn" onClick={onOpenInstall}>
               <Smartphone /> ติดตั้งแอปมือถือ
             </button>
@@ -230,28 +327,27 @@ export default function CitizenView({
                   </span>
                 </div>
                 <div>
-                  <span className={`risk-pill ${province.risk}`}>{riskLabel[province.risk] || "เสี่ยงต่ำ"}</span>
+                  <div className="risk-header-badge">
+                    <span className={`risk-pill ${province.risk}`}>{riskLabel[province.risk] || "เสี่ยงต่ำ"}</span>
+                    <span className="risk-type-tag">ความเสี่ยงน้ำท่วมฉับพลัน (Flash Flood Risk)</span>
+                  </div>
                   <p>{advice}</p>
                 </div>
               </div>
               <div className="risk-factors">
                 <span>
                   <CloudRain />
-                  <small>ฝนจริงวันนี้</small>
+                  <small>ฝนตรวจวัดสด (Radar/Obs)</small>
                   <b>{province.rain !== null && province.rain !== undefined ? `${province.rain} มม.` : "กำลังดึง..."}</b>
                 </span>
                 <span>
-                  <Thermometer />
-                  <small>อุณหภูมิ/ความชื้น</small>
-                  <b>
-                    {province.temperature !== null && province.temperature !== undefined
-                      ? `${province.temperature}°C · ${province.humidity ?? "-"}%`
-                      : "รอซิงค์"}
-                  </b>
+                  <CloudRain />
+                  <small>โอกาสฝนตก (Forecast)</small>
+                  <b>{province.rainProbability ?? 0}%</b>
                 </span>
                 <span>
                   <Mountain />
-                  <small>ความสูงจากน้ำทะเล</small>
+                  <small>ความสูงภูมิประเทศ</small>
                   <b>{province.elevation !== null && province.elevation !== undefined ? `${province.elevation} ม.` : "รอซิงค์"}</b>
                 </span>
               </div>
@@ -401,15 +497,29 @@ export default function CitizenView({
           </section>
         </aside>
 
-        <FloodMap
-          provinces={provinces}
-          reports={reports}
-          selectedProvince={province}
-          userLocation={userLocation}
-          onSelectProvince={onSelectProvince}
-          onReportAt={onReportAt}
-          onLocate={() => onLocate(false)}
-        />
+        <div className="map-wrapper-relative">
+          {!sidebarOpen && (
+            <button
+              type="button"
+              className="map-sidebar-expand-btn"
+              onClick={() => setSidebarOpen(true)}
+              title="เปิดแถบข้อมูลซ้ายมือ"
+              aria-label="เปิดแถบข้อมูลซ้ายมือ"
+            >
+              <PanelLeftOpen />
+              <span>เปิดแผงข้อมูล</span>
+            </button>
+          )}
+          <FloodMap
+            provinces={provinces}
+            reports={reports}
+            selectedProvince={province}
+            userLocation={userLocation}
+            onSelectProvince={onSelectProvince}
+            onReportAt={onReportAt}
+            onLocate={() => onLocate(false)}
+          />
+        </div>
       </div>
 
       {previewReport && (

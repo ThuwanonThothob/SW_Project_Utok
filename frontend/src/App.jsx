@@ -84,6 +84,13 @@ export default function App() {
     loading: false,
     error: "",
   });
+  const [isSimulated, setIsSimulated] = useState(false);
+  const isSimulatedRef = useRef(false);
+  const realGpsCoordsRef = useRef(null);
+
+  useEffect(() => {
+    isSimulatedRef.current = isSimulated;
+  }, [isSimulated]);
   const [coordinate, setCoordinate] = useState(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
@@ -137,10 +144,17 @@ export default function App() {
   }
 
   const updateFromCoords = useCallback(
-    async (coords, silent = false) => {
+    async (coords, silent = false, fromSimulation = false) => {
       const lat = coords.latitude;
       const lng = coords.longitude;
       const accuracy = Math.round(coords.accuracy || 20);
+
+      if (!fromSimulation) {
+        realGpsCoordsRef.current = { latitude: lat, longitude: lng, accuracy };
+        setIsSimulated(false);
+      } else {
+        setIsSimulated(true);
+      }
 
       setUserLocation((prev) => ({
         ...prev,
@@ -205,7 +219,7 @@ export default function App() {
         }).catch(() => {});
       } else if (!silent) {
         toast(
-          "เชื่อมต่อพิกัดปัจจุบันสำเร็จ",
+          fromSimulation ? `จำลองตำแหน่ง จ.${matched?.name || ""}` : "เชื่อมต่อพิกัดปัจจุบันสำเร็จ",
           liveTelemetry.address || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
           "success",
         );
@@ -217,33 +231,67 @@ export default function App() {
   const locate = useCallback(
     (silent = false) => {
       if (typeof navigator === "undefined" || !navigator.geolocation) {
-        setUserLocation((prev) => ({
-          ...prev,
-          loading: false,
-          error: "เบราว์เซอร์นี้ไม่รองรับ GPS กรุณาเลือกพื้นที่บนแผนที่",
-        }));
-        if (!silent) toast("ไม่รองรับ GPS", "เลือกตำแหน่งบนแผนที่แทนได้", "error");
+        const msg = "เบราว์เซอร์นี้ไม่รองรับ GPS กรุณาเลือกค้นหาพื้นที่บนแผนที่";
+        setUserLocation((prev) => ({ ...prev, loading: false, error: msg }));
+        if (!silent) toast("ไม่รองรับ GPS", msg, "error");
+        return;
+      }
+
+      // Check insecure context on LAN IP (e.g. http://192.168.x.x)
+      if (
+        typeof window !== "undefined" &&
+        !window.isSecureContext &&
+        window.location.hostname !== "localhost" &&
+        window.location.hostname !== "127.0.0.1"
+      ) {
+        const msg =
+          "เบราว์เซอร์จำกัด GPS เมื่อเปิดผ่าน HTTP วง LAN (ต้องใช้ localhost หรือ HTTPS) ท่านสามารถพิมพ์ค้นหาหรือคลิกเลือกจังหวัดบนแผนที่ได้โดยตรงครับ";
+        setUserLocation((prev) => ({ ...prev, loading: false, error: msg }));
+        if (!silent) toast("เบราว์เซอร์จำกัดสิทธิ์ GPS", msg, "warning");
         return;
       }
 
       setUserLocation((prev) => ({ ...prev, loading: true, error: "" }));
+
+      // Try High Accuracy first, if timeout try low accuracy (works indoors/without satellites)
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
-          updateFromCoords(coords, silent);
+          updateFromCoords(coords, silent, false);
         },
-        (err) => {
-          const msg =
-            err?.code === 1
-              ? "กรุณากดอนุญาตการเข้าถึงตำแหน่ง (Allow Location) ในเบราว์เซอร์เพื่อแสดงพิกัดจริงของคุณ"
-              : "ไม่สามารถดึงพิกัด GPS ได้ในขณะนี้ กดปุ่มเปิด GPS เพื่อลองอีกครั้ง";
-          setUserLocation((prev) => ({ ...prev, loading: false, error: msg }));
-          if (!silent) toast("เข้าถึงตำแหน่งไม่ได้", msg, "error");
+        () => {
+          navigator.geolocation.getCurrentPosition(
+            ({ coords }) => {
+              updateFromCoords(coords, silent, false);
+            },
+            (err) => {
+              const isDenied = err?.code === 1;
+              const isTimeout = err?.code === 3;
+              const msg = isDenied
+                ? "เบราว์เซอร์ยังไม่ได้รับอนุญาตให้เข้าถึงตำแหน่ง กรุณากดไอคอนแม่กุญแจ/การตั้งค่าที่แถบ URL เพื่อกดเปิด 'Allow Location'"
+                : isTimeout
+                  ? "การเชื่อมต่อสัญญาณ GPS หมดเวลา กรุณาลองใหม่อีกครั้ง หรือพิมพ์ค้นหาอำเภอ/จังหวัดบนแผนที่"
+                  : "ไม่สามารถดึงพิกัด GPS ได้ในขณะนี้ คุณสามารถพิมพ์ค้นหาอำเภอ/จังหวัดบนแผนที่เพื่อระบุตำแหน่งได้";
+              setUserLocation((prev) => ({ ...prev, loading: false, error: msg }));
+              if (!silent) toast("เข้าถึงตำแหน่งไม่ได้", msg, "error");
+            },
+            { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 },
+          );
         },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
+        { enableHighAccuracy: true, timeout: 6000, maximumAge: 30000 },
       );
     },
     [toast, updateFromCoords],
   );
+
+  const resetToRealGps = useCallback(() => {
+    setIsSimulated(false);
+    if (realGpsCoordsRef.current) {
+      updateFromCoords(realGpsCoordsRef.current, false, false);
+      toast("กลับสู่ตำแหน่งจริงแล้ว", "รีเซ็ตพิกัดกลับสู่พิกัด GPS อุปกรณ์จริงของคุณ", "success");
+    } else {
+      locate(false);
+    }
+  }, [updateFromCoords, locate, toast]);
 
   const loadData = useCallback(
     async (silent = false) => {
@@ -296,8 +344,8 @@ export default function App() {
         setUserLocation((prev) => {
           const moved =
             !prev.lat || Math.hypot(prev.lat - coords.latitude, prev.lng - coords.longitude) > 0.001;
-          if (moved) {
-            updateFromCoords(coords, true);
+          if (moved && !isSimulatedRef.current) {
+            updateFromCoords(coords, true, false);
           }
           return {
             ...prev,
@@ -439,11 +487,19 @@ export default function App() {
         setMyReports((items) => items.filter((item) => item.id !== payload.id));
       }
     };
+    const onBroadcastDeleted = (event) => {
+      const payload = readPayload(event);
+      if (payload?.id) {
+        setBroadcasts((items) => items.filter((item) => item.id !== payload.id));
+        setNotifications((items) => items.filter((item) => item.id !== payload.id));
+      }
+    };
     events.addEventListener("report.created", onReportCreated);
     events.addEventListener("report.updated", onReportUpdated);
     events.addEventListener("report.deleted", onReportDeleted);
     events.addEventListener("province.updated", onProvinceUpdated);
     events.addEventListener("broadcast.created", onBroadcastCreated);
+    events.addEventListener("broadcast.deleted", onBroadcastDeleted);
     events.addEventListener("notification.test", onNotificationTest);
     events.addEventListener("news.updated", onNewsUpdated);
     events.onopen = () => setConnected(true);
@@ -455,7 +511,7 @@ export default function App() {
     (provinceName) => {
       const target = provinces.find((p) => p.name === provinceName || p.name.includes(provinceName));
       if (!target) return;
-      updateFromCoords({ latitude: target.lat, longitude: target.lng, accuracy: 15 }, false);
+      updateFromCoords({ latitude: target.lat, longitude: target.lng, accuracy: 15 }, false, true);
       setSelectedProvince(target);
       setCoordinate({ lat: target.lat, lng: target.lng });
     },
@@ -641,6 +697,18 @@ export default function App() {
     }
   }
 
+  async function removeBroadcast(id) {
+    if (!token) return;
+    try {
+      await api.deleteBroadcast(id, token);
+      setBroadcasts((items) => items.filter((item) => item.id !== id));
+      setNotifications((items) => items.filter((item) => item.id !== id));
+      toast("ยกเลิกประกาศแล้ว", `ลบประกาศรหัส ${id} เรียบร้อยแล้ว`, "info");
+    } catch (error) {
+      toast("ลบประกาศไม่สำเร็จ", error.message, "error");
+    }
+  }
+
   async function sendTestNotification(payload) {
     setBusy(true);
     try {
@@ -694,6 +762,8 @@ export default function App() {
           newsBusy={newsBusy}
           selectedProvince={selectedProvince}
           userLocation={userLocation}
+          isSimulated={isSimulated}
+          onResetRealGps={resetToRealGps}
           onSelectProvince={onSelectProvince}
           onReportAt={onReportAt}
           onLocate={locate}
@@ -718,11 +788,17 @@ export default function App() {
           newsBusy={newsBusy}
           onModerate={moderate}
           onDeleteReport={removeReport}
+          onDeleteBroadcast={removeBroadcast}
           onRiskChange={updateRisk}
           onOpenBroadcast={() => setBroadcastOpen(true)}
           onOpenNotifications={() => setNotificationOpen(true)}
           onRefresh={() => loadData(false)}
           onLogout={logout}
+          selectedProvince={selectedProvince}
+          userLocation={userLocation}
+          onSelectProvince={onSelectProvince}
+          onReportAt={onReportAt}
+          onLocate={() => locate(false)}
         />
       )}
       {!provinces.length && (
@@ -802,6 +878,7 @@ export default function App() {
       />
       <NotificationModal
         open={notificationOpen}
+        user={user}
         provinces={provinces}
         notifications={notifications}
         broadcasts={broadcasts}
