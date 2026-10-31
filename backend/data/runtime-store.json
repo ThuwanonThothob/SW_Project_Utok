@@ -15,10 +15,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 29.2,
-      "humidity": 70,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 28.7,
+      "humidity": 71,
+      "weatherCode": 2
     },
     {
       "id": "npt",
@@ -35,9 +35,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.4,
-      "humidity": 94,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.1,
+      "humidity": 95,
       "weatherCode": 3
     },
     {
@@ -55,10 +55,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 28.6,
-      "humidity": 81,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 28,
+      "humidity": 84,
+      "weatherCode": 2
     },
     {
       "id": "pte",
@@ -75,9 +75,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.9,
-      "humidity": 92,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.6,
+      "humidity": 93,
       "weatherCode": 2
     },
     {
@@ -95,10 +95,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.5,
-      "humidity": 89,
-      "weatherCode": 2
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 27.8,
+      "humidity": 86,
+      "weatherCode": 1
     },
     {
       "id": "skn",
@@ -115,10 +115,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 28.5,
-      "humidity": 84,
-      "weatherCode": 3
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 28.3,
+      "humidity": 85,
+      "weatherCode": 2
     },
     {
       "id": "aya",
@@ -135,10 +135,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.5,
-      "humidity": 92,
-      "weatherCode": 2
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.3,
+      "humidity": 95,
+      "weatherCode": 3
     },
     {
       "id": "atg",
@@ -155,10 +155,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.1,
-      "humidity": 92,
-      "weatherCode": 2
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.7,
+      "humidity": 94,
+      "weatherCode": 3
     },
     {
       "id": "cnt",
@@ -175,9 +175,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.6,
-      "humidity": 95,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.3,
+      "humidity": 97,
       "weatherCode": 3
     },
     {
@@ -195,10 +195,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.1,
-      "humidity": 88,
-      "weatherCode": 3
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.7,
+      "humidity": 91,
+      "weatherCode": 0
     },
     {
       "id": "nyk",
@@ -215,10 +215,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.9,
-      "humidity": 93,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.4,
+      "humidity": 92,
+      "weatherCode": 0
     },
     {
       "id": "sri",
@@ -235,10 +235,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.2,
-      "humidity": 93,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.5,
+      "humidity": 95,
+      "weatherCode": 0
     },
     {
       "id": "sbr",
@@ -255,10 +255,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.7,
-      "humidity": 93,
-      "weatherCode": 2
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.5,
+      "humidity": 95,
+      "weatherCode": 3
     },
     {
       "id": "spb",
@@ -275,9 +275,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.6,
-      "humidity": 95,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.2,
+      "humidity": 96,
       "weatherCode": 3
     },
     {
@@ -295,9 +295,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.7,
-      "humidity": 95,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26,
+      "humidity": 97,
       "weatherCode": 3
     },
     {
@@ -315,9 +315,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27,
-      "humidity": 91,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.5,
+      "humidity": 92,
       "weatherCode": 3
     },
     {
@@ -335,10 +335,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.4,
-      "humidity": 91,
-      "weatherCode": 2
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.2,
+      "humidity": 93,
+      "weatherCode": 3
     },
     {
       "id": "pkn",
@@ -355,9 +355,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26,
-      "humidity": 95,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.4,
+      "humidity": 94,
       "weatherCode": 3
     },
     {
@@ -375,9 +375,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.3,
-      "humidity": 93,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.6,
+      "humidity": 94,
       "weatherCode": 3
     },
     {
@@ -395,8 +395,8 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 25.5,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25,
       "humidity": 99,
       "weatherCode": 2
     },
@@ -415,10 +415,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 23.8,
-      "humidity": 95,
-      "weatherCode": 3
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 23.4,
+      "humidity": 96,
+      "weatherCode": 0
     },
     {
       "id": "lpg",
@@ -435,10 +435,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 25.9,
-      "humidity": 99,
-      "weatherCode": 2
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.1,
+      "humidity": 100,
+      "weatherCode": 45
     },
     {
       "id": "lpn",
@@ -455,8 +455,8 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.4,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.8,
       "humidity": 91,
       "weatherCode": 1
     },
@@ -475,10 +475,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 25.3,
-      "humidity": 99,
-      "weatherCode": 2
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 24.6,
+      "humidity": 100,
+      "weatherCode": 45
     },
     {
       "id": "nan",
@@ -495,9 +495,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.2,
-      "humidity": 90,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.5,
+      "humidity": 93,
       "weatherCode": 0
     },
     {
@@ -515,9 +515,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 25.4,
-      "humidity": 100,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 24.8,
+      "humidity": 99,
       "weatherCode": 45
     },
     {
@@ -535,8 +535,8 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.1,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.6,
       "humidity": 90,
       "weatherCode": 0
     },
@@ -555,10 +555,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 28.1,
-      "humidity": 87,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 27.3,
+      "humidity": 92,
+      "weatherCode": 0
     },
     {
       "id": "tak",
@@ -575,10 +575,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.8,
-      "humidity": 92,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.2,
+      "humidity": 94,
+      "weatherCode": 0
     },
     {
       "id": "skt",
@@ -595,10 +595,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.2,
-      "humidity": 94,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.7,
+      "humidity": 97,
+      "weatherCode": 2
     },
     {
       "id": "plk",
@@ -615,10 +615,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.9,
-      "humidity": 91,
-      "weatherCode": 3
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.5,
+      "humidity": 93,
+      "weatherCode": 0
     },
     {
       "id": "pct",
@@ -635,10 +635,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.1,
-      "humidity": 93,
-      "weatherCode": 3
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.4,
+      "humidity": 96,
+      "weatherCode": 2
     },
     {
       "id": "kpt",
@@ -655,10 +655,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.3,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.1,
       "humidity": 95,
-      "weatherCode": 3
+      "weatherCode": 1
     },
     {
       "id": "nsn",
@@ -675,9 +675,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.9,
-      "humidity": 89,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 27.3,
+      "humidity": 92,
       "weatherCode": 3
     },
     {
@@ -695,9 +695,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.9,
-      "humidity": 97,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.5,
+      "humidity": 98,
       "weatherCode": 3
     },
     {
@@ -715,8 +715,8 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.8,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.5,
       "humidity": 90,
       "weatherCode": 0
     },
@@ -735,9 +735,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.3,
-      "humidity": 80,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.5,
+      "humidity": 83,
       "weatherCode": 0
     },
     {
@@ -755,9 +755,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 28.7,
-      "humidity": 75,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 28.1,
+      "humidity": 77,
       "weatherCode": 0
     },
     {
@@ -775,9 +775,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.1,
-      "humidity": 83,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.2,
+      "humidity": 89,
       "weatherCode": 0
     },
     {
@@ -795,9 +795,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27,
-      "humidity": 83,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.9,
+      "humidity": 82,
       "weatherCode": 0
     },
     {
@@ -815,9 +815,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.3,
-      "humidity": 89,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.6,
+      "humidity": 91,
       "weatherCode": 0
     },
     {
@@ -835,10 +835,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.2,
-      "humidity": 99,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.8,
+      "humidity": 96,
+      "weatherCode": 0
     },
     {
       "id": "brm",
@@ -855,9 +855,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.1,
-      "humidity": 89,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.8,
+      "humidity": 91,
       "weatherCode": 0
     },
     {
@@ -875,8 +875,8 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.6,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 27,
       "humidity": 83,
       "weatherCode": 0
     },
@@ -895,9 +895,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.9,
-      "humidity": 79,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.2,
+      "humidity": 83,
       "weatherCode": 0
     },
     {
@@ -915,9 +915,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.9,
-      "humidity": 82,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.3,
+      "humidity": 84,
       "weatherCode": 0
     },
     {
@@ -935,9 +935,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.5,
-      "humidity": 80,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.7,
+      "humidity": 83,
       "weatherCode": 0
     },
     {
@@ -955,9 +955,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 25.9,
-      "humidity": 87,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 24.8,
+      "humidity": 93,
       "weatherCode": 0
     },
     {
@@ -975,9 +975,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.5,
-      "humidity": 79,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.8,
+      "humidity": 80,
       "weatherCode": 0
     },
     {
@@ -995,9 +995,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 25.8,
-      "humidity": 95,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.5,
+      "humidity": 96,
       "weatherCode": 0
     },
     {
@@ -1015,9 +1015,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.6,
-      "humidity": 89,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.7,
+      "humidity": 90,
       "weatherCode": 0
     },
     {
@@ -1035,9 +1035,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.2,
-      "humidity": 87,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.6,
+      "humidity": 91,
       "weatherCode": 0
     },
     {
@@ -1055,9 +1055,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.4,
-      "humidity": 88,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26,
+      "humidity": 89,
       "weatherCode": 0
     },
     {
@@ -1075,9 +1075,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.1,
-      "humidity": 82,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.5,
+      "humidity": 84,
       "weatherCode": 0
     },
     {
@@ -1095,9 +1095,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.6,
-      "humidity": 81,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.4,
+      "humidity": 87,
       "weatherCode": 0
     },
     {
@@ -1115,8 +1115,8 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.6,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26,
       "humidity": 91,
       "weatherCode": 0
     },
@@ -1135,10 +1135,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.2,
-      "humidity": 94,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.1,
+      "humidity": 96,
+      "weatherCode": 0
     },
     {
       "id": "cbi",
@@ -1155,10 +1155,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.9,
       "humidity": 93,
-      "weatherCode": 1
+      "weatherCode": 2
     },
     {
       "id": "ryk",
@@ -1175,10 +1175,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
+      "updatedAt": "2026-10-31T16:29:32.194Z",
       "temperature": 27,
-      "humidity": 94,
-      "weatherCode": 3
+      "humidity": 90,
+      "weatherCode": 2
     },
     {
       "id": "cti",
@@ -1195,8 +1195,8 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 25.4,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25,
       "humidity": 98,
       "weatherCode": 3
     },
@@ -1215,10 +1215,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
+      "updatedAt": "2026-10-31T16:29:32.194Z",
       "temperature": 24.7,
-      "humidity": 100,
-      "weatherCode": 51
+      "humidity": 98,
+      "weatherCode": 3
     },
     {
       "id": "pri",
@@ -1235,10 +1235,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.9,
-      "humidity": 92,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.4,
+      "humidity": 93,
+      "weatherCode": 51
     },
     {
       "id": "skw",
@@ -1255,10 +1255,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.7,
-      "humidity": 91,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.2,
+      "humidity": 94,
+      "weatherCode": 0
     },
     {
       "id": "cpn",
@@ -1275,10 +1275,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.4,
-      "humidity": 92,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.9,
+      "humidity": 94,
+      "weatherCode": 51
     },
     {
       "id": "rng",
@@ -1295,10 +1295,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 27.3,
-      "humidity": 90,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.9,
+      "humidity": 92,
+      "weatherCode": 0
     },
     {
       "id": "sni",
@@ -1315,9 +1315,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.7,
-      "humidity": 84,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.9,
+      "humidity": 88,
       "weatherCode": 0
     },
     {
@@ -1335,10 +1335,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 25.7,
-      "humidity": 97,
-      "weatherCode": 0
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.3,
+      "humidity": 96,
+      "weatherCode": 51
     },
     {
       "id": "pkt",
@@ -1355,10 +1355,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.5,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.3,
       "humidity": 95,
-      "weatherCode": 1
+      "weatherCode": 51
     },
     {
       "id": "kbi",
@@ -1375,10 +1375,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.4,
-      "humidity": 87,
-      "weatherCode": 2
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25,
+      "humidity": 97,
+      "weatherCode": 55
     },
     {
       "id": "nrt",
@@ -1395,10 +1395,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.6,
-      "humidity": 86,
-      "weatherCode": 2
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.2,
+      "humidity": 94,
+      "weatherCode": 51
     },
     {
       "id": "trg",
@@ -1415,9 +1415,9 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.9,
-      "humidity": 92,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.3,
+      "humidity": 90,
       "weatherCode": 1
     },
     {
@@ -1435,10 +1435,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.5,
-      "humidity": 88,
-      "weatherCode": 55
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.3,
+      "humidity": 96,
+      "weatherCode": 51
     },
     {
       "id": "stn",
@@ -1455,8 +1455,8 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 25.4,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 24.8,
       "humidity": 99,
       "weatherCode": 51
     },
@@ -1475,10 +1475,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26,
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 26.1,
       "humidity": 95,
-      "weatherCode": 55
+      "weatherCode": 1
     },
     {
       "id": "ptn",
@@ -1495,10 +1495,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.6,
-      "humidity": 90,
-      "weatherCode": 2
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.7,
+      "humidity": 93,
+      "weatherCode": 95
     },
     {
       "id": "yla",
@@ -1515,10 +1515,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 25.8,
-      "humidity": 97,
-      "weatherCode": 1
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.2,
+      "humidity": 99,
+      "weatherCode": 80
     },
     {
       "id": "nwt",
@@ -1535,10 +1535,10 @@
       "risk": "low",
       "dataSource": "Open-Meteo Real-Time API",
       "liveWeatherConnected": true,
-      "updatedAt": "2026-10-31T14:34:57.443Z",
-      "temperature": 26.7,
-      "humidity": 96,
-      "weatherCode": 51
+      "updatedAt": "2026-10-31T16:29:32.194Z",
+      "temperature": 25.7,
+      "humidity": 99,
+      "weatherCode": 1
     }
   ],
   "reports": [],
