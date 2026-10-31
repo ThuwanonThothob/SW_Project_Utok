@@ -147,7 +147,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   height: 100% !important;
   min-height: 0 !important;
 }.leaflet-control-zoom { border:0!important;box-shadow:0 10px 25px rgba(7,22,36,.16)!important;margin-right:18px!important;margin-bottom:94px!important; }.leaflet-control-attribution { font-size:8px!important; }.custom-marker { display:block;width:34px;height:34px;border:3px solid white;border-radius:50% 50% 50% 8px;transform:rotate(-45deg);box-shadow:0 6px 15px rgba(7,22,36,.27); }.custom-marker:after { content:"";display:block;width:8px;height:8px;border-radius:50%;background:white;margin:10px; }.custom-marker.critical { background:var(--red); }.custom-marker.moderate { background:var(--amber); }.custom-marker.resolved { background:#298fae; }.popup { min-width:190px;font-family:"IBM Plex Sans Thai",sans-serif; }.popup small,.popup b { display:block; }.popup small { color:#7b898e;font-size:8px; }.popup b { font-size:13px; }.popup p { font-size:10px;color:#506168;margin:5px 0; }.popup strong { color:#ce4d3a;font-size:10px; }
-.map-search { position:absolute;z-index:500;top:20px;left:20px;width:min(365px,calc(100% - 40px));height:47px;display:flex;align-items:center;gap:8px;padding:0 10px 0 14px;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-radius:13px;box-shadow:0 10px 35px rgba(7,22,36,.15); }.map-search>svg { width:17px;color:#55727a; }.map-search input { min-width:0;flex:1;border:0;outline:0;background:transparent;font-size:11px; }.map-search button { width:34px;height:34px;border:0;border-radius:9px;background:#e8f5f5;color:#168a98;display:grid;place-items:center;cursor:pointer; }.map-search button svg { width:16px; }
 .map-legend { position:absolute;z-index:500;left:20px;bottom:20px;padding:10px 13px;border-radius:11px;background:rgba(255,255,255,.94);display:flex;align-items:center;gap:11px;font-size:9px;box-shadow:0 10px 28px rgba(7,22,36,.13); }.map-legend span { display:flex;align-items:center;gap:4px; }.map-legend i { width:7px;height:7px;border-radius:50%; }.map-legend i.high { background:var(--red); }.map-legend i.medium { background:var(--amber); }.map-legend i.low { background:var(--green); }.report-fab { position:absolute;z-index:500;right:20px;bottom:23px;border:0;border-radius:13px;padding:12px 16px;background:var(--orange);color:white;font-size:11px;font-weight:700;display:flex;align-items:center;gap:7px;cursor:pointer;box-shadow:0 12px 30px rgba(221,78,36,.33); }.report-fab svg { width:17px; }
 
 .authority-view { min-height:calc(100vh - 76px);padding:30px clamp(20px,4vw,58px) 50px;background:#edf1ef; }.authority-hero { min-height:140px;padding:26px 29px;border-radius:21px;background:var(--navy-2);color:white;display:flex;align-items:center;justify-content:space-between;gap:25px;overflow:hidden;position:relative; }.authority-hero:after { content:"";position:absolute;width:330px;height:330px;border:1px solid rgba(23,191,210,.13);border-radius:50%;right:17%;top:-220px;box-shadow:0 0 0 65px rgba(23,191,210,.025); }.authority-hero>div { position:relative;z-index:1; }.authority-hero h1 { margin:0 0 7px;font-size:31px; }.authority-hero p { margin:0;color:#91a4ae;font-size:10px; }.authority-hero>div:last-child { display:flex;gap:8px; }.secondary-button,.warning-button { height:41px;border-radius:10px;padding:0 13px;display:flex;align-items:center;gap:6px;font-size:10px;font-weight:700;cursor:pointer; }.secondary-button { color:#d5e0e4;background:transparent;border:1px solid rgba(255,255,255,.2); }.warning-button { color:white;background:var(--orange);border:0; }.secondary-button svg,.warning-button svg { width:15px; }
@@ -164,7 +163,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .data-card{min-width:0}
 .metrics{grid-template-columns:repeat(5,minmax(0,1fr))}.metrics .green{background:#dcf3e9;color:#187a60}.province-count{padding:5px 8px;border-radius:20px;background:#e5f4f3;color:#147d87;font:800 9px Manrope,sans-serif}.province-filters{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;margin:-3px 0 10px}.province-filters label{height:34px;border:1px solid #dce3e1;border-radius:9px;padding:0 9px;display:flex;align-items:center;gap:5px}.province-filters label svg{width:13px;color:#829094}.province-filters input{min-width:0;width:100%;border:0;outline:0;font-size:9px}.province-filters select{max-width:165px;border:1px solid #dce3e1;border-radius:9px;background:#f7f8f6;padding:0 8px;font-size:9px}.province-card .zone-list{max-height:485px;overflow:auto;padding-right:4px;scrollbar-width:thin}.empty-state{margin:12px 0;text-align:center;color:#899599;font-size:9px}
 @media(max-width:1100px){.topbar{display:flex;justify-content:space-between;align-items:center;padding:8px 17px;gap:12px}.user-badge>span{display:none}.citizen-layout{grid-template-columns:minmax(340px,40%) 1fr}.control-panel{padding:24px 21px}.authority-grid{grid-template-columns:1fr}.side-stack{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr 1fr}}
-@media(max-width:760px){.topbar{min-height:52px;height:auto;display:flex;justify-content:space-between;align-items:center;padding:6px 12px;gap:8px}.weather-ticker,.user-badge>span,.topbar .app-pill-button,.topbar .icon-button,.connection{display:none!important}.role-switch button{font-size:10px;padding:6px 8px}.alert-ribbon{min-height:48px;padding:6px 12px}.alert-ribbon p{display:none}.citizen-layout{height:auto;min-height:0;display:flex;flex-direction:column}.map-stage{order:1;height:56vh;min-height:410px}.map-node{min-height:410px}.control-panel{order:2;overflow:visible;padding:24px 15px 96px}.map-search{top:12px;left:12px;width:calc(100% - 24px)}.map-hint{display:none}.map-legend{left:12px;bottom:76px}.map-legend>b{display:none}.report-fab{right:12px;bottom:76px;padding:12px;font-size:0}.authority-view{padding:15px 11px 40px;min-height:calc(100vh - 64px)}.authority-hero{align-items:flex-start;flex-direction:column;padding:21px}.authority-hero h1{font-size:25px}.authority-hero>div:last-child{width:100%;flex-wrap:wrap}.authority-hero button{flex:1;justify-content:center}.metrics{gap:8px}.metrics article{min-height:92px;padding:11px}.authority-grid{gap:11px}.data-card{padding:14px}.card-head{align-items:flex-start;flex-direction:column}.filters{width:100%;flex-wrap:wrap}.filters label{flex:1}.filters input{width:100%}.province-filters{grid-template-columns:1fr}.province-filters select{max-width:none;height:34px}.side-stack{grid-template-columns:1fr}.drawer{padding:23px 17px}.toast-stack{right:14px;bottom:76px}}
+@media(max-width:760px){.topbar{min-height:52px;height:auto;display:flex;justify-content:space-between;align-items:center;padding:6px 12px;gap:8px}.weather-ticker,.user-badge>span,.topbar .app-pill-button,.topbar .icon-button,.connection{display:none!important}.role-switch button{font-size:10px;padding:6px 8px}.alert-ribbon{min-height:48px;padding:6px 12px}.alert-ribbon p{display:none}.citizen-layout{height:auto;min-height:0;display:flex;flex-direction:column}.map-stage{order:1;height:56vh;min-height:410px}.map-node{min-height:410px}.control-panel{order:2;overflow:visible;padding:24px 15px 96px}.map-legend{left:12px;bottom:76px}.map-legend>b{display:none}.report-fab{right:12px;bottom:76px;padding:12px;font-size:0}.authority-view{padding:15px 11px 40px;min-height:calc(100vh - 64px)}.authority-hero{align-items:flex-start;flex-direction:column;padding:21px}.authority-hero h1{font-size:25px}.authority-hero>div:last-child{width:100%;flex-wrap:wrap}.authority-hero button{flex:1;justify-content:center}.metrics{gap:8px}.metrics article{min-height:92px;padding:11px}.authority-grid{gap:11px}.data-card{padding:14px}.card-head{align-items:flex-start;flex-direction:column}.filters{width:100%;flex-wrap:wrap}.filters label{flex:1}.filters input{width:100%}.province-filters{grid-template-columns:1fr}.province-filters select{max-width:none;height:34px}.side-stack{grid-template-columns:1fr}.drawer{padding:23px 17px}.toast-stack{right:14px;bottom:76px}}
 @media(max-width:430px){.brand-title small{font-size:7px}.swu-logo{padding:2px 5px;font-size:8px}.top-actions{gap:4px}.metrics{grid-template-columns:1fr}.risk-main{gap:12px}.risk-gauge{width:70px;height:70px}.risk-factors{gap:4px}.risk-factors>span{padding:6px 4px}.level-grid{grid-template-columns:1fr}.modal{padding:25px 19px}.map-legend{max-width:calc(100% - 24px)}}
 @media(max-width:380px){.swu-logo-text{display:none!important}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
@@ -670,7 +669,10 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   z-index: 750;
 }
 .map-search {
-  width: 100%;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  width: 100% !important;
   height: 48px;
   display: flex;
   align-items: center;
@@ -678,9 +680,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   padding: 0 10px 0 14px;
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 13px;
   border: 1px solid #e2e8f0;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.16);
+  box-sizing: border-box;
 }
 .map-search > svg {
   width: 18px;
@@ -745,6 +749,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   position: relative;
   z-index: 760;
 }
+.map-search-container.has-suggestions .map-hint,
 .map-search-container.has-suggestions ~ .map-hint {
   display: none !important;
   opacity: 0 !important;
@@ -842,20 +847,20 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 @media (max-width: 768px) {
   .map-search-container {
-    top: 12px;
-    left: 12px;
-    width: calc(100% - 24px);
+    top: 52px;
+    left: 10px;
+    width: calc(100% - 20px);
   }
   .map-mode-bar {
-    top: 68px;
-    left: 12px;
-    right: auto;
+    top: 10px;
+    right: 10px;
+    left: auto;
     bottom: auto;
   }
   .map-mode-btn {
-    height: 30px;
-    padding: 0 8px;
-    font-size: 9.5px;
+    height: 32px;
+    padding: 0 9px;
+    font-size: 10px;
   }
   .map-legend {
     left: 12px;
@@ -1110,7 +1115,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* Vertical Docking: When sidebar is collapsed, position search bar and hint cleanly below the expand button */
 .citizen-layout.sidebar-collapsed .map-search-container,
 .authority-gis-layout.sidebar-collapsed .map-search-container {
-  top: 66px;
+  top: 76px;
   left: 16px;
   width: min(360px, calc(100% - 240px));
 }
