@@ -132,7 +132,7 @@ export default function AuthorityView({
   const newsItems = news?.items || [];
 
   return (
-    <main className="authority-view">
+    <main className={`authority-view ${viewMode === "map" ? "gis-mode" : "dashboard-mode"}`}>
       <section className="authority-hero">
         <div>
           <span className="eyebrow">ศูนย์บัญชาการสถานการณ์น้ำ · ข้อมูลจริงจาก Open-Meteo & ผู้ใช้งาน</span>
