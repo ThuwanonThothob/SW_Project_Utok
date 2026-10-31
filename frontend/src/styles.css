@@ -18,7 +18,7 @@
   --paper: #f3f4ef;
 }
 
-html, body {
+html, body, #root {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -539,10 +539,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 /* Search Bar with District Autocomplete */
 .map-search-container {
   position: absolute;
-  z-index: 500;
+  z-index: 600;
   top: 16px;
   left: 16px;
-  width: min(360px, calc(100% - 230px));
+  width: min(360px, calc(100% - 240px));
+  transition: left 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              top 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.map-search-container.has-suggestions {
+  z-index: 750;
 }
 .map-search {
   width: 100%;
@@ -572,7 +578,29 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   color: #0f172a;
   font-weight: 500;
 }
-.map-search button {
+.search-clear-btn {
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  border: 0 !important;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.18s;
+  padding: 0;
+}
+.search-clear-btn:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+.search-clear-btn svg {
+  width: 13px;
+  height: 13px;
+}
+.map-search button:not(.search-clear-btn) {
   width: 34px;
   height: 34px;
   border: 0;
@@ -595,6 +623,13 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   display: grid;
   padding: 5px;
   gap: 2px;
+  position: relative;
+  z-index: 760;
+}
+.map-search-container.has-suggestions ~ .map-hint {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 .suggestion-item {
   border: 0;
@@ -930,20 +965,17 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   }
 }
 
-/* Clear Separation: Shift search bar & hint when sidebar is collapsed */
-.citizen-layout.sidebar-collapsed .map-search-container {
-  left: 175px;
-  width: min(340px, calc(100% - 395px));
-}
-.citizen-layout.sidebar-collapsed .map-hint {
-  left: 175px;
-}
+/* Vertical Docking: When sidebar is collapsed, position search bar and hint cleanly below the expand button */
+.citizen-layout.sidebar-collapsed .map-search-container,
 .authority-gis-layout.sidebar-collapsed .map-search-container {
-  left: 220px;
-  width: min(340px, calc(100% - 440px));
+  top: 66px;
+  left: 16px;
+  width: min(360px, calc(100% - 240px));
 }
+.citizen-layout.sidebar-collapsed .map-hint,
 .authority-gis-layout.sidebar-collapsed .map-hint {
-  left: 220px;
+  top: 122px;
+  left: 16px;
 }
 
 /* Authority View Header & Mode Switcher */

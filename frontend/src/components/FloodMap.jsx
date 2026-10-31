@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
-import { CloudRain, Crosshair, Eye, Layers, MapPin, Plus, Search, ShieldAlert, Waves } from "lucide-react";
+import { CloudRain, Crosshair, Eye, Layers, MapPin, Plus, Search, ShieldAlert, Waves, X } from "lucide-react";
 
 const riskColor = (risk) => (risk === "high" ? "#ef4444" : risk === "medium" ? "#f59e0b" : "#10b981");
 const riskBorder = (risk) => (risk === "high" ? "#dc2626" : risk === "medium" ? "#d97706" : "#059669");
@@ -47,11 +47,26 @@ export default function FloodMap({
   const userLocationLayerRef = useRef(null);
   const hasCenteredOnUserRef = useRef(false);
   const reportHandlerRef = useRef(onReportAt);
+  const searchContainerRef = useRef(null);
 
   const [mapMode, setMapMode] = useState("risk"); // "risk" | "rain"
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, []);
 
   useEffect(() => {
     reportHandlerRef.current = onReportAt;
@@ -387,7 +402,10 @@ export default function FloodMap({
       </div>
 
       {/* Location Search Bar with District Support */}
-      <div className="map-search-container">
+      <div
+        ref={searchContainerRef}
+        className={`map-search-container ${showSuggestions && searchSuggestions.length > 0 ? "has-suggestions" : ""}`}
+      >
         <form className="map-search" onSubmit={handleSearchSubmit}>
           <Search />
           <input
@@ -400,6 +418,20 @@ export default function FloodMap({
             placeholder="ค้นหาตามจังหวัด หรือ อำเภอ (เช่น วารินชำราบ, ดุสิต)"
             aria-label="ค้นหาจังหวัดหรืออำเภอ"
           />
+          {searchQuery && (
+            <button
+              type="button"
+              className="search-clear-btn"
+              onClick={() => {
+                setSearchQuery("");
+                setShowSuggestions(false);
+              }}
+              aria-label="ล้างการค้นหา"
+              title="ล้างการค้นหา"
+            >
+              <X />
+            </button>
+          )}
           <button
             type="button"
             onClick={() => {
@@ -436,11 +468,13 @@ export default function FloodMap({
         )}
       </div>
 
-      <div className="map-hint">
-        {userLocation?.lat
-          ? `📍 GPS เปิดอยู่: ${userLocation.districtName || userLocation.provinceName || "พิกัดของคุณ"} (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}) · คลิกเขตจังหวัดเพื่อดูรายละเอียด`
-          : "คลิกปุ่มเป้าเล็งเพื่อเปิดพิกัด GPS หรือคลิกบนแผนที่เพื่อแจ้งเหตุ"}
-      </div>
+      {(!showSuggestions || searchSuggestions.length === 0) && (
+        <div className="map-hint">
+          {userLocation?.lat
+            ? `📍 GPS เปิดอยู่: ${userLocation.districtName || userLocation.provinceName || "พิกัดของคุณ"} (${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}) · คลิกเขตจังหวัดเพื่อดูรายละเอียด`
+            : "คลิกปุ่มเป้าเล็งเพื่อเปิดพิกัด GPS หรือคลิกบนแผนที่เพื่อแจ้งเหตุ"}
+        </div>
+      )}
 
       {/* Dynamic Map Legend based on mapMode */}
       <div className="map-legend">
