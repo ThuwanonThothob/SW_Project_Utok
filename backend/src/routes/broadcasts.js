@@ -15,6 +15,14 @@ const broadcastLimiter = rateLimit({
   message: { message: "คุณสร้างประกาศเตือนภัยถี่เกินไป กรุณารอสักครู่" },
 });
 
+const testNotificationLimiter = rateLimit({
+  windowMs: 5 * 60_000,
+  limit: 30,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: { message: "คุณส่งสัญญาณทดสอบถี่เกินไป กรุณารอสักครู่" },
+});
+
 router.get("/", async (_req, res, next) => {
   try {
     res.set("Cache-Control", "public, max-age=10, stale-while-revalidate=30");
@@ -38,7 +46,7 @@ router.post("/", requireAuthority, broadcastLimiter, async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
-router.post("/test-notification", async (req, res, next) => {
+router.post("/test-notification", testNotificationLimiter, async (req, res, next) => {
   try {
     const {
       level = "warning",

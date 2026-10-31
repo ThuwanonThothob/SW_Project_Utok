@@ -35,7 +35,7 @@ export default function SWULogo({ className = "swu-logo", size = 36 }) {
           boxShadow: "0 1px 4px rgba(0,0,0,0.25)",
         }}
       />
-      <span style={{ display: "inline-flex", flexDirection: "column", lineHeight: 1.15 }}>
+      <span className="swu-logo-text" style={{ display: "inline-flex", flexDirection: "column", lineHeight: 1.15 }}>
         <b style={{ color: "#ffffff", fontSize: "11px", fontWeight: 800, letterSpacing: "0.04em" }}>วิศวฯ มศว</b>
         <small style={{ color: "#fca5a5", fontSize: "8px", fontWeight: 700 }}>SWU ENG</small>
       </span>

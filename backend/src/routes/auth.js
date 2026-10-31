@@ -1,11 +1,20 @@
 import { Router } from "express";
 import bcrypt from "bcryptjs";
+import rateLimit from "express-rate-limit";
 import { createAuthority, createCitizen, findUserByEmail, findUserById, listReportsByUser, updateCitizenProfile } from "../data/repository.js";
 import { requireAuth, requireCitizen, signAuthToken } from "../middleware/auth.js";
 import { sanitizeText } from "../utils/sanitize.js";
 
 const router = Router();
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60_000,
+  limit: 30,
+  standardHeaders: "draft-7",
+  legacyHeaders: false,
+  message: { message: "มีการพยายามเข้าสู่ระบบหรือลงทะเบียนถี่เกินไป กรุณารอสักครู่ก่อนลองใหม่" },
+});
 
 export function getAllowedAuthorityCodes() {
   return ["1784", "SWU-CPE-2026", "THAI-FLOOD-AUTH", process.env.AUTHORITY_INVITE_CODE].filter(Boolean);
@@ -85,9 +94,9 @@ export async function registerUserHandler(req, res, next) {
   }
 }
 
-router.post("/register", registerUserHandler);
+router.post("/register", authLimiter, registerUserHandler);
 
-router.post("/login", async (req, res, next) => {
+router.post("/login", authLimiter, async (req, res, next) => {
   try {
     const email = String(req.body.email || "").trim().toLowerCase();
     const password = String(req.body.password || "");

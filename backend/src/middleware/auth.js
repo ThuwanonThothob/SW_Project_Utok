@@ -3,14 +3,14 @@ import jwt from "jsonwebtoken";
 const secret = () => process.env.JWT_SECRET || "development-only-secret-change-before-production";
 
 export function signAuthToken(payload) {
-  return jwt.sign(payload, secret(), { expiresIn: "8h", issuer: "thaiflood-api" });
+  return jwt.sign(payload, secret(), { algorithm: "HS256", expiresIn: "8h", issuer: "thaiflood-api" });
 }
 
 export function requireAuth(req, res, next) {
   const token = req.headers.authorization?.replace(/^Bearer\s+/i, "");
   if (!token) return res.status(401).json({ message: "กรุณาเข้าสู่ระบบสมาชิก" });
   try {
-    const user = jwt.verify(token, secret(), { issuer: "thaiflood-api" });
+    const user = jwt.verify(token, secret(), { algorithms: ["HS256"], issuer: "thaiflood-api" });
     req.user = user;
     next();
   } catch {
