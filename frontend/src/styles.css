@@ -193,6 +193,63 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   color: #f59e0b;
 }
 
+.authority-header-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.authority-logout-header-btn {
+  height: 34px;
+  padding: 0 11px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  font-size: 10px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.authority-logout-header-btn:hover {
+  background: rgba(229, 72, 63, 0.2);
+  border-color: rgba(229, 72, 63, 0.5);
+  color: #fca5a5;
+}
+.authority-logout-header-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.authority-access-btn {
+  height: 34px;
+  padding: 0 11px;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 10px;
+  background: rgba(245, 158, 11, 0.12);
+  color: #fcd34d;
+  font-size: 10px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.authority-access-btn:hover {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+  color: #ffffff;
+}
+.authority-access-btn svg {
+  width: 14px;
+  height: 14px;
+  color: #f59e0b;
+}
+
 .authority-citizen-preview-banner {
   margin-bottom: 16px;
   padding: 11px 13px;

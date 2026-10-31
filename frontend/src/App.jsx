@@ -565,20 +565,30 @@ export default function App() {
   const onSelectProvince = useCallback((province) => setSelectedProvince(province), []);
 
   function changeMode(nextMode) {
-    if (nextMode === "authority" && user?.role !== "authority") {
+    if (user?.role === "authority") {
+      toast(
+        "สิทธิ์เจ้าหน้าที่",
+        "บัญชีเจ้าหน้าที่ถูกล็อกให้อยู่ในระบบศูนย์บัญชาการสถานการณ์น้ำ ไม่สามารถสลับไปโหมดประชาชนได้ หากต้องการใช้งานในฐานะประชาชน กรุณากดออกจากระบบก่อน",
+        "warning",
+      );
+      return;
+    }
+    if (nextMode === "authority") {
       setLoginIntent("authority");
       setLoginOpen(true);
       return;
     }
-    if (nextMode === "citizen" && user?.role === "authority") {
-      toast(
-        "โหมดแสดงตัวอย่างประชาชน",
-        "คุณกำลังสลับมาดูมุมมองประชาชนด้วยบัญชีเจ้าหน้าที่ (โหมดดูอย่างเดียว ไม่สามารถส่งรายงานเหตุได้)",
-        "info",
-      );
-    }
-    setMode(nextMode);
+    setMode("citizen");
   }
+
+  // Enforce strict role confinement: Authorities can NEVER be in citizen mode
+  useEffect(() => {
+    if (user?.role === "authority" && mode !== "authority") {
+      setMode("authority");
+    } else if (user?.role !== "authority" && mode === "authority") {
+      setMode("citizen");
+    }
+  }, [user?.role, mode]);
 
   async function login(email, password, intent) {
     setBusy(true);
@@ -771,6 +781,7 @@ export default function App() {
             setLoginOpen(true);
           }
         }}
+        onLogout={logout}
       />
       {mode === "citizen" ? (
         <CitizenView

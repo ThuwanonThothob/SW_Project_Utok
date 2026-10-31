@@ -1,4 +1,4 @@
-import { Bell, CloudRain, LocateFixed, ShieldAlert, ShieldCheck, Smartphone, Waves, Wifi, WifiOff } from "lucide-react";
+import { Bell, CloudRain, LocateFixed, LogOut, ShieldAlert, ShieldCheck, Smartphone, Waves, Wifi, WifiOff } from "lucide-react";
 import SWULogo from "./SWULogo.jsx";
 
 export default function Header({
@@ -13,6 +13,7 @@ export default function Header({
   onOpenNotifications,
   onOpenInstall,
   onUserClick,
+  onLogout,
 }) {
   const liveTickerTitle = userLocation?.lat
     ? `📍 พิกัดปัจจุบัน: ${userLocation.address || `${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}`}`
@@ -60,21 +61,43 @@ export default function Header({
           <LocateFixed />
           <span>{userLocation?.lat ? "GPS เปิดอยู่" : "เปิด GPS"}</span>
         </button>
-        {mode === "authority" ? (
-          <span className="authority-role-pill" title="ระบบบัญชาการและคัดกรองเหตุการณ์สำหรับเจ้าหน้าที่">
-            <ShieldCheck />
-            <span>ศูนย์บัญชาการ</span>
-          </span>
+        {user?.role === "authority" ? (
+          <div className="authority-header-cluster">
+            <span className="authority-role-pill" title="ระบบบัญชาการและคัดกรองเหตุการณ์สำหรับเจ้าหน้าที่">
+              <ShieldCheck />
+              <span>ศูนย์บัญชาการ</span>
+            </span>
+            <button
+              type="button"
+              className="authority-logout-header-btn"
+              onClick={onLogout}
+              title="ออกจากระบบเจ้าหน้าที่เพื่อกลับสู่หน้าประชาชน"
+            >
+              <LogOut />
+              <span>ออกจากระบบ</span>
+            </button>
+          </div>
         ) : (
-          <button
-            type="button"
-            className="app-pill-button"
-            onClick={onOpenInstall}
-            title="ติดตั้งแอปลงโทรศัพท์มือถือ (PWA)"
-          >
-            <Smartphone />
-            <span>แอปมือถือ</span>
-          </button>
+          <>
+            <button
+              type="button"
+              className="app-pill-button"
+              onClick={onOpenInstall}
+              title="ติดตั้งแอปลงโทรศัพท์มือถือ (PWA)"
+            >
+              <Smartphone />
+              <span>แอปมือถือ</span>
+            </button>
+            <button
+              type="button"
+              className="authority-access-btn"
+              onClick={() => onModeChange("authority")}
+              title="เข้าสู่ระบบศูนย์บัญชาการสำหรับเจ้าหน้าที่ ปภ. / กู้ภัย"
+            >
+              <ShieldAlert />
+              <span>สำหรับเจ้าหน้าที่</span>
+            </button>
+          </>
         )}
         <button
           type="button"
@@ -86,25 +109,11 @@ export default function Header({
           <Bell />
           <span>{notificationCount}</span>
         </button>
-        <div className="role-switch" role="group" aria-label="สลับโหมดใช้งาน">
-          <button
-            className={mode === "citizen" ? "active" : ""}
-            onClick={() => onModeChange("citizen")}
-          >
-            {user?.role === "authority" ? "ประชาชน (จำลอง)" : "ประชาชน"}
-          </button>
-          <button
-            className={mode === "authority" ? "active" : ""}
-            onClick={() => onModeChange("authority")}
-          >
-            เจ้าหน้าที่
-          </button>
-        </div>
         <button className="user-badge" onClick={onUserClick}>
           <b>{user ? (user.role === "authority" ? "จ" : user.name.slice(0, 1)) : "ป"}</b>
           <span>
             {user?.name || "เข้าสู่ระบบ / สมัคร"}
-            <small>{user ? (user.role === "authority" ? `เจ้าหน้าที่ · ${user.agency || "ปภ."}` : "สมาชิกประชาชน") : "Citizen / Authority"}</small>
+            <small>{user ? (user.role === "authority" ? `เจ้าหน้าที่ · ${user.agency || "ปภ."}` : "สมาชิกประชาชน") : "สำหรับประชาชน"}</small>
           </span>
         </button>
       </div>
