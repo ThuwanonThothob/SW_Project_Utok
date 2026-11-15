@@ -19,36 +19,9 @@ const isTestRun =
 const LEGACY_FAKE_REPORT_IDS = new Set(["FR-1028", "FR-1027", "FR-1026", "FR-1025", "FR-1024", "FR-1023"]);
 const LEGACY_FAKE_BROADCAST_IDS = new Set(["BA-203", "BA-202"]);
 
-const defaultUsers = [
-  {
-    id: "memory-admin",
-    name: "ศูนย์บัญชาการกลาง",
-    email: "admin@flood.go.th",
-    password_hash: bcrypt.hashSync("admin123", 10),
-    role: "authority",
-    agency: "กรมป้องกันและบรรเทาสาธารณภัย (ปภ.)",
-    phone: "1784",
-    notifyEnabled: true,
-    homeProvince: "กรุงเทพมหานคร",
-    homeDistrict: "เขตดุสิต",
-    lat: 13.7768,
-    lng: 100.5206,
-  },
-  {
-    id: "memory-citizen",
-    name: "สมชาย ใจดี",
-    email: "citizen@example.com",
-    password_hash: bcrypt.hashSync("citizen123", 10),
-    role: "citizen",
-    agency: "",
-    phone: "081-234-5678",
-    notifyEnabled: true,
-    homeProvince: "กรุงเทพมหานคร",
-    homeDistrict: "เขตดุสิต",
-    lat: 13.7768,
-    lng: 100.5206,
-  },
-];
+const LEGACY_DEMO_EMAILS = new Set(["admin@flood.go.th", "citizen@example.com"]);
+const LEGACY_DEMO_USER_IDS = new Set(["memory-admin", "memory-citizen"]);
+const defaultUsers = [];
 
 function mergeProvincesWithSeed(savedProvinces, realReports = []) {
   const reportCounts = new Map();
@@ -86,24 +59,23 @@ function mergeProvincesWithSeed(savedProvinces, realReports = []) {
 
 function mergeUsersWithDefaults(savedUsers) {
   if (!Array.isArray(savedUsers) || savedUsers.length === 0) {
-    return clone(defaultUsers);
+    return [];
   }
-  const merged = clone(savedUsers).map((user) => ({
-    agency: "",
-    phone: "",
-    notifyEnabled: true,
-    homeProvince: "",
-    homeDistrict: "",
-    lat: null,
-    lng: null,
-    ...user,
-  }));
-  for (const def of defaultUsers) {
-    if (!merged.some((u) => u.email.toLowerCase() === def.email.toLowerCase())) {
-      merged.unshift(clone(def));
-    }
-  }
-  return merged;
+  return clone(savedUsers)
+    .filter((user) => {
+      const email = String(user?.email || "").toLowerCase();
+      return !LEGACY_DEMO_EMAILS.has(email) && !LEGACY_DEMO_USER_IDS.has(user?.id);
+    })
+    .map((user) => ({
+      agency: "",
+      phone: "",
+      notifyEnabled: true,
+      homeProvince: "",
+      homeDistrict: "",
+      lat: null,
+      lng: null,
+      ...user,
+    }));
 }
 
 function loadMemoryStore() {
@@ -112,7 +84,7 @@ function loadMemoryStore() {
       provinces: clone(seedProvinces),
       reports: clone(seedReports),
       broadcasts: clone(seedBroadcasts),
-      users: clone(defaultUsers),
+      users: [],
     };
   }
   try {
@@ -200,6 +172,8 @@ function enrichReportWithTriage(report, { forceRecalculate = false } = {}) {
     ...publicReport,
     description,
     photo,
+    authorityNote: report.authorityNote ?? "",
+    updatedAt: report.updatedAt ?? report.createdAt,
     upvotes,
     aiTriage,
   };
@@ -369,11 +343,15 @@ export async function createReport(input) {
   return reportFromRow(rows[0]);
 }
 
-export async function updateReportStatus(publicId, status) {
+export async function updateReportStatus(publicId, status, authorityNote) {
   if (!pool) {
     const report = memory.reports.find((item) => item.id === publicId);
     if (!report) return null;
     report.status = status;
+    report.updatedAt = new Date().toISOString();
+    if (authorityNote !== undefined) {
+      report.authorityNote = String(authorityNote);
+    }
     Object.assign(report, enrichReportWithTriage(report));
     const province = memory.provinces.find((item) => item.name === report.province);
     if (province) {
@@ -392,6 +370,9 @@ export async function updateReportStatus(publicId, status) {
   `, [publicId, status]);
   if (rows[0]) {
     const updated = reportFromRow(rows[0]);
+    if (authorityNote !== undefined) {
+      updated.authorityNote = String(authorityNote);
+    }
     const countRes = await pool.query(
       "SELECT COUNT(*)::int AS count FROM flood_reports WHERE province = $1 AND status NOT IN ('rejected', 'resolved')",
       [updated.province],

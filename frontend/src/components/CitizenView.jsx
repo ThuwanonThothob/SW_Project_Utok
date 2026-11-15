@@ -66,6 +66,22 @@ const IMPACT_CHECKLIST = {
   ],
 };
 
+function computeRiskBreakdown(province) {
+  if (!province) return { rain: 0, terrain: 0, reports: 0 };
+  if (province.riskBreakdown) return province.riskBreakdown;
+  const rainMm = Number(province.rain || 0);
+  const rainProb = Number(province.rainProbability || 0);
+  const elevation = province.elevation ?? null;
+  const activeReports = Number(province.affected || 0);
+  const rain = rainMm > 0 ? Math.min(65, Math.round(rainMm * 1.35 + (rainProb >= 80 ? 6 : 0))) : 0;
+  const terrain =
+    (rainMm >= 5 || activeReports > 0) && elevation !== null
+      ? Math.max(0, Math.min(20, Math.round((30 - Math.min(30, elevation)) * 0.5)))
+      : 0;
+  const reports = Math.min(35, activeReports * 12);
+  return { rain, terrain, reports };
+}
+
 function relativeTime(value) {
   if (!value) return "ซิงค์ข้อมูลสด";
   const minutes = Math.max(1, Math.round((Date.now() - new Date(value)) / 60_000));
@@ -81,8 +97,6 @@ export default function CitizenView({
   newsBusy,
   selectedProvince,
   userLocation,
-  isSimulated = false,
-  onResetRealGps,
   onSelectProvince,
   onReportAt,
   onLocate,
@@ -204,36 +218,17 @@ export default function CitizenView({
           <section className="live-gps-card" aria-live="polite">
             <div className="live-gps-head">
               <div>
-                <span className="eyebrow">
-                  {isSimulated ? "📍 Simulated Mode (โหมดจำลองพิกัด)" : "Real-time User Location & Live Telemetry"}
-                </span>
+                <span className="eyebrow">Real-time User Location & Live Telemetry</span>
                 <h3>
-                  <Navigation className="inline-icon" /> {isSimulated ? "ตำแหน่งที่จำลองไว้" : "ตำแหน่งปัจจุบันของคุณ"}
+                  <Navigation className="inline-icon" /> ตำแหน่งปัจจุบันของคุณ
                 </h3>
               </div>
               <div className="live-gps-actions">
-                {isSimulated && (
-                  <button
-                    type="button"
-                    className="chip-button warning"
-                    onClick={onResetRealGps}
-                    title="ยกเลิกการจำลองและกลับสู่ตำแหน่ง GPS จริงของฉัน"
-                  >
-                    <RefreshCw className="inline-icon" /> กลับพิกัดจริง
-                  </button>
-                )}
                 <button type="button" className="chip-button primary" onClick={() => onLocate(false)}>
                   <LocateFixed /> {userLocation?.loading ? "กำลังค้นหา..." : userLocation?.lat ? "อัปเดตพิกัด" : "เปิด GPS ปัจจุบัน"}
                 </button>
               </div>
             </div>
-
-            {isSimulated && (
-              <div className="simulated-location-banner">
-                <span>⚠️ กำลังจำลองพิกัดใน <b>จ.{userLocation.provinceName}</b> เพื่อทดสอบระบบ</span>
-                <button type="button" onClick={onResetRealGps}>กลับพิกัด GPS จริง</button>
-              </div>
-            )}
 
             {userLocation?.lat ? (
               <>
@@ -379,6 +374,42 @@ export default function CitizenView({
                   <b>{province.elevation !== null && province.elevation !== undefined ? `${province.elevation} ม.` : "รอซิงค์"}</b>
                 </span>
               </div>
+              {(() => {
+                const bd = computeRiskBreakdown(province);
+                const isManualOverride = province.dataSource === "manual-authority-update";
+                return (
+                  <div className="explainable-risk-box">
+                    <div className="explainable-risk-head">
+                      <small>องค์ประกอบคะแนนความเสี่ยง (Explainable Risk)</small>
+                      {isManualOverride && (
+                        <span className="manual-override-badge">ปรับระดับโดยเจ้าหน้าที่</span>
+                      )}
+                    </div>
+                    <div className="risk-breakdown-bar" aria-label="สัดส่วนปัจจัยความเสี่ยง">
+                      <span
+                        className="rb-seg rain"
+                        style={{ width: `${Math.min(100, bd.rain)}%` }}
+                        title={`ปริมาณและโอกาสฝน +${bd.rain}%`}
+                      />
+                      <span
+                        className="rb-seg terrain"
+                        style={{ width: `${Math.min(100, bd.terrain)}%` }}
+                        title={`ความลุ่มต่ำพื้นที่ +${bd.terrain}%`}
+                      />
+                      <span
+                        className="rb-seg reports"
+                        style={{ width: `${Math.min(100, bd.reports)}%` }}
+                        title={`รายงานเหตุจริง +${bd.reports}%`}
+                      />
+                    </div>
+                    <div className="risk-breakdown-legend">
+                      <span><i className="rb-dot rain" /> 🌧️ ฝน/โอกาสตก <b>+{bd.rain}%</b></span>
+                      <span><i className="rb-dot terrain" /> ⛰️ พื้นที่ลุ่มต่ำ <b>+{bd.terrain}%</b></span>
+                      <span><i className="rb-dot reports" /> 📋 รายงานจริง <b>+{bd.reports}%</b></span>
+                    </div>
+                  </div>
+                );
+              })()}
               {province.forecast3Day?.length > 0 && (
                 <div className="forecast-3day-strip">
                   <div className="forecast-strip-head">
@@ -388,13 +419,27 @@ export default function CitizenView({
                     </span>
                   </div>
                   <div className="forecast-days-grid">
-                    {province.forecast3Day.map((day) => (
-                      <div key={day.label} className="forecast-day-box">
-                        <span>{day.label}</span>
-                        <b>{day.rainMm} มม.</b>
-                        <small>โอกาสตก {day.prob}%</small>
-                      </div>
-                    ))}
+                    {province.forecast3Day.map((day) => {
+                      const barPct =
+                        day.rainMm > 0
+                          ? Math.min(100, Math.max(12, Math.round((day.rainMm / 60) * 100)))
+                          : Math.min(100, Math.max(6, Math.round((day.prob || 0) * 0.45)));
+                      const barTone =
+                        day.rainMm >= 35 ? "heavy" : day.rainMm >= 10 ? "medium" : "light";
+                      return (
+                        <div key={day.label} className="forecast-day-box">
+                          <span>{day.label}</span>
+                          <b>{day.rainMm} มม.</b>
+                          <div className="forecast-bar-track" aria-hidden="true">
+                            <span
+                              className={`forecast-bar-fill ${barTone}`}
+                              style={{ width: `${barPct}%` }}
+                            />
+                          </div>
+                          <small>โอกาสตก {day.prob}%</small>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               )}
@@ -494,6 +539,42 @@ export default function CitizenView({
                   </div>
 
                   {report.description && <p className="incident-desc">{report.description}</p>}
+
+                  {report.status !== "rejected" && (
+                    <div className="incident-stepper" aria-label="ความคืบหน้าการช่วยเหลือ">
+                      <div className="step-node done">
+                        <span className="step-dot" />
+                        <small>แจ้งเหตุแล้ว</small>
+                      </div>
+                      <span
+                        className={`step-line ${
+                          report.status === "verified" || report.status === "resolved" ? "done" : ""
+                        }`}
+                      />
+                      <div
+                        className={`step-node ${
+                          report.status === "verified" || report.status === "resolved" ? "done" : "pending"
+                        }`}
+                      >
+                        <span className="step-dot" />
+                        <small>รับเรื่อง/ส่งทีมกู้ภัย</small>
+                      </div>
+                      <span className={`step-line ${report.status === "resolved" ? "done" : ""}`} />
+                      <div className={`step-node ${report.status === "resolved" ? "done" : ""}`}>
+                        <span className="step-dot" />
+                        <small>คลี่คลายแล้ว</small>
+                      </div>
+                    </div>
+                  )}
+
+                  {report.authorityNote && (
+                    <div className="authority-note-banner">
+                      <ShieldCheck />
+                      <span>
+                        <b>บันทึกจากศูนย์บัญชาการ:</b> {report.authorityNote}
+                      </span>
+                    </div>
+                  )}
 
                   <div className="incident-footer">
                     <span className={`triage-pill ${triage.priority}`}>

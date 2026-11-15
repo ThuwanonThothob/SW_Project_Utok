@@ -68,6 +68,7 @@ export async function fetchLiveProvinceWeather(provinces = [], reports = []) {
         temperature,
         humidity,
         affected: activeReports,
+        riskBreakdown: { rain: rainComponent, terrain: terrainComponent, reports: reportComponent },
         score: isManual ? province.score : score,
         risk: isManual ? province.risk : risk,
         dataSource: isManual ? province.dataSource : "Open-Meteo Live API",

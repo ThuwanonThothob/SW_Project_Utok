@@ -121,7 +121,9 @@ router.patch("/:id/status", requireAuthority, async (req, res, next) => {
   try {
     const allowed = ["pending", "verified", "resolved", "rejected"];
     if (!allowed.includes(req.body.status)) return res.status(400).json({ message: "สถานะไม่ถูกต้อง" });
-    const report = await updateReportStatus(req.params.id, req.body.status);
+    const authorityNote =
+      req.body.authorityNote !== undefined ? sanitizeText(req.body.authorityNote, 500) : undefined;
+    const report = await updateReportStatus(req.params.id, req.body.status, authorityNote);
     if (!report) return res.status(404).json({ message: "ไม่พบรายงาน" });
     publishEvent("report.updated", report);
     res.json(report);

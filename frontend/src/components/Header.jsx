@@ -103,7 +103,7 @@ export default function Header({
           type="button"
           className="icon-button"
           onClick={onOpenNotifications}
-          title="ศูนย์แจ้งเตือนและทดสอบสัญญาณเตือนภัย"
+          title="ศูนย์การแจ้งเตือนและประกาศเตือนภัยฉุกเฉิน"
           aria-label={`การแจ้งเตือน ${notificationCount} รายการ`}
         >
           <Bell />

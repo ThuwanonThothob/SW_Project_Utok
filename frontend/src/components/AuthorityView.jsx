@@ -30,6 +30,11 @@ import { analyzeIncidentClient } from "../services/aiTriage.js";
 
 const statusLabel = { pending: "รอตรวจสอบ", verified: "ยืนยันแล้ว", resolved: "แก้ไขแล้ว", rejected: "ปฏิเสธ" };
 const riskLabel = { high: "เสี่ยงสูง", medium: "ปานกลาง", low: "เสี่ยงต่ำ" };
+const QUICK_AUTHORITY_NOTES = [
+  "ส่งทีมกู้ภัย ปภ. ลงพื้นที่แล้ว",
+  "ประสานงานเทศบาลเร่งสูบน้ำ",
+  "ตรวจสอบและช่วยเหลือเรียบร้อย",
+];
 
 function relativeTime(value) {
   if (!value) return "ล่าสุด";
@@ -71,6 +76,11 @@ export default function AuthorityView({
   const [provinceQuery, setProvinceQuery] = useState("");
   const [region, setRegion] = useState("all");
   const [previewReport, setPreviewReport] = useState(null);
+  const [noteDrafts, setNoteDrafts] = useState({});
+
+  const getNote = (report) =>
+    noteDrafts[report.id] !== undefined ? noteDrafts[report.id] : report.authorityNote || "";
+  const setNote = (id, value) => setNoteDrafts((prev) => ({ ...prev, [id]: value }));
 
   const enrichedReports = useMemo(
     () =>
@@ -218,7 +228,7 @@ export default function AuthorityView({
               <RefreshCw /> ซิงค์ข้อมูลจริง
             </button>
             <button className="secondary-button" onClick={onOpenNotifications}>
-              <BellRing /> ทดสอบแจ้งเตือน
+              <BellRing /> ศูนย์แจ้งเตือนภัย
             </button>
             <button className="warning-button" onClick={onOpenBroadcast}>
               <RadioTower /> สร้างประกาศเตือนภัย
@@ -354,6 +364,34 @@ export default function AuthorityView({
                     {report.aiTriage?.recommendation && (
                       <small className="gis-ai-rec">💡 {report.aiTriage.recommendation}</small>
                     )}
+                    {report.authorityNote && (
+                      <div className="authority-note-banner compact">
+                        <span>
+                          <b>บันทึกปัจจุบัน:</b> {report.authorityNote}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="authority-note-inline" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="text"
+                      value={getNote(report)}
+                      onChange={(e) => setNote(report.id, e.target.value)}
+                      placeholder="หมายเหตุการสั่งการถึงประชาชน (ไม่บังคับ)..."
+                      aria-label={`บันทึกการดำเนินการ ${report.id}`}
+                    />
+                    <div className="authority-quick-notes">
+                      {QUICK_AUTHORITY_NOTES.map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => setNote(report.id, preset)}
+                        >
+                          + {preset}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {report.photo && (
@@ -376,7 +414,7 @@ export default function AuthorityView({
                       <button
                         type="button"
                         className="action-btn verify"
-                        onClick={() => onModerate(report.id, "verified")}
+                        onClick={() => onModerate(report.id, "verified", getNote(report))}
                         title="ยืนยันเหตุและส่งทีมช่วยเหลือ"
                       >
                         <BadgeCheck /> ยืนยัน
@@ -386,7 +424,7 @@ export default function AuthorityView({
                       <button
                         type="button"
                         className="action-btn resolve"
-                        onClick={() => onModerate(report.id, "resolved")}
+                        onClick={() => onModerate(report.id, "resolved", getNote(report))}
                         title="คลี่คลายแล้ว"
                       >
                         <CheckCheck /> คลี่คลาย
@@ -396,7 +434,7 @@ export default function AuthorityView({
                       <button
                         type="button"
                         className="action-btn reject"
-                        onClick={() => onModerate(report.id, "rejected")}
+                        onClick={() => onModerate(report.id, "rejected", getNote(report))}
                         title="ปฏิเสธรายงาน"
                       >
                         <X /> ปฏิเสธ
@@ -578,16 +616,39 @@ export default function AuthorityView({
                         </td>
                         <td>
                           <span className={`status ${report.status}`}>{statusLabel[report.status]}</span>
+                          {report.authorityNote && (
+                            <small className="table-authority-note">🛡️ {report.authorityNote}</small>
+                          )}
                         </td>
                         <td>
+                          <div className="authority-note-inline table-mode">
+                            <input
+                              type="text"
+                              value={getNote(report)}
+                              onChange={(e) => setNote(report.id, e.target.value)}
+                              placeholder="หมายเหตุสั่งการ..."
+                              aria-label={`หมายเหตุสั่งการ ${report.id}`}
+                            />
+                            <div className="authority-quick-notes">
+                              {QUICK_AUTHORITY_NOTES.map((preset) => (
+                                <button
+                                  key={preset}
+                                  type="button"
+                                  onClick={() => setNote(report.id, preset)}
+                                >
+                                  + {preset}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                           <div className="row-actions">
-                            <button title="ยืนยัน" onClick={() => onModerate(report.id, "verified")}>
+                            <button title="ยืนยัน" onClick={() => onModerate(report.id, "verified", getNote(report))}>
                               <BadgeCheck />
                             </button>
-                            <button title="แก้ไขแล้ว" onClick={() => onModerate(report.id, "resolved")}>
+                            <button title="แก้ไขแล้ว" onClick={() => onModerate(report.id, "resolved", getNote(report))}>
                               <CheckCheck />
                             </button>
-                            <button title="ปฏิเสธ" onClick={() => onModerate(report.id, "rejected")}>
+                            <button title="ปฏิเสธ" onClick={() => onModerate(report.id, "rejected", getNote(report))}>
                               <X />
                             </button>
                             {onDeleteReport && (

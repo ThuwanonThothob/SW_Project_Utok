@@ -15,14 +15,6 @@ const broadcastLimiter = rateLimit({
   message: { message: "คุณสร้างประกาศเตือนภัยถี่เกินไป กรุณารอสักครู่" },
 });
 
-const testNotificationLimiter = rateLimit({
-  windowMs: 5 * 60_000,
-  limit: 30,
-  standardHeaders: "draft-7",
-  legacyHeaders: false,
-  message: { message: "คุณส่งสัญญาณทดสอบถี่เกินไป กรุณารอสักครู่" },
-});
-
 router.get("/", async (_req, res, next) => {
   try {
     res.set("Cache-Control", "public, max-age=10, stale-while-revalidate=30");
@@ -53,32 +45,6 @@ router.delete("/:id", requireAuthority, async (req, res, next) => {
     if (!ok) return res.status(404).json({ message: "ไม่พบประกาศเตือนภัยนี้หรือถูกยกเลิกแล้ว" });
     publishEvent("broadcast.deleted", { id });
     res.json({ success: true, id });
-  } catch (error) { next(error); }
-});
-
-router.post("/test-notification", testNotificationLimiter, async (req, res, next) => {
-  try {
-    const {
-      level = "warning",
-      province = "กรุงเทพมหานคร",
-      headline = "ทดสอบระบบแจ้งเตือนภัยน้ำท่วม (Test Alert)",
-      advisory = "นี่คือการทดสอบส่งสัญญาณแจ้งเตือนแบบ Real-time ไปยังแอปพลิเคชันและเบราว์เซอร์",
-      sender = "ระบบทดสอบการแจ้งเตือน UTOK (อุทก)",
-    } = req.body || {};
-
-    const payload = {
-      id: `TEST-${Date.now().toString().slice(-7)}`,
-      level: ["warning", "red", "evacuation"].includes(level) ? level : "warning",
-      province: sanitizeText(province, 100) || "กรุงเทพมหานคร",
-      headline: sanitizeText(headline, 255) || "ทดสอบระบบแจ้งเตือนภัยน้ำท่วม (Test Alert)",
-      advisory: sanitizeText(advisory, 2000) || "นี่คือการทดสอบส่งสัญญาณแจ้งเตือนแบบ Real-time ไปยังแอปพลิเคชันและเบราว์เซอร์",
-      sender: sanitizeText(sender, 150) || "ระบบทดสอบการแจ้งเตือน UTOK (อุทก)",
-      isTest: true,
-      createdAt: new Date().toISOString(),
-    };
-
-    publishEvent("notification.test", payload);
-    res.status(201).json(payload);
   } catch (error) { next(error); }
 });
 

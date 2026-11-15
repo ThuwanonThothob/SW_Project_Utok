@@ -1,9 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
-import { CloudRain, Crosshair, Eye, Layers, MapPin, Plus, Search, ShieldAlert, Tent, Waves, X } from "lucide-react";
+import { CloudRain, Crosshair, MapPin, Plus, Search, ShieldAlert, Siren, Tent, X } from "lucide-react";
 
 const riskColor = (risk) => (risk === "high" ? "#ef4444" : risk === "medium" ? "#f59e0b" : "#10b981");
 const riskBorder = (risk) => (risk === "high" ? "#dc2626" : risk === "medium" ? "#d97706" : "#059669");
+
+const statusLabelMap = {
+  pending: "รอตรวจสอบ",
+  verified: "ยืนยันแล้ว / ส่งทีมกู้ภัย",
+  resolved: "คลี่คลายแล้ว",
+  rejected: "ปฏิเสธ",
+};
+
+function calcDistanceKm(lat1, lng1, lat2, lng2) {
+  const toRad = (deg) => (deg * Math.PI) / 180;
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 const rainColor = (mm) => {
   const rain = Number(mm || 0);
@@ -55,6 +73,7 @@ export default function FloodMap({
 
   const [mapMode, setMapMode] = useState("risk"); // "risk" | "rain"
   const [showShelters, setShowShelters] = useState(false);
+  const [filterCriticalOnly, setFilterCriticalOnly] = useState(false);
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -289,23 +308,45 @@ export default function FloodMap({
     layer.clearLayers();
     reportMarkersByIdRef.current = {};
     reports
-      .filter((report) => report.status !== "rejected")
+      .filter((report) => {
+        if (report.status === "rejected") return false;
+        if (!filterCriticalOnly) return true;
+        return (
+          report.aiTriage?.priority === "critical" ||
+          report.urgent ||
+          markerClass(report.level) === "critical"
+        );
+      })
       .forEach((report) => {
+        const isCriticalP1 = report.aiTriage?.priority === "critical" || report.urgent;
         const icon = L.divIcon({
           className: "",
-          html: `<span class="custom-marker ${markerClass(report.level)}"></span>`,
+          html: `<span class="custom-marker ${markerClass(report.level)} ${isCriticalP1 ? "p1-pulse" : ""}"></span>`,
           iconSize: [34, 34],
           iconAnchor: [17, 32],
         });
         const upvotesCount = Number(report.upvotes || 0);
-        const marker = L.marker([report.lat, report.lng], { icon, title: `${report.province} ${report.level}` })
+        const triageText = report.aiTriage?.label
+          ? `${escapeHtml(report.aiTriage.label)} (${report.aiTriage.score ?? 0}%)`
+          : isCriticalP1
+            ? "P1 วิกฤตเร่งด่วน"
+            : "เฝ้าระวัง";
+        const statusText = statusLabelMap[report.status] || "รอตรวจสอบ";
+        const noteHtml = report.authorityNote
+          ? `<div class="popup-note">🛡️ เจ้าหน้าที่: ${escapeHtml(report.authorityNote)}</div>`
+          : "";
+        const marker = L.marker([report.lat, report.lng], {
+          icon,
+          title: `${report.province} ${report.level}`,
+          zIndexOffset: isCriticalP1 ? 500 : 100,
+        })
           .bindPopup(
-            `<div class="popup"><small>${escapeHtml(report.id)} · 👍 ยืนยันเหตุจริง ${upvotesCount} คน</small><b>${escapeHtml(report.province)} · ${escapeHtml(report.district)}</b><p>${escapeHtml(report.description)}</p><strong>ระดับน้ำ: ${escapeHtml(report.level)}</strong></div>`,
+            `<div class="popup"><small>${escapeHtml(report.id)} · 👍 ยืนยันเหตุจริง ${upvotesCount} คน</small><b>${escapeHtml(report.province)} · ${escapeHtml(report.district)}</b><div class="popup-badges"><span class="popup-triage ${escapeHtml(report.aiTriage?.priority || (isCriticalP1 ? "critical" : "moderate"))}">${triageText}</span><span class="popup-status ${escapeHtml(report.status || "pending")}">${escapeHtml(statusText)}</span></div><p>${escapeHtml(report.description)}</p><strong>ระดับน้ำ: ${escapeHtml(report.level)}</strong>${noteHtml}</div>`,
           )
           .addTo(layer);
         reportMarkersByIdRef.current[report.id] = marker;
       });
-  }, [reports]);
+  }, [reports, filterCriticalOnly]);
 
   // Fly to focused incident report & open its popup
   useEffect(() => {
@@ -344,8 +385,12 @@ export default function FloodMap({
       targetProvinces.push(provinces[0]);
     }
 
+    const originLat = Number(userLocation?.lat || selectedProvince?.lat || provinces[0]?.lat || 13.736717);
+    const originLng = Number(userLocation?.lng || selectedProvince?.lng || provinces[0]?.lng || 100.523186);
+
+    const allShelters = [];
     targetProvinces.forEach((prov) => {
-      const shelters = [
+      const candidates = [
         {
           name: `ศูนย์ประสานงานช่วยเหลือ / ศาลากลาง จ.${prov.name}`,
           type: "ศูนย์บัญชาการและพักพิงชั่วคราวประจำจังหวัด",
@@ -359,22 +404,60 @@ export default function FloodMap({
           lng: Number(prov.lng) - 0.015,
         },
       ];
-
-      shelters.forEach((shelter) => {
-        const icon = L.divIcon({
-          className: "",
-          html: `<span class="shelter-marker-pin" title="${escapeHtml(shelter.name)}">⛺</span>`,
-          iconSize: [30, 30],
-          iconAnchor: [15, 15],
+      candidates.forEach((shelter) => {
+        allShelters.push({
+          ...shelter,
+          distKm: calcDistanceKm(originLat, originLng, shelter.lat, shelter.lng),
         });
-        L.marker([shelter.lat, shelter.lng], { icon, zIndexOffset: 650 })
-          .bindPopup(
-            `<div class="popup"><small>⛺ จุดพักพิง / พื้นที่ปลอดภัย (DDPM Reference)</small><b>${escapeHtml(shelter.name)}</b><p>${escapeHtml(shelter.type)} · แจ้งขอรถอพยพโทรสายด่วน ปภ. <a href="tel:1784"><b>1784</b></a></p><a href="https://www.google.com/maps/dir/?api=1&destination=${shelter.lat.toFixed(5)},${shelter.lng.toFixed(5)}" target="_blank" rel="noreferrer"><b>📍 นำทางด้วย Google Maps</b></a></div>`,
-          )
-          .addTo(layer);
       });
     });
-  }, [showShelters, selectedProvince, userLocation?.provinceName, provinces]);
+
+    allShelters.sort((a, b) => a.distKm - b.distKm);
+    const nearestShelter = allShelters[0];
+    let routeLine = null;
+    if (nearestShelter) {
+      routeLine = L.polyline(
+        [
+          [originLat, originLng],
+          [nearestShelter.lat, nearestShelter.lng],
+        ],
+        {
+          color: "#059669",
+          weight: 3,
+          dashArray: "6 6",
+          opacity: 0.85,
+        },
+      ).addTo(layer);
+    }
+
+    allShelters.forEach((shelter, idx) => {
+      const icon = L.divIcon({
+        className: "",
+        html: `<span class="shelter-marker-pin ${idx === 0 ? "nearest" : ""}" title="${escapeHtml(shelter.name)}">⛺</span>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+      });
+      const distLabel = `📏 ระยะห่าง: ประมาณ ${shelter.distKm.toFixed(1)} กม.`;
+      const marker = L.marker([shelter.lat, shelter.lng], { icon, zIndexOffset: 650 })
+        .bindTooltip(
+          `<b>${escapeHtml(shelter.name)}</b><br/>${distLabel}${idx === 0 ? " (ใกล้ที่สุด)" : ""}`,
+          { direction: "top", offset: [0, -12] },
+        )
+        .bindPopup(
+          `<div class="popup"><small>⛺ จุดพักพิง / พื้นที่ปลอดภัย (DDPM Reference)${idx === 0 ? " · ใกล้จุดอ้างอิงที่สุด" : ""}</small><b>${escapeHtml(shelter.name)}</b><p>${escapeHtml(shelter.type)} · แจ้งขอรถอพยพโทรสายด่วน ปภ. <a href="tel:1784"><b>1784</b></a></p><strong>${distLabel}</strong><div style="margin-top:6px"><a href="https://www.google.com/maps/dir/?api=1&destination=${shelter.lat.toFixed(5)},${shelter.lng.toFixed(5)}" target="_blank" rel="noreferrer"><b>📍 นำทางด้วย Google Maps</b></a></div></div>`,
+        )
+        .addTo(layer);
+
+      marker.on("click", () => {
+        if (routeLine) {
+          routeLine.setLatLngs([
+            [originLat, originLng],
+            [shelter.lat, shelter.lng],
+          ]);
+        }
+      });
+    });
+  }, [showShelters, selectedProvince, userLocation?.lat, userLocation?.lng, userLocation?.provinceName, provinces]);
 
   // Real-time GPS Location Marker
   useEffect(() => {
@@ -489,6 +572,15 @@ export default function FloodMap({
           title="แสดง/ซ่อนจุดประสานงานพักพิงและพื้นที่สูงปลอดภัย"
         >
           <Tent /> <span>จุดพักพิง</span>
+        </button>
+        <button
+          type="button"
+          className={`map-mode-btn ${filterCriticalOnly ? "critical-active" : ""}`}
+          onClick={() => setFilterCriticalOnly((prev) => !prev)}
+          aria-pressed={filterCriticalOnly}
+          title="กรองแสดงเฉพาะหมุดเหตุการณ์วิกฤตเร่งด่วน (P1 Critical)"
+        >
+          <Siren /> <span>เฉพาะเคส P1</span>
         </button>
       </div>
 

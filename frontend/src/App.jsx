@@ -85,13 +85,6 @@ export default function App() {
     loading: false,
     error: "",
   });
-  const [isSimulated, setIsSimulated] = useState(false);
-  const isSimulatedRef = useRef(false);
-  const realGpsCoordsRef = useRef(null);
-
-  useEffect(() => {
-    isSimulatedRef.current = isSimulated;
-  }, [isSimulated]);
   const [coordinate, setCoordinate] = useState(null);
   const [reportOpen, setReportOpen] = useState(false);
   const [loginOpen, setLoginOpen] = useState(false);
@@ -145,17 +138,10 @@ export default function App() {
   }
 
   const updateFromCoords = useCallback(
-    async (coords, silent = false, fromSimulation = false) => {
+    async (coords, silent = false) => {
       const lat = coords.latitude;
       const lng = coords.longitude;
       const accuracy = Math.round(coords.accuracy || 20);
-
-      if (!fromSimulation) {
-        realGpsCoordsRef.current = { latitude: lat, longitude: lng, accuracy };
-        setIsSimulated(false);
-      } else {
-        setIsSimulated(true);
-      }
 
       setUserLocation((prev) => ({
         ...prev,
@@ -220,7 +206,7 @@ export default function App() {
         }).catch(() => {});
       } else if (!silent) {
         toast(
-          fromSimulation ? `จำลองตำแหน่ง จ.${matched?.name || ""}` : "เชื่อมต่อพิกัดปัจจุบันสำเร็จ",
+          "เชื่อมต่อพิกัดปัจจุบันสำเร็จ",
           liveTelemetry.address || `${lat.toFixed(5)}, ${lng.toFixed(5)}`,
           "success",
         );
@@ -257,12 +243,12 @@ export default function App() {
       // Try High Accuracy first, if timeout try low accuracy (works indoors/without satellites)
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
-          updateFromCoords(coords, silent, false);
+          updateFromCoords(coords, silent);
         },
         () => {
           navigator.geolocation.getCurrentPosition(
             ({ coords }) => {
-              updateFromCoords(coords, silent, false);
+              updateFromCoords(coords, silent);
             },
             (err) => {
               const isDenied = err?.code === 1;
@@ -283,16 +269,6 @@ export default function App() {
     },
     [toast, updateFromCoords],
   );
-
-  const resetToRealGps = useCallback(() => {
-    setIsSimulated(false);
-    if (realGpsCoordsRef.current) {
-      updateFromCoords(realGpsCoordsRef.current, false, false);
-      toast("กลับสู่ตำแหน่งจริงแล้ว", "รีเซ็ตพิกัดกลับสู่พิกัด GPS อุปกรณ์จริงของคุณ", "success");
-    } else {
-      locate(false);
-    }
-  }, [updateFromCoords, locate, toast]);
 
   const loadData = useCallback(
     async (silent = false) => {
@@ -345,8 +321,8 @@ export default function App() {
         setUserLocation((prev) => {
           const moved =
             !prev.lat || Math.hypot(prev.lat - coords.latitude, prev.lng - coords.longitude) > 0.001;
-          if (moved && !isSimulatedRef.current) {
-            updateFromCoords(coords, true, false);
+          if (moved) {
+            updateFromCoords(coords, true);
           }
           return {
             ...prev,
@@ -454,27 +430,6 @@ export default function App() {
         });
       }
     };
-    const onNotificationTest = (event) => {
-      const notif = readPayload(event);
-      if (notif) {
-        setNotifications((items) => [
-          { ...notif, source: `ทดสอบระบบ (${notif.sender || "ผู้ใช้"})` },
-          ...items.filter((item) => item.id !== notif.id),
-        ]);
-        toast(
-          `แจ้งเตือนฉุกเฉิน · ${notif.province}`,
-          `${notif.headline} — ${notif.advisory}`,
-          notif.level === "evacuation" || notif.level === "red" ? "error" : "info",
-        );
-        if (soundEnabledRef.current) playAlertSound(notif.level || "warning");
-        sendSystemNotification({
-          title: `${notif.province} · ${notif.headline}`,
-          body: notif.advisory,
-          tag: notif.id,
-          level: notif.level || "warning",
-        });
-      }
-    };
     const onNewsUpdated = (event) => {
       const payload = readPayload(event);
       if (payload?.items?.length) {
@@ -501,23 +456,11 @@ export default function App() {
     events.addEventListener("province.updated", onProvinceUpdated);
     events.addEventListener("broadcast.created", onBroadcastCreated);
     events.addEventListener("broadcast.deleted", onBroadcastDeleted);
-    events.addEventListener("notification.test", onNotificationTest);
     events.addEventListener("news.updated", onNewsUpdated);
     events.onopen = () => setConnected(true);
     events.onerror = () => setConnected(false);
     return () => events.close();
   }, [toast]);
-
-  const simulateProvince = useCallback(
-    (provinceName) => {
-      const target = provinces.find((p) => p.name === provinceName || p.name.includes(provinceName));
-      if (!target) return;
-      updateFromCoords({ latitude: target.lat, longitude: target.lng, accuracy: 15 }, false, true);
-      setSelectedProvince(target);
-      setCoordinate({ lat: target.lat, lng: target.lng });
-    },
-    [provinces, updateFromCoords],
-  );
 
   const onReportAt = useCallback(
     (point) => {
@@ -674,9 +617,9 @@ export default function App() {
     }
   }
 
-  async function moderate(id, status) {
+  async function moderate(id, status, authorityNote) {
     try {
-      const updated = await api.updateReportStatus(id, status, token);
+      const updated = await api.updateReportStatus(id, status, token, authorityNote);
       setReports((items) => items.map((item) => (item.id === id ? updated : item)));
       toast("อัปเดตรายงานแล้ว", `${id} เปลี่ยนสถานะเรียบร้อย`, "success");
     } catch (error) {
@@ -771,22 +714,6 @@ export default function App() {
     }
   }
 
-  async function sendTestNotification(payload) {
-    setBusy(true);
-    try {
-      await api.testNotification(payload, token);
-    } catch (error) {
-      toast("ส่งสัญญาณทดสอบไม่สำเร็จ", error.message, "error");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  function handleLocalTestNotification(item) {
-    setNotifications((items) => [item, ...items]);
-    toast(`ทดสอบแจ้งเตือนสำเร็จ · ${item.province}`, item.headline, "success");
-  }
-
   const notificationCount = useMemo(
     () => Math.min(99, broadcasts.length + notifications.length),
     [broadcasts.length, notifications.length],
@@ -825,8 +752,6 @@ export default function App() {
           newsBusy={newsBusy}
           selectedProvince={selectedProvince}
           userLocation={userLocation}
-          isSimulated={isSimulated}
-          onResetRealGps={resetToRealGps}
           onSelectProvince={onSelectProvince}
           onReportAt={onReportAt}
           onLocate={locate}
@@ -984,16 +909,15 @@ export default function App() {
       <NotificationModal
         open={notificationOpen}
         user={user}
-        provinces={provinces}
         notifications={notifications}
         broadcasts={broadcasts}
         soundEnabled={soundEnabled}
         onToggleSound={() => setSoundEnabled((prev) => !prev)}
-        onSendTestNotification={sendTestNotification}
-        onLocalTestNotification={handleLocalTestNotification}
-        onSimulateProvince={simulateProvince}
+        onOpenBroadcast={() => {
+          setNotificationOpen(false);
+          setBroadcastOpen(true);
+        }}
         onClose={() => setNotificationOpen(false)}
-        busy={busy}
       />
       <InstallAppModal
         open={installOpen}

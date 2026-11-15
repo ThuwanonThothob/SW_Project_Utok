@@ -113,7 +113,7 @@ export default function LoginModal({ open, intent = "citizen", provinces, onClos
             เข้าสู่ระบบ
           </button>
           <button type="button" className={view === "register" ? "active" : ""} onClick={() => switchView("register")}>
-            สมัครสมาชิกจริง
+            ลงทะเบียนใช้งานจริง
           </button>
         </div>
 
@@ -195,22 +195,25 @@ export default function LoginModal({ open, intent = "citizen", provinces, onClos
           )}
 
           {view === "register" && authority && (
-            <div className="profile-grid">
-              <label>
-                <span>หน่วยงานต้นสังกัด</span>
-                <div className="input-icon">
-                  <Building2 />
-                  <input value={form.agency} onChange={update("agency")} required placeholder="เช่น ปภ. / เทศบาล" />
-                </div>
-              </label>
-              <label>
-                <span>รหัสยืนยันหน่วยงาน</span>
-                <div className="input-icon">
-                  <KeyRound />
-                  <input value={form.authorityCode} onChange={update("authorityCode")} required placeholder="กรอกรหัสยืนยันหน่วยงาน" />
-                </div>
-              </label>
-            </div>
+            <>
+              <div className="profile-grid">
+                <label>
+                  <span>หน่วยงานต้นสังกัด</span>
+                  <div className="input-icon">
+                    <Building2 />
+                    <input value={form.agency} onChange={update("agency")} required placeholder="เช่น ปภ. / เทศบาล" />
+                  </div>
+                </label>
+                <label>
+                  <span>รหัสยืนยันหน่วยงาน</span>
+                  <div className="input-icon">
+                    <KeyRound />
+                    <input value={form.authorityCode} onChange={update("authorityCode")} required placeholder="กรอกรหัสยืนยันหน่วยงาน" />
+                  </div>
+                </label>
+              </div>
+              <small className="auth-hint">รหัสยืนยันหน่วยงานราชการ/ปภ.: <b>1784</b> หรือ <b>SWU-CPE-2026</b></small>
+            </>
           )}
 
           {error && <div className="form-error">{error}</div>}

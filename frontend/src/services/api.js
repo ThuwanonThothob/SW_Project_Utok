@@ -28,11 +28,15 @@ export const api = {
   createReport: (formData, token) => request("/reports", { method: "POST", headers: authHeaders(token, false), body: formData }),
   upvoteReport: (id, token) => request(`/reports/${id}/upvote`, { method: "POST", headers: authHeaders(token) }),
   deleteReport: (id, token) => request(`/reports/${id}`, { method: "DELETE", headers: authHeaders(token, false) }),
-  updateReportStatus: (id, status, token) => request(`/reports/${id}/status`, { method: "PATCH", headers: authHeaders(token), body: JSON.stringify({ status }) }),
+  updateReportStatus: (id, status, token, authorityNote) =>
+    request(`/reports/${id}/status`, {
+      method: "PATCH",
+      headers: authHeaders(token),
+      body: JSON.stringify({ status, ...(authorityNote !== undefined ? { authorityNote } : {}) }),
+    }),
   updateProvince: (id, risk, score, token) => request(`/provinces/${id}/risk`, { method: "PATCH", headers: authHeaders(token), body: JSON.stringify({ risk, score }) }),
   createBroadcast: (payload, token) => request("/broadcasts", { method: "POST", headers: authHeaders(token), body: JSON.stringify(payload) }),
   deleteBroadcast: (id, token) => request(`/broadcasts/${id}`, { method: "DELETE", headers: authHeaders(token, false) }),
-  testNotification: (payload, token) => request("/broadcasts/test-notification", { method: "POST", headers: authHeaders(token), body: JSON.stringify(payload) }),
   aiTriage: (payload) => request("/ai/triage", { method: "POST", headers: authHeaders(null), body: JSON.stringify(payload) }),
   news: () => request("/news"),
   refreshNews: () => request("/news/refresh", { method: "POST", headers: authHeaders(null) }),

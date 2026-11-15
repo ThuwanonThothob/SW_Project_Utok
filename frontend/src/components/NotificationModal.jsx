@@ -1,34 +1,18 @@
-import { Bell, BellRing, CheckCircle2, Navigation, RadioTower, Siren, Volume2, VolumeX, X } from "lucide-react";
+import { Bell, BellRing, CheckCircle2, RadioTower, ShieldCheck, Siren, Volume2, VolumeX, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getNotificationPermission, playAlertSound, requestNotificationPermission, sendSystemNotification } from "../services/notifications.js";
-
-const levelLabels = {
-  warning: "เฝ้าระวัง (Warning)",
-  red: "เตือนภัยวิกฤต (Critical Red)",
-  evacuation: "สั่งอพยพด่วน (Evacuation)",
-};
 
 export default function NotificationModal({
   open,
   user,
-  provinces = [],
   notifications = [],
   broadcasts = [],
   soundEnabled,
   onToggleSound,
-  onSendTestNotification,
-  onLocalTestNotification,
-  onSimulateProvince,
+  onOpenBroadcast,
   onClose,
-  busy,
 }) {
   const [permission, setPermission] = useState(() => getNotificationPermission());
-  const [form, setForm] = useState({
-    level: "red",
-    province: "กรุงเทพมหานคร",
-    headline: "[ทดสอบระบบ] แจ้งเตือนระดับน้ำวิกฤตและฝนตกหนัก",
-    advisory: "ขอให้ประชาชนในพื้นที่ลุ่มต่ำเตรียมยกของขึ้นที่สูง และตรวจสอบเส้นทางอพยพใกล้บ้านทันที",
-  });
 
   useEffect(() => {
     if (!open) return;
@@ -36,8 +20,6 @@ export default function NotificationModal({
   }, [open]);
 
   if (!open) return null;
-
-  const update = (key) => (event) => setForm((prev) => ({ ...prev, [key]: event.target.value }));
 
   async function handleEnablePermission() {
     const next = await requestNotificationPermission();
@@ -50,29 +32,6 @@ export default function NotificationModal({
         level: "warning",
       });
     }
-  }
-
-  async function handleLocalDeviceTest() {
-    playAlertSound(form.level);
-    await sendSystemNotification({
-      title: `${form.province} · ${ form.headline }`,
-      body: form.advisory,
-      level: form.level,
-    });
-    onLocalTestNotification?.({
-      id: `LOCAL-${Date.now()}`,
-      level: form.level,
-      province: form.province,
-      headline: form.headline,
-      advisory: form.advisory,
-      createdAt: new Date().toISOString(),
-      source: "อุปกรณ์นี้ (Local Test)",
-    });
-  }
-
-  async function handleRealtimeBroadcastTest(event) {
-    event.preventDefault();
-    await onSendTestNotification?.(form);
   }
 
   const permissionText =
@@ -107,9 +66,9 @@ export default function NotificationModal({
         <span className="modal-icon orange">
           <BellRing />
         </span>
-        <span className="eyebrow">Notification Center & Test Lab</span>
-        <h2>ศูนย์แจ้งเตือนและทดสอบสัญญาณเตือนภัย</h2>
-        <p>ตั้งค่าการแจ้งเตือนบนมือถือ/คอมพิวเตอร์ และจำลองการยิงแจ้งเตือนฉุกเฉินพร้อมเสียงไซเรนแบบ Real-time</p>
+        <span className="eyebrow">Real-time Emergency Notification Center</span>
+        <h2>ศูนย์การแจ้งเตือนและประกาศเตือนภัยฉุกเฉิน</h2>
+        <p>ตั้งค่าการรับแจ้งเตือนภัยน้ำท่วมบนอุปกรณ์นี้ และติดตามประกาศฉุกเฉินจากศูนย์บัญชาการ ปภ. แบบ Real-time</p>
 
         <div className="notif-status-bar">
           <div>
@@ -129,115 +88,30 @@ export default function NotificationModal({
           </div>
         </div>
 
-        {user?.role === "authority" && (
-          <>
-            <form onSubmit={handleRealtimeBroadcastTest} className="form-stack notif-lab-box">
-              <div className="notif-lab-head">
-                <span>
-                  <Siren /> <b>ศูนย์ทดสอบการแจ้งเตือน (Notification Test Lab · เจ้าหน้าที่)</b>
-                </span>
-                <small>ทดสอบได้ทันทีใน 1 คลิก</small>
-              </div>
-
-              <div className="profile-grid">
-                <label>
-                  <span>ระดับความรุนแรง</span>
-                  <select value={form.level} onChange={update("level")}>
-                    {Object.entries(levelLabels).map(([key, label]) => (
-                      <option key={key} value={key}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
-                  <span>พื้นที่เป้าหมาย</span>
-                  <select value={form.province} onChange={update("province")}>
-                    <option value="ทุกพื้นที่ทั่วประเทศ">ทุกพื้นที่ทั่วประเทศ</option>
-                    {provinces.map((item) => (
-                      <option key={item.id} value={item.name}>
-                        {item.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              <label>
-                <span>หัวข้อแจ้งเตือน (Headline)</span>
-                <input value={form.headline} onChange={update("headline")} required />
-              </label>
-
-              <label>
-                <span>รายละเอียดคำแนะนำ (Advisory)</span>
-                <textarea rows="2" value={form.advisory} onChange={update("advisory")} required />
-              </label>
-
-              <div className="notif-test-buttons">
-                <button type="button" className="primary-button" onClick={handleLocalDeviceTest}>
-                  <Volume2 /> ทดสอบแจ้งเตือน + เสียงบนอุปกรณ์นี้ทันที
-                </button>
-                <button type="submit" className="primary-button orange" disabled={busy}>
-                  <RadioTower /> {busy ? "กำลังส่งสัญญาณ..." : "ยิงทดสอบ Real-time ไปยังทุกเครื่อง (SSE Broadcast Test)"}
-                </button>
-              </div>
-            </form>
-
-            <div className="geofence-test-box">
-              <div className="notif-lab-head">
-                <span>
-                  <Navigation /> <b>ทดสอบแจ้งเตือนเมื่อเดินทางเข้า/ผ่านจังหวัด (Geofence Simulation)</b>
-                </span>
-                <small>ระบบป้องกันรายงานเท็จ</small>
-              </div>
-              <p className="geofence-test-desc">
-                เมื่อผู้ใช้เดินทางเข้าหรือข้ามเขตจังหวัด ระบบจะส่งเสียงไซเรนแจ้งเตือนระดับความเสี่ยงของจังหวัดนั้น และเปิดสิทธิ์การส่งรายงานเหตุน้ำท่วมเฉพาะในจังหวัดที่ท่านอยู่จริง
-              </p>
-              <div className="geofence-btn-group">
-                <button
-                  type="button"
-                  className="chip-button"
-                  onClick={() => {
-                    onSimulateProvince?.("อุบลราชธานี");
-                    onClose();
-                  }}
-                >
-                  📍 จำลองเข้า จ.อุบลราชธานี
-                </button>
-                <button
-                  type="button"
-                  className="chip-button"
-                  onClick={() => {
-                    onSimulateProvince?.("เชียงใหม่");
-                    onClose();
-                  }}
-                >
-                  📍 จำลองเข้า จ.เชียงใหม่
-                </button>
-                <button
-                  type="button"
-                  className="chip-button"
-                  onClick={() => {
-                    onSimulateProvince?.("สงขลา");
-                    onClose();
-                  }}
-                >
-                  📍 จำลองเข้า จ.สงขลา
-                </button>
-                <button
-                  type="button"
-                  className="chip-button"
-                  onClick={() => {
-                    onSimulateProvince?.("กรุงเทพมหานคร");
-                    onClose();
-                  }}
-                >
-                  📍 จำลองเข้า กรุงเทพมหานคร
-                </button>
-              </div>
+        <div className="notif-lab-box">
+          <div className="notif-lab-head">
+            <span>
+              <ShieldCheck /> <b>ระบบแจ้งเตือนอัตโนมัติตามพิกัด GPS และประกาศจากเจ้าหน้าที่</b>
+            </span>
+          </div>
+          <p className="geofence-test-desc">
+            ระบบจะแจ้งเตือนพร้อมเสียงไซเรนอัตโนมัติเมื่อตรวจพบพื้นที่เสี่ยงน้ำท่วมในจังหวัดที่คุณอยู่ หรือเมื่อศูนย์บัญชาการ ปภ. ออกประกาศเตือนภัยฉุกเฉินแบบ Real-time
+          </p>
+          {user?.role === "authority" && onOpenBroadcast && (
+            <div className="notif-test-buttons">
+              <button
+                type="button"
+                className="primary-button orange"
+                onClick={() => {
+                  onClose();
+                  onOpenBroadcast();
+                }}
+              >
+                <RadioTower /> ออกประกาศเตือนภัยฉุกเฉินถึงประชาชน
+              </button>
             </div>
-          </>
-        )}
+          )}
+        </div>
 
         <div className="notif-feed-section">
           <div className="card-head">
@@ -247,20 +121,24 @@ export default function NotificationModal({
             </div>
           </div>
           <div className="notif-feed-list">
-            {combinedFeed.map((item) => (
-              <article key={item.id} className={`notif-feed-item ${item.level || "warning"}`}>
-                <span className="notif-badge-icon">
-                  {item.level === "evacuation" || item.level === "red" ? <Siren /> : <CheckCircle2 />}
-                </span>
-                <div>
-                  <small>
-                    {item.province} · {item.source || "Real-time Alert"}
-                  </small>
-                  <b>{item.headline}</b>
-                  <p>{item.advisory}</p>
-                </div>
-              </article>
-            ))}
+            {combinedFeed.length === 0 ? (
+              <p className="empty-state">ยังไม่มีประกาศเตือนภัยฉุกเฉินในขณะนี้</p>
+            ) : (
+              combinedFeed.map((item) => (
+                <article key={item.id} className={`notif-feed-item ${item.level || "warning"}`}>
+                  <span className="notif-badge-icon">
+                    {item.level === "evacuation" || item.level === "red" ? <Siren /> : <CheckCircle2 />}
+                  </span>
+                  <div>
+                    <small>
+                      {item.province} · {item.source || "Real-time Alert"}
+                    </small>
+                    <b>{item.headline}</b>
+                    <p>{item.advisory}</p>
+                  </div>
+                </article>
+              ))
+            )}
           </div>
         </div>
       </section>
