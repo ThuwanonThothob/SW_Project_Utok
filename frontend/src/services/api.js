@@ -26,6 +26,7 @@ export const api = {
   updateProfile: (payload, token) => request("/auth/profile", { method: "PATCH", headers: authHeaders(token), body: JSON.stringify(payload) }),
   myReports: (token) => request("/auth/my-reports", { headers: authHeaders(token, false) }),
   createReport: (formData, token) => request("/reports", { method: "POST", headers: authHeaders(token, false), body: formData }),
+  upvoteReport: (id, token) => request(`/reports/${id}/upvote`, { method: "POST", headers: authHeaders(token) }),
   deleteReport: (id, token) => request(`/reports/${id}`, { method: "DELETE", headers: authHeaders(token, false) }),
   updateReportStatus: (id, status, token) => request(`/reports/${id}/status`, { method: "PATCH", headers: authHeaders(token), body: JSON.stringify({ status }) }),
   updateProvince: (id, risk, score, token) => request(`/provinces/${id}/risk`, { method: "PATCH", headers: authHeaders(token), body: JSON.stringify({ risk, score }) }),

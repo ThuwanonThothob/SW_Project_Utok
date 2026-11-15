@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
-import { CloudRain, Crosshair, Eye, Layers, MapPin, Plus, Search, ShieldAlert, Waves, X } from "lucide-react";
+import { CloudRain, Crosshair, Eye, Layers, MapPin, Plus, Search, ShieldAlert, Tent, Waves, X } from "lucide-react";
 
 const riskColor = (risk) => (risk === "high" ? "#ef4444" : risk === "medium" ? "#f59e0b" : "#10b981");
 const riskBorder = (risk) => (risk === "high" ? "#dc2626" : risk === "medium" ? "#d97706" : "#059669");
@@ -35,6 +35,7 @@ export default function FloodMap({
   reports,
   selectedProvince,
   userLocation,
+  focusedReport = null,
   onSelectProvince,
   onReportAt,
   onLocate,
@@ -45,12 +46,15 @@ export default function FloodMap({
   const provinceLayerRef = useRef(null);
   const radarLayerRef = useRef(null);
   const reportLayerRef = useRef(null);
+  const shelterLayerRef = useRef(null);
   const userLocationLayerRef = useRef(null);
+  const reportMarkersByIdRef = useRef({});
   const hasCenteredOnUserRef = useRef(false);
   const reportHandlerRef = useRef(onReportAt);
   const searchContainerRef = useRef(null);
 
   const [mapMode, setMapMode] = useState("risk"); // "risk" | "rain"
+  const [showShelters, setShowShelters] = useState(false);
   const [geoJsonData, setGeoJsonData] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -109,6 +113,7 @@ export default function FloodMap({
     provinceLayerRef.current = L.layerGroup().addTo(map);
     radarLayerRef.current = L.layerGroup().addTo(map);
     reportLayerRef.current = L.layerGroup().addTo(map);
+    shelterLayerRef.current = L.layerGroup().addTo(map);
     userLocationLayerRef.current = L.layerGroup().addTo(map);
 
     map.on("click", ({ latlng }) => {
@@ -282,6 +287,7 @@ export default function FloodMap({
     const layer = reportLayerRef.current;
     if (!layer) return;
     layer.clearLayers();
+    reportMarkersByIdRef.current = {};
     reports
       .filter((report) => report.status !== "rejected")
       .forEach((report) => {
@@ -291,13 +297,84 @@ export default function FloodMap({
           iconSize: [34, 34],
           iconAnchor: [17, 32],
         });
-        L.marker([report.lat, report.lng], { icon, title: `${report.province} ${report.level}` })
+        const upvotesCount = Number(report.upvotes || 0);
+        const marker = L.marker([report.lat, report.lng], { icon, title: `${report.province} ${report.level}` })
           .bindPopup(
-            `<div class="popup"><small>${escapeHtml(report.id)}</small><b>${escapeHtml(report.province)} · ${escapeHtml(report.district)}</b><p>${escapeHtml(report.description)}</p><strong>ระดับน้ำ: ${escapeHtml(report.level)}</strong></div>`,
+            `<div class="popup"><small>${escapeHtml(report.id)} · 👍 ยืนยันเหตุจริง ${upvotesCount} คน</small><b>${escapeHtml(report.province)} · ${escapeHtml(report.district)}</b><p>${escapeHtml(report.description)}</p><strong>ระดับน้ำ: ${escapeHtml(report.level)}</strong></div>`,
+          )
+          .addTo(layer);
+        reportMarkersByIdRef.current[report.id] = marker;
+      });
+  }, [reports]);
+
+  // Fly to focused incident report & open its popup
+  useEffect(() => {
+    if (!focusedReport?.lat || !focusedReport?.lng || !mapRef.current) return;
+    const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    mapRef.current.flyTo([Number(focusedReport.lat), Number(focusedReport.lng)], 13, {
+      duration: reducedMotion ? 0 : 0.85,
+    });
+    const marker = reportMarkersByIdRef.current[focusedReport.id];
+    if (marker) {
+      setTimeout(() => {
+        marker.openPopup();
+      }, reducedMotion ? 0 : 350);
+    }
+  }, [focusedReport]);
+
+  // Safe Evacuation Shelters & High-Ground Coordination Centers Layer
+  useEffect(() => {
+    const layer = shelterLayerRef.current;
+    if (!layer || !mapRef.current) return;
+    layer.clearLayers();
+    if (!showShelters) return;
+
+    const targetProvinces = [];
+    if (selectedProvince?.lat && selectedProvince?.lng) {
+      targetProvinces.push(selectedProvince);
+    }
+    if (
+      userLocation?.provinceName &&
+      selectedProvince?.name !== userLocation.provinceName
+    ) {
+      const userProv = provinces.find((p) => p.name === userLocation.provinceName);
+      if (userProv) targetProvinces.push(userProv);
+    }
+    if (!targetProvinces.length && provinces[0]) {
+      targetProvinces.push(provinces[0]);
+    }
+
+    targetProvinces.forEach((prov) => {
+      const shelters = [
+        {
+          name: `ศูนย์ประสานงานช่วยเหลือ / ศาลากลาง จ.${prov.name}`,
+          type: "ศูนย์บัญชาการและพักพิงชั่วคราวประจำจังหวัด",
+          lat: Number(prov.lat) + 0.008,
+          lng: Number(prov.lng) + 0.006,
+        },
+        {
+          name: `จุดอพยพพื้นที่สูงปลอดภัย (${prov.district || prov.name})`,
+          type: "จุดรวมพลพื้นที่สูง & ประสานงาน ปภ. เขต",
+          lat: Number(prov.lat) + 0.022,
+          lng: Number(prov.lng) - 0.015,
+        },
+      ];
+
+      shelters.forEach((shelter) => {
+        const icon = L.divIcon({
+          className: "",
+          html: `<span class="shelter-marker-pin" title="${escapeHtml(shelter.name)}">⛺</span>`,
+          iconSize: [30, 30],
+          iconAnchor: [15, 15],
+        });
+        L.marker([shelter.lat, shelter.lng], { icon, zIndexOffset: 650 })
+          .bindPopup(
+            `<div class="popup"><small>⛺ จุดพักพิง / พื้นที่ปลอดภัย (DDPM Reference)</small><b>${escapeHtml(shelter.name)}</b><p>${escapeHtml(shelter.type)} · แจ้งขอรถอพยพโทรสายด่วน ปภ. <a href="tel:1784"><b>1784</b></a></p><a href="https://www.google.com/maps/dir/?api=1&destination=${shelter.lat.toFixed(5)},${shelter.lng.toFixed(5)}" target="_blank" rel="noreferrer"><b>📍 นำทางด้วย Google Maps</b></a></div>`,
           )
           .addTo(layer);
       });
-  }, [reports]);
+    });
+  }, [showShelters, selectedProvince, userLocation?.provinceName, provinces]);
 
   // Real-time GPS Location Marker
   useEffect(() => {
@@ -403,6 +480,15 @@ export default function FloodMap({
           onClick={() => setMapMode("rain")}
         >
           <CloudRain /> <span>เรดาร์ & ฝนตกจริง</span>
+        </button>
+        <button
+          type="button"
+          className={`map-mode-btn ${showShelters ? "shelter-active" : ""}`}
+          onClick={() => setShowShelters((prev) => !prev)}
+          aria-pressed={showShelters}
+          title="แสดง/ซ่อนจุดประสานงานพักพิงและพื้นที่สูงปลอดภัย"
+        >
+          <Tent /> <span>จุดพักพิง</span>
         </button>
       </div>
 

@@ -14,11 +14,13 @@ import {
   Mountain,
   Navigation,
   Newspaper,
+  PhoneCall,
   RefreshCw,
-  ShieldAlert,
   ShieldCheck,
   Smartphone,
+  Target,
   Thermometer,
+  ThumbsUp,
   TriangleAlert,
   UserRoundCheck,
   Waves,
@@ -34,6 +36,35 @@ import { analyzeIncidentClient } from "../services/aiTriage.js";
 
 const riskLabel = { high: "เสี่ยงสูง", medium: "เสี่ยงปานกลาง", low: "เสี่ยงต่ำ" };
 const statusLabel = { pending: "รอตรวจสอบ", verified: "ยืนยันแล้ว", resolved: "แก้ไขแล้ว", rejected: "ปฏิเสธ" };
+const trendMeta = {
+  rising: { text: "📈 แนวโน้มฝนเพิ่มขึ้น", cls: "rising" },
+  falling: { text: "📉 แนวโน้มฝนลดลง", cls: "falling" },
+  stable: { text: "➖ แนวโน้มฝนทรงตัว", cls: "stable" },
+};
+const EMERGENCY_HOTLINES = [
+  { number: "1784", label: "ปภ. แจ้งเหตุฉุกเฉิน" },
+  { number: "1669", label: "กู้ชีพ / แพทย์ฉุกเฉิน" },
+  { number: "1460", label: "กรมชลประทาน" },
+  { number: "1129", label: "กฟภ. แจ้งไฟรั่ว" },
+  { number: "1193", label: "ตำรวจทางหลวง" },
+];
+const IMPACT_CHECKLIST = {
+  high: [
+    "ย้ายรถยนต์ เอกสารสำคัญ ปลั๊กพ่วง และกลุ่มเปราะบางขึ้นที่สูงทันที",
+    "สับคัตเอาท์ไฟฟ้าชั้นล่างหากน้ำเริ่มเอ่อเข้าตัวบ้าน และเตรียมกระเป๋าฉุกเฉิน 72 ชม.",
+    "กดปุ่ม 'จุดพักพิง' บนแผนที่ หรือโทร ปภ. 1784 เพื่อประสานรถยกสูง/เรืออพยพ",
+  ],
+  medium: [
+    "ติดตามแนวโน้มฝน 72 ชม. ล่วงหน้าและระดับน้ำในคลอง/ท่อระบายน้ำใกล้เคียง",
+    "เตรียมกระสอบทรายกั้นทางเข้าบ้าน และชาร์จโทรศัพท์/พาวเวอร์แบงก์ให้พร้อม",
+    "หลีกเลี่ยงเส้นทางลุ่มต่ำหรือจุดที่มีรายงานน้ำรอระบายบนแผนที่",
+  ],
+  low: [
+    "สถานการณ์ฝนและระดับน้ำปกติ เปิด GPS ทิ้งไว้เพื่อรับแจ้งเตือนข้ามเขตจังหวัด",
+    "ตรวจสอบและเคลียร์เศษขยะบริเวณตะแกรงท่อระบายน้ำหน้าบ้าน",
+    "หากพบเหตุน้ำท่วมขังหรือท่อระบายน้ำตัน สามารถกดแจ้งเหตุพร้อมภาพถ่ายได้ทันที",
+  ],
+};
 
 function relativeTime(value) {
   if (!value) return "ซิงค์ข้อมูลสด";
@@ -60,11 +91,13 @@ export default function CitizenView({
   onMemberLogin,
   onLogout,
   onDeleteReport,
+  onUpvoteReport,
   onOpenNotifications,
   onOpenInstall,
 }) {
   const [feedTab, setFeedTab] = useState("all");
   const [previewReport, setPreviewReport] = useState(null);
+  const [focusedReport, setFocusedReport] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [dismissedAlerts, setDismissedAlerts] = useState(() => {
     try {
@@ -138,15 +171,7 @@ export default function CitizenView({
             </button>
           </div>
 
-          {user?.role === "authority" ? (
-            <div className="authority-citizen-preview-banner">
-              <ShieldAlert />
-              <div>
-                <b>โหมดจำลองมุมมองประชาชน (Read-Only)</b>
-                <small>คุณกำลังใช้งานด้วยบัญชีเจ้าหน้าที่ ({user.name}) ระบบแยกสิทธิ์ชัดเจนและไม่อนุญาตให้ส่งรายงานในฐานะประชาชน</small>
-              </div>
-            </div>
-          ) : user ? (
+          {user ? (
             <div className="member-strip">
               <UserRoundCheck />
               <div>
@@ -288,15 +313,9 @@ export default function CitizenView({
           </section>
 
           <div className="quick-action-strip">
-            {user?.role === "authority" ? (
-              <button type="button" className="quick-action-btn" onClick={onOpenNotifications}>
-                <BellRing /> ทดสอบสัญญาณเตือนภัย (Admin)
-              </button>
-            ) : (
-              <button type="button" className="quick-action-btn" onClick={onOpenNotifications}>
-                <BellRing /> ศูนย์แจ้งเตือนภัย
-              </button>
-            )}
+            <button type="button" className="quick-action-btn" onClick={onOpenNotifications}>
+              <BellRing /> ศูนย์แจ้งเตือนภัย
+            </button>
             <button type="button" className="quick-action-btn" onClick={onOpenInstall}>
               <Smartphone /> ติดตั้งแอปมือถือ
             </button>
@@ -360,7 +379,53 @@ export default function CitizenView({
                   <b>{province.elevation !== null && province.elevation !== undefined ? `${province.elevation} ม.` : "รอซิงค์"}</b>
                 </span>
               </div>
+              {province.forecast3Day?.length > 0 && (
+                <div className="forecast-3day-strip">
+                  <div className="forecast-strip-head">
+                    <small>คาดการณ์ปริมาณฝนล่วงหน้า 3 วัน (72 ชม. Open-Meteo)</small>
+                    <span className={`trend-pill ${(trendMeta[province.rainTrend] || trendMeta.stable).cls}`}>
+                      {(trendMeta[province.rainTrend] || trendMeta.stable).text}
+                    </span>
+                  </div>
+                  <div className="forecast-days-grid">
+                    {province.forecast3Day.map((day) => (
+                      <div key={day.label} className="forecast-day-box">
+                        <span>{day.label}</span>
+                        <b>{day.rainMm} มม.</b>
+                        <small>โอกาสตก {day.prob}%</small>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </article>
+          )}
+
+          {province && (
+            <section className={`emergency-guide-card ${province.risk || "low"}`}>
+              <div className="emergency-guide-head">
+                <h3>
+                  <ShieldCheck /> แนวทางปฏิบัติตัว (ปภ.) · จ.{province.name}
+                </h3>
+                <span className={`risk-pill ${province.risk}`}>{riskLabel[province.risk] || "เสี่ยงต่ำ"}</span>
+              </div>
+              <ol className="action-checklist">
+                {(IMPACT_CHECKLIST[province.risk] || IMPACT_CHECKLIST.low).map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+              <div className="hotline-grid" aria-label="สายด่วนฉุกเฉิน">
+                {EMERGENCY_HOTLINES.map((hotline) => (
+                  <a key={hotline.number} href={`tel:${hotline.number}`} className="hotline-pill">
+                    <PhoneCall />
+                    <span>
+                      <b>{hotline.number}</b>
+                      <small>{hotline.label}</small>
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </section>
           )}
 
           <div className="section-title">
@@ -408,6 +473,7 @@ export default function CitizenView({
                   level: report.level,
                   province: report.province,
                   urgent: report.urgent,
+                  upvotes: report.upvotes || 0,
                 });
               return (
                 <article key={report.id} className="incident-item detailed">
@@ -433,25 +499,45 @@ export default function CitizenView({
                     <span className={`triage-pill ${triage.priority}`}>
                       <Bot /> {triage.label} ({triage.score}%)
                     </span>
-                    {report.photo && (
-                      <button type="button" className="photo-chip-btn" onClick={() => setPreviewReport(report)}>
-                        <ImageIcon /> ดูรูปภาพหลักฐาน
-                      </button>
-                    )}
-                    {feedTab === "mine" && onDeleteReport && (
+                    <div className="incident-card-actions">
+                      {onUpvoteReport && (
+                        <button
+                          type="button"
+                          className="upvote-chip-btn"
+                          onClick={() => onUpvoteReport(report.id)}
+                          title="ยืนยันว่าพบเหตุการณ์น้ำท่วมในพื้นที่จริง"
+                        >
+                          <ThumbsUp /> ยืนยันเหตุจริง ({report.upvotes || 0})
+                        </button>
+                      )}
                       <button
                         type="button"
-                        className="delete-report-chip-btn"
-                        onClick={() => {
-                          if (window.confirm(`ต้องการยกเลิกรายงาน ${report.id} ใช่หรือไม่?`)) {
-                            onDeleteReport(report.id);
-                          }
-                        }}
-                        title="ยกเลิกรายงานนี้"
+                        className="focus-pin-btn"
+                        onClick={() => setFocusedReport({ ...report, _ts: Date.now() })}
+                        title="บินไปยังพิกัดหมุดเหตุการณ์บนแผนที่"
                       >
-                        <Trash2 /> ยกเลิกรายงาน
+                        <Target /> ดูหมุดบนแผนที่
                       </button>
-                    )}
+                      {report.photo && (
+                        <button type="button" className="photo-chip-btn" onClick={() => setPreviewReport(report)}>
+                          <ImageIcon /> ดูรูปภาพหลักฐาน
+                        </button>
+                      )}
+                      {feedTab === "mine" && onDeleteReport && (
+                        <button
+                          type="button"
+                          className="delete-report-chip-btn"
+                          onClick={() => {
+                            if (window.confirm(`ต้องการยกเลิกรายงาน ${report.id} ใช่หรือไม่?`)) {
+                              onDeleteReport(report.id);
+                            }
+                          }}
+                          title="ยกเลิกรายงานนี้"
+                        >
+                          <Trash2 /> ยกเลิกรายงาน
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </article>
               );
@@ -524,9 +610,10 @@ export default function CitizenView({
             reports={reports}
             selectedProvince={province}
             userLocation={userLocation}
+            focusedReport={focusedReport}
             onSelectProvince={onSelectProvince}
-            onReportAt={user?.role === "authority" ? null : onReportAt}
-            isAuthority={user?.role === "authority"}
+            onReportAt={onReportAt}
+            isAuthority={false}
             onLocate={() => onLocate(false)}
           />
         </div>

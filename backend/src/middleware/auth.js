@@ -18,6 +18,17 @@ export function requireAuth(req, res, next) {
   }
 }
 
+export function optionalAuth(req, _res, next) {
+  const token = req.headers.authorization?.replace(/^Bearer\s+/i, "");
+  if (!token) return next();
+  try {
+    req.user = jwt.verify(token, secret(), { algorithms: ["HS256"], issuer: "thaiflood-api" });
+  } catch {
+    req.user = null;
+  }
+  return next();
+}
+
 export function requireAuthority(req, res, next) {
   return requireAuth(req, res, () => {
     if (req.user.role !== "authority") return res.status(403).json({ message: "สงวนสิทธิ์สำหรับเจ้าหน้าที่" });

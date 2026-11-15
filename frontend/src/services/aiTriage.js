@@ -4,10 +4,17 @@ export function analyzeIncidentClient({
   province = "",
   urgent = false,
   provinceScore = 50,
+  upvotes = 0,
 } = {}) {
   const text = `${description} ${level} ${province}`.toLowerCase();
   const tags = [];
-  let score = 20;
+  const upvoteCount = Math.max(0, Number(upvotes || 0));
+  const corroborationBoost = Math.min(10, upvoteCount * 3);
+  let score = 20 + corroborationBoost;
+
+  if (upvoteCount > 0) {
+    tags.push(`ยืนยันซ้ำจากชุมชน (${upvoteCount} คน)`);
+  }
 
   if (level.includes("มากกว่า 100") || level.includes("> 100")) {
     score += 34;
@@ -93,12 +100,18 @@ export function analyzeIncidentClient({
     tags.push("รายงานสถานการณ์น้ำท่วมทั่วไป");
   }
 
+  const confidence = Math.min(
+    99,
+    86 + Math.min(8, tags.length * 2) + Math.min(8, upvoteCount * 2)
+  );
+
   return {
     score: finalScore,
     priority,
     label,
     tags,
     recommendation,
+    confidence,
     model: "UTOK-AI-Triage-v2",
   };
 }

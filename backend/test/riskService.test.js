@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { calculateRiskScore, normalizeRiskLevel } from "../src/services/riskService.js";
 import { analyzeIncidentTriage } from "../src/services/aiTriageService.js";
 import { getFloodNews } from "../src/services/newsAgentService.js";
-import { createReport, listReports } from "../src/data/repository.js";
+import { createReport, listReports, upvoteReport } from "../src/data/repository.js";
 
 test("normalizeRiskLevel separates low, medium, and high risk", () => {
   assert.equal(normalizeRiskLevel(20), "low");
@@ -65,4 +65,37 @@ test("getFloodNews returns live-only Flood News & Intelligence Agent without fak
   for (const item of feed.items) {
     assert.equal(item.isLiveRss, true);
   }
+});
+
+test("upvoteReport increments community corroboration, blocks duplicate voterKey, and boosts AI Triage confidence", async () => {
+  const created = await createReport({
+    province: "พระนครศรีอยุธยา",
+    district: "อ.พระนครศรีอยุธยา",
+    reporter: "ประชาชนในพื้นที่",
+    level: "30–50 ซม.",
+    description: "น้ำท่วมถนนทางเข้าชุมชน",
+    urgent: false,
+    lat: 14.3532,
+    lng: 100.5689,
+  });
+  assert.equal(created.upvotes, 0);
+  const initialScore = created.aiTriage.score;
+  const initialConfidence = created.aiTriage.confidence;
+
+  const afterFirstVote = await upvoteReport(created.id, "user:1");
+  assert.equal(afterFirstVote.upvotes, 1);
+  assert.ok(afterFirstVote.aiTriage.score > initialScore);
+  assert.ok(afterFirstVote.aiTriage.confidence >= initialConfidence);
+  assert.ok(afterFirstVote.aiTriage.tags.some((t) => t.includes("ยืนยันซ้ำจากชุมชน")));
+
+  // Duplicate vote from the same voterKey should not increment again
+  const afterDuplicateVote = await upvoteReport(created.id, "user:1");
+  assert.equal(afterDuplicateVote.upvotes, 1);
+
+  // Vote from a second distinct voter should increment to 2
+  const afterSecondVote = await upvoteReport(created.id, "user:2");
+  assert.equal(afterSecondVote.upvotes, 2);
+  assert.ok(afterSecondVote.aiTriage.score >= afterFirstVote.aiTriage.score);
+  assert.ok(afterSecondVote.aiTriage.confidence >= afterFirstVote.aiTriage.confidence);
+  assert.equal("upvotedBy" in afterSecondVote, false);
 });

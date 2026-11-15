@@ -1,9 +1,22 @@
+function build3DayForecast(daily, fallbackRain = 0, fallbackProb = 0) {
+  const dayLabels = ["วันนี้", "พรุ่งนี้", "มะรืนนี้"];
+  const forecast3Day = [0, 1, 2].map((dIdx) => ({
+    label: dayLabels[dIdx],
+    rainMm: Math.round(Number(daily?.precipitation_sum?.[dIdx] ?? (dIdx === 0 ? fallbackRain : 0)) * 10) / 10,
+    prob: Math.round(Number(daily?.precipitation_probability_max?.[dIdx] ?? (dIdx === 0 ? fallbackProb : 0))),
+  }));
+  const day0Rain = forecast3Day[0]?.rainMm || 0;
+  const day1Rain = forecast3Day[1]?.rainMm || 0;
+  const rainTrend = day1Rain > day0Rain + 5 ? "rising" : day1Rain + 5 < day0Rain ? "falling" : "stable";
+  return { forecast3Day, rainTrend };
+}
+
 export async function fetchLiveProvinceWeather(provinces = [], reports = []) {
   if (!Array.isArray(provinces) || !provinces.length) return provinces;
   try {
     const lats = provinces.map((p) => p.lat.toFixed(4)).join(",");
     const lngs = provinces.map((p) => p.lng.toFixed(4)).join(",");
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lngs}&current=precipitation,rain,temperature_2m,relative_humidity_2m,weather_code&daily=precipitation_sum,precipitation_probability_max&timezone=Asia%2FBangkok&forecast_days=1`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lats}&longitude=${lngs}&current=precipitation,rain,temperature_2m,relative_humidity_2m,weather_code&daily=precipitation_sum,precipitation_probability_max&timezone=Asia%2FBangkok&forecast_days=3`;
     const response = await fetch(url);
     if (!response.ok) return provinces;
     const payload = await response.json();
@@ -43,11 +56,14 @@ export async function fetchLiveProvinceWeather(provinces = [], reports = []) {
       const risk = score >= 75 ? "high" : score >= 45 ? "medium" : "low";
 
       const isManual = province.dataSource === "manual-authority-update";
+      const { forecast3Day, rainTrend } = build3DayForecast(data.daily, dailyRain, rainProb);
 
       return {
         ...province,
         rain: rainMm,
         rainProbability: rainProb,
+        forecast3Day,
+        rainTrend,
         elevation,
         temperature,
         humidity,
@@ -88,7 +104,7 @@ export async function fetchUserLocationWeatherAndAddress(lat, lng) {
     .catch(() => null);
 
   const weatherPromise = fetch(
-    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=precipitation,rain,temperature_2m,relative_humidity_2m,wind_speed_10m&daily=precipitation_sum,precipitation_probability_max&timezone=Asia%2FBangkok&forecast_days=1`,
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=precipitation,rain,temperature_2m,relative_humidity_2m,wind_speed_10m&daily=precipitation_sum,precipitation_probability_max&timezone=Asia%2FBangkok&forecast_days=3`,
   )
     .then((res) => (res.ok ? res.json() : null))
     .catch(() => null);
@@ -126,6 +142,9 @@ export async function fetchUserLocationWeatherAndAddress(lat, lng) {
     result.windSpeed = Number.isFinite(weather.current?.wind_speed_10m)
       ? Math.round(weather.current.wind_speed_10m * 10) / 10
       : null;
+    const { forecast3Day, rainTrend } = build3DayForecast(weather.daily, dailyPrecip, result.rainProbability);
+    result.forecast3Day = forecast3Day;
+    result.rainTrend = rainTrend;
     result.elevation = Number.isFinite(weather.elevation) ? Math.round(weather.elevation) : null;
   }
 

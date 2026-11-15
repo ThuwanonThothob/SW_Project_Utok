@@ -40,15 +40,22 @@ export function analyzeIncidentTriage({
   province = "",
   urgent = false,
   provinceRiskScore = 50,
+  upvotes = 0,
 } = {}) {
   const cleanDesc = String(description || "").trim();
   const cleanLevel = String(level || "").trim();
   const isUrgent = urgent === true || urgent === "true";
   const normalizedProvScore = Number.isFinite(Number(provinceRiskScore)) ? Number(provinceRiskScore) : 50;
+  const upvoteCount = Math.max(0, Number(upvotes || 0));
+  const corroborationBoost = Math.min(10, upvoteCount * 3);
 
-  let rawScore = 14 + Math.round(normalizedProvScore * 0.15);
+  let rawScore = 14 + Math.round(normalizedProvScore * 0.15) + corroborationBoost;
   const tags = [];
   const matchedRuleIds = new Set();
+
+  if (upvoteCount > 0) {
+    tags.push(`ยืนยันซ้ำจากชุมชน (${upvoteCount} คน)`);
+  }
 
   for (const item of WATER_LEVEL_WEIGHTS) {
     if (item.match.some((token) => cleanLevel.includes(token))) {
@@ -113,8 +120,10 @@ export function analyzeIncidentTriage({
   }
 
   const confidence = Math.min(
-    96,
-    88 + Math.min(8, matchedRuleIds.size * 2 + (cleanLevel ? 2 : 0) + (cleanDesc.length > 20 ? 2 : 0))
+    99,
+    88 +
+      Math.min(8, matchedRuleIds.size * 2 + (cleanLevel ? 2 : 0) + (cleanDesc.length > 20 ? 2 : 0)) +
+      Math.min(8, upvoteCount * 2)
   );
 
   return {

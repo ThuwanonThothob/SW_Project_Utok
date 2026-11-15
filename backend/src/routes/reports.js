@@ -3,9 +3,9 @@ import { fileURLToPath } from "node:url";
 import { Router } from "express";
 import multer from "multer";
 import rateLimit from "express-rate-limit";
-import { createReport, deleteReport, listReports, updateReportStatus } from "../data/repository.js";
+import { createReport, deleteReport, listReports, updateReportStatus, upvoteReport } from "../data/repository.js";
 import { provinceCatalog } from "../data/provinceCatalog.js";
-import { requireAuth, requireAuthority } from "../middleware/auth.js";
+import { optionalAuth, requireAuth, requireAuthority } from "../middleware/auth.js";
 import { publishEvent } from "../services/eventBus.js";
 import { sanitizeFileName, sanitizeText } from "../utils/sanitize.js";
 
@@ -101,6 +101,20 @@ router.post("/", requireAuth, reportPostLimiter, upload.single("photo"), async (
     publishEvent("report.created", report);
     res.status(201).json(report);
   } catch (error) { next(error); }
+});
+
+router.post("/:id/upvote", optionalAuth, async (req, res, next) => {
+  try {
+    const voterKey = req.user?.sub
+      ? `user:${req.user.sub}`
+      : `ip:${req.ip || req.headers["x-forwarded-for"] || "anon"}`;
+    const updated = await upvoteReport(req.params.id, voterKey);
+    if (!updated) return res.status(404).json({ message: "ไม่พบรายงานเหตุการณ์นี้" });
+    publishEvent("report.updated", updated);
+    return res.json(updated);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.patch("/:id/status", requireAuthority, async (req, res, next) => {

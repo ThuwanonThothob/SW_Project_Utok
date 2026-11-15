@@ -176,7 +176,7 @@ function provinceFromRow(row) {
   };
 }
 
-function enrichReportWithTriage(report) {
+function enrichReportWithTriage(report, { forceRecalculate = false } = {}) {
   if (!report) return null;
   const matchedProvince =
     memory.provinces.find((item) => item.name === report.province) ||
@@ -184,19 +184,23 @@ function enrichReportWithTriage(report) {
   const provinceRiskScore = matchedProvince ? Number(matchedProvince.score) : 50;
   const description = report.description ?? "";
   const photo = report.photo ?? "";
+  const upvotes = Math.max(0, Number(report.upvotes || 0));
   const aiTriage =
-    report.aiTriage ||
+    (!forceRecalculate && report.aiTriage) ||
     analyzeIncidentTriage({
       description,
       level: report.level,
       province: report.province,
       urgent: report.urgent,
       provinceRiskScore,
+      upvotes,
     });
+  const { upvotedBy: _upvotedBy, ...publicReport } = report;
   return {
-    ...report,
+    ...publicReport,
     description,
     photo,
+    upvotes,
     aiTriage,
   };
 }
@@ -295,7 +299,7 @@ export async function listReports({ status, search, limit = 200 } = {}) {
                 .includes(search.toLowerCase()))
         )
         .slice(0, limit)
-        .map(enrichReportWithTriage)
+        .map((report) => enrichReportWithTriage(report))
     );
   }
   const conditions = [];
@@ -335,11 +339,15 @@ export async function createReport(input) {
     status: "pending",
     lat: Number(input.lat),
     lng: Number(input.lng),
+    upvotes: Math.max(0, Number(input.upvotes || 0)),
     createdAt: new Date().toISOString(),
   };
   const report = enrichReportWithTriage(baseReport);
   if (!pool) {
-    memory.reports.unshift(report);
+    memory.reports.unshift({
+      ...report,
+      upvotedBy: Array.isArray(input.upvotedBy) ? [...input.upvotedBy] : [],
+    });
     const province = memory.provinces.find((item) => item.name === report.province);
     if (province) {
       province.affected = memory.reports.filter(
@@ -374,7 +382,7 @@ export async function updateReportStatus(publicId, status) {
       ).length;
     }
     saveMemoryStore();
-    return clone(report);
+    return clone(enrichReportWithTriage(report));
   }
   const { rows } = await pool.query(`
     UPDATE flood_reports SET status = $2, updated_at = NOW() WHERE public_id = $1
@@ -435,6 +443,27 @@ export async function deleteReport(publicId, requester = null) {
     existing.province,
   ]);
   return { id: publicId, province: existing.province };
+}
+
+export async function upvoteReport(publicId, voterKey = "anon") {
+  if (!pool) {
+    const report = memory.reports.find((item) => String(item.id) === String(publicId));
+    if (!report) return null;
+    if (!Array.isArray(report.upvotedBy)) {
+      report.upvotedBy = [];
+    }
+    const cleanKey = String(voterKey || "anon");
+    if (!report.upvotedBy.includes(cleanKey)) {
+      report.upvotedBy.push(cleanKey);
+      report.upvotes = Math.max(0, Number(report.upvotes || 0)) + 1;
+      const enriched = enrichReportWithTriage(report, { forceRecalculate: true });
+      report.aiTriage = enriched.aiTriage;
+      saveMemoryStore();
+      return clone(enriched);
+    }
+    return clone(enrichReportWithTriage(report));
+  }
+  return null;
 }
 
 export async function listBroadcasts() {
@@ -583,7 +612,7 @@ export async function updateCitizenProfile(id, input) {
 }
 
 export async function listReportsByUser(userId) {
-  if (!pool) return clone(memory.reports.filter((report) => report.reporterId === userId).map(enrichReportWithTriage));
+  if (!pool) return clone(memory.reports.filter((report) => report.reporterId === userId).map((report) => enrichReportWithTriage(report)));
   const { rows } = await pool.query(`
     SELECT public_id,reporter_name,province,district,water_level,description,photo_url,
       urgent_help,status,created_at,ST_Y(location::geometry) AS lat,ST_X(location::geometry) AS lng

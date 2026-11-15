@@ -4,6 +4,7 @@ import {
   Bot,
   CheckCheck,
   Clock3,
+  Download,
   ExternalLink,
   Globe2,
   Image as ImageIcon,
@@ -19,6 +20,7 @@ import {
   RefreshCw,
   Search,
   Siren,
+  ThumbsUp,
   Trash2,
   X,
 } from "lucide-react";
@@ -33,6 +35,10 @@ function relativeTime(value) {
   if (!value) return "ล่าสุด";
   const minutes = Math.max(1, Math.round((Date.now() - new Date(value)) / 60_000));
   return minutes < 60 ? `${minutes} นาทีที่แล้ว` : `${Math.round(minutes / 60)} ชม.ที่แล้ว`;
+}
+
+function csvCell(value) {
+  return `"${String(value ?? "").replace(/"/g, '""')}"`;
 }
 
 export default function AuthorityView({
@@ -58,6 +64,7 @@ export default function AuthorityView({
   const [viewMode, setViewMode] = useState("map"); // "map" | "dashboard"
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selectedReportId, setSelectedReportId] = useState(null);
+  const [focusedReport, setFocusedReport] = useState(null);
   const [status, setStatus] = useState("all");
   const [sortBy, setSortBy] = useState("ai_priority");
   const [search, setSearch] = useState("");
@@ -76,6 +83,7 @@ export default function AuthorityView({
             level: report.level,
             province: report.province,
             urgent: report.urgent,
+            upvotes: report.upvotes || 0,
           }),
       })),
     [reports],
@@ -129,6 +137,51 @@ export default function AuthorityView({
   ];
 
   const newsItems = news?.items || [];
+
+  function handleExportCsv() {
+    const headers = [
+      "ID",
+      "เวลาที่แจ้ง",
+      "จังหวัด",
+      "อำเภอ/เขต",
+      "ละติจูด",
+      "ลองจิจูด",
+      "ระดับน้ำ",
+      "ความเร่งด่วน AI",
+      "คะแนน AI (%)",
+      "ยืนยันซ้ำจากชุมชน (คน)",
+      "สถานะ",
+      "ผู้แจ้ง",
+      "รายละเอียด",
+    ];
+    const rows = filtered.map((r) => [
+      r.id,
+      r.createdAt || "",
+      r.province || "",
+      r.district || "",
+      r.lat ?? "",
+      r.lng ?? "",
+      r.level || "",
+      r.aiTriage?.label || "",
+      r.aiTriage?.score ?? "",
+      r.upvotes || 0,
+      statusLabel[r.status] || r.status || "",
+      r.reporter || "",
+      r.description || "",
+    ]);
+    const csvContent =
+      "\uFEFF" +
+      [headers.map(csvCell).join(","), ...rows.map((row) => row.map(csvCell).join(","))].join("\r\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `utok-flood-reports-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
 
   return (
     <main className={`authority-view ${viewMode === "map" ? "gis-mode" : "dashboard-mode"}`}>
@@ -251,6 +304,14 @@ export default function AuthorityView({
                 >
                   ยืนยันแล้ว
                 </button>
+                <button
+                  type="button"
+                  className="csv-export-btn"
+                  onClick={handleExportCsv}
+                  title="ส่งออกรายการที่กรองเป็นไฟล์ CSV (UTF-8)"
+                >
+                  <Download /> ส่งออก CSV
+                </button>
               </div>
             </div>
 
@@ -263,6 +324,7 @@ export default function AuthorityView({
                   }`}
                   onClick={() => {
                     setSelectedReportId(report.id);
+                    setFocusedReport({ ...report, _ts: Date.now() });
                     const prov = provinces.find((p) => p.name === report.province);
                     if (prov && onSelectProvince) onSelectProvince(prov);
                   }}
@@ -284,6 +346,9 @@ export default function AuthorityView({
                     <div className="gis-card-level">
                       ระดับน้ำ: <strong>{report.level}</strong>{" "}
                       {report.urgent && <em className="urgent-tag">เร่งด่วน</em>}
+                      <span style={{ marginLeft: 8, color: "#0369a1", fontWeight: 600 }}>
+                        · 👍 ยืนยันซ้ำ ({report.upvotes || 0})
+                      </span>
                     </div>
                     {report.description && <p className="gis-card-desc">{report.description}</p>}
                     {report.aiTriage?.recommendation && (
@@ -381,6 +446,7 @@ export default function AuthorityView({
               reports={reports}
               selectedProvince={selectedProvince || provinces[0]}
               userLocation={userLocation}
+              focusedReport={focusedReport}
               onSelectProvince={onSelectProvince}
               onReportAt={null}
               isAuthority={true}
@@ -442,6 +508,14 @@ export default function AuthorityView({
                       </option>
                     ))}
                   </select>
+                  <button
+                    type="button"
+                    className="csv-export-btn"
+                    onClick={handleExportCsv}
+                    title="ส่งออกรายงานตามตัวกรองเป็นไฟล์ CSV"
+                  >
+                    <Download /> ส่งออก CSV
+                  </button>
                 </div>
               </div>
 
@@ -471,6 +545,10 @@ export default function AuthorityView({
                         <td>
                           <strong>{report.level}</strong>
                           {report.urgent && <em>ด่วน</em>}
+                          <div style={{ marginTop: 4, fontSize: 10, color: "#0369a1", fontWeight: 600 }}>
+                            <ThumbsUp style={{ width: 11, height: 11, verticalAlign: "middle", marginRight: 3 }} />
+                            ยืนยันซ้ำ ({report.upvotes || 0})
+                          </div>
                           {report.photo && (
                             <div className="table-photo-box">
                               <button

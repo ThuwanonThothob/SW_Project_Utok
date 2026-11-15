@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Bell, Check, Info, Map, PlusCircle, RadioTower, RefreshCw, Smartphone, TriangleAlert, X } from "lucide-react";
 import { api } from "./services/api.js";
+import { analyzeIncidentClient } from "./services/aiTriage.js";
 import {
   fetchLiveProvinceWeather,
   fetchLiveThailandFloodNewsClient,
@@ -695,6 +696,37 @@ export default function App() {
     }
   }
 
+  async function handleUpvoteReport(id) {
+    const existing = reports.find((item) => item.id === id);
+    const prevVotes = Number(existing?.upvotes || 0);
+    try {
+      const updated = await api.upvoteReport(id, token);
+      setReports((items) => items.map((item) => (item.id === id ? updated : item)));
+      setMyReports((items) => items.map((item) => (item.id === id ? updated : item)));
+      if (Number(updated.upvotes || 0) > prevVotes) {
+        toast("ยืนยันเหตุการณ์จริงแล้ว", "เพิ่มความเชื่อมั่นของเหตุการณ์นี้ต่อศูนย์บัญชาการเรียบร้อย", "success");
+      } else {
+        toast("ยืนยันไปแล้ว", "คุณได้ร่วมยืนยันเหตุการณ์นี้ไปแล้วก่อนหน้านี้", "info");
+      }
+    } catch {
+      if (!existing) return;
+      const nextVotes = prevVotes + 1;
+      const provScore = provincesRef.current.find((p) => p.name === existing.province)?.score || 50;
+      const nextTriage = analyzeIncidentClient({
+        description: existing.description,
+        level: existing.level,
+        province: existing.province,
+        urgent: existing.urgent,
+        provinceScore: provScore,
+        upvotes: nextVotes,
+      });
+      const localUpdated = { ...existing, upvotes: nextVotes, aiTriage: nextTriage };
+      setReports((items) => items.map((item) => (item.id === id ? localUpdated : item)));
+      setMyReports((items) => items.map((item) => (item.id === id ? localUpdated : item)));
+      toast("ยืนยันเหตุการณ์แล้ว", "บันทึกการยืนยันในโหมดออฟไลน์เรียบร้อย", "info");
+    }
+  }
+
   async function updateRisk(province, risk) {
     const score =
       risk === "high"
@@ -806,6 +838,7 @@ export default function App() {
           }}
           onLogout={logout}
           onDeleteReport={removeReport}
+          onUpvoteReport={handleUpvoteReport}
           onOpenNotifications={() => setNotificationOpen(true)}
           onOpenInstall={() => setInstallOpen(true)}
         />
