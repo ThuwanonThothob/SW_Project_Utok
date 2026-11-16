@@ -96,7 +96,7 @@ export default function LoginModal({ open, intent = "citizen", provinces, onClos
         <p>
           {authority
             ? "สำหรับเจ้าหน้าที่รัฐ ปภ. และหน่วยกู้ภัย เพื่อบริหารจัดการสถานการณ์และออกประกาศเตือนภัย"
-            : "สมัครสมาชิกจริงด้วยอีเมลของคุณ เพื่อแจ้งเหตุน้ำท่วม บันทึกพื้นที่บ้าน และรับการแจ้งเตือน"}
+            : "ลงทะเบียนผู้ใช้งานเพื่อแจ้งเหตุน้ำท่วม บันทึกพื้นที่เฝ้าระวัง และรับการแจ้งเตือนฉุกเฉิน"}
         </p>
 
         <div className="auth-role-pills" role="group" aria-label="เลือกประเภทบัญชี">
@@ -113,7 +113,7 @@ export default function LoginModal({ open, intent = "citizen", provinces, onClos
             เข้าสู่ระบบ
           </button>
           <button type="button" className={view === "register" ? "active" : ""} onClick={() => switchView("register")}>
-            ลงทะเบียนใช้งานจริง
+            สมัครสมาชิก
           </button>
         </div>
 

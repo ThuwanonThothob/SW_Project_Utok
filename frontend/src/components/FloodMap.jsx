@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
-import { CloudRain, Crosshair, MapPin, Plus, Search, ShieldAlert, Siren, Tent, X } from "lucide-react";
+import { CloudRain, Crosshair, MapPin, Plus, Satellite, Search, ShieldAlert, Siren, Tent, X } from "lucide-react";
 
 const riskColor = (risk) => (risk === "high" ? "#ef4444" : risk === "medium" ? "#f59e0b" : "#10b981");
 const riskBorder = (risk) => (risk === "high" ? "#dc2626" : risk === "medium" ? "#d97706" : "#059669");
@@ -61,6 +61,7 @@ export default function FloodMap({
 }) {
   const nodeRef = useRef(null);
   const mapRef = useRef(null);
+  const baseTileLayerRef = useRef(null);
   const provinceLayerRef = useRef(null);
   const radarLayerRef = useRef(null);
   const reportLayerRef = useRef(null);
@@ -72,6 +73,7 @@ export default function FloodMap({
   const searchContainerRef = useRef(null);
 
   const [mapMode, setMapMode] = useState("risk"); // "risk" | "rain"
+  const [isSatellite, setIsSatellite] = useState(false);
   const [showShelters, setShowShelters] = useState(false);
   const [filterCriticalOnly, setFilterCriticalOnly] = useState(false);
   const [geoJsonData, setGeoJsonData] = useState(null);
@@ -124,11 +126,7 @@ export default function FloodMap({
     }).setView([13.736717, 100.523186], 6);
 
     L.control.zoom({ position: "bottomright" }).addTo(map);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 18,
-      attribution: "&copy; OpenStreetMap contributors | UTOK อุทก (มศว)",
-    }).addTo(map);
-
+    baseTileLayerRef.current = L.layerGroup().addTo(map);
     provinceLayerRef.current = L.layerGroup().addTo(map);
     radarLayerRef.current = L.layerGroup().addTo(map);
     reportLayerRef.current = L.layerGroup().addTo(map);
@@ -157,6 +155,42 @@ export default function FloodMap({
       mapRef.current = null;
     };
   }, []);
+
+  // Switch between Standard OSM and Satellite Hybrid base tiles
+  useEffect(() => {
+    const baseGroup = baseTileLayerRef.current;
+    if (!baseGroup || !mapRef.current) return;
+    baseGroup.clearLayers();
+
+    if (isSatellite) {
+      const satImagery = L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 19,
+          zIndex: 1,
+          attribution:
+            "Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics | UTOK อุทก (มศว)",
+        },
+      );
+      const hybridLabels = L.tileLayer(
+        "https://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+        {
+          maxZoom: 19,
+          zIndex: 2,
+          opacity: 0.88,
+        },
+      );
+      baseGroup.addLayer(satImagery);
+      baseGroup.addLayer(hybridLabels);
+    } else {
+      const osmTile = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        zIndex: 1,
+        attribution: "&copy; OpenStreetMap contributors | UTOK อุทก (มศว)",
+      });
+      baseGroup.addLayer(osmTile);
+    }
+  }, [isSatellite]);
 
   // Fetch and manage live RainViewer radar overlay when mapMode is "rain"
   useEffect(() => {
@@ -215,9 +249,9 @@ export default function FloodMap({
             const rainMm = p?.rain ?? 0;
             return {
               fillColor: rainColor(rainMm),
-              fillOpacity: isSelected ? 0.65 : 0.42,
+              fillOpacity: isSatellite ? (isSelected ? 0.45 : 0.22) : isSelected ? 0.65 : 0.42,
               color: isSelected ? "#ffffff" : rainBorder(rainMm),
-              weight: isSelected ? 2.5 : 1.2,
+              weight: isSelected ? (isSatellite ? 2.8 : 2.5) : isSatellite ? 1.5 : 1.2,
               dashArray: isSelected ? "4 3" : "",
             };
           }
@@ -226,9 +260,9 @@ export default function FloodMap({
           const risk = p?.risk || "low";
           return {
             fillColor: riskColor(risk),
-            fillOpacity: isSelected ? 0.65 : 0.38,
+            fillOpacity: isSatellite ? (isSelected ? 0.45 : 0.22) : isSelected ? 0.65 : 0.38,
             color: isSelected ? "#ffffff" : riskBorder(risk),
-            weight: isSelected ? 2.5 : 1.2,
+            weight: isSelected ? (isSatellite ? 2.8 : 2.5) : isSatellite ? 1.5 : 1.2,
             dashArray: isSelected ? "4 3" : "",
           };
         },
@@ -252,7 +286,7 @@ export default function FloodMap({
                    <b>${provinceName}</b> <small>(${districtName})</small>
                    <div>🚨 ความเสี่ยงน้ำท่วมฉับพลัน: <strong class="risk-${p?.risk || "low"}">${scoreText}% (${p?.risk === "high" ? "เสี่ยงสูง" : p?.risk === "medium" ? "ปานกลาง" : "เสี่ยงต่ำ"})</strong></div>
                    <div>🌧️ ฝนตรวจวัดสด: <strong>${rainText}</strong> · โอกาสฝน: <strong>${p?.rainProbability ?? 0}%</strong></div>
-                   <div>📋 รายงานเหตุการณ์จริง: <strong>${affectedCount} เคส</strong></div>
+                   <div>📋 รายงานในพื้นที่: <strong>${affectedCount} เคส</strong></div>
                  </div>`;
 
           polygonLayer.bindTooltip(tooltipHtml, { sticky: true, opacity: 0.95 });
@@ -261,7 +295,7 @@ export default function FloodMap({
             mouseover: (e) => {
               const target = e.target;
               target.setStyle({
-                fillOpacity: 0.72,
+                fillOpacity: isSatellite ? 0.5 : 0.72,
                 weight: 2.5,
                 color: "#ffffff",
               });
@@ -299,7 +333,7 @@ export default function FloodMap({
         });
       });
     }
-  }, [geoJsonData, provinces, selectedProvince, mapMode]);
+  }, [geoJsonData, provinces, selectedProvince, mapMode, isSatellite]);
 
   // Citizen Incident Reports Layer
   useEffect(() => {
@@ -341,7 +375,7 @@ export default function FloodMap({
           zIndexOffset: isCriticalP1 ? 500 : 100,
         })
           .bindPopup(
-            `<div class="popup"><small>${escapeHtml(report.id)} · 👍 ยืนยันเหตุจริง ${upvotesCount} คน</small><b>${escapeHtml(report.province)} · ${escapeHtml(report.district)}</b><div class="popup-badges"><span class="popup-triage ${escapeHtml(report.aiTriage?.priority || (isCriticalP1 ? "critical" : "moderate"))}">${triageText}</span><span class="popup-status ${escapeHtml(report.status || "pending")}">${escapeHtml(statusText)}</span></div><p>${escapeHtml(report.description)}</p><strong>ระดับน้ำ: ${escapeHtml(report.level)}</strong>${noteHtml}</div>`,
+            `<div class="popup"><small>${escapeHtml(report.id)} · 👍 ร่วมยืนยัน ${upvotesCount} คน</small><b>${escapeHtml(report.province)} · ${escapeHtml(report.district)}</b><div class="popup-badges"><span class="popup-triage ${escapeHtml(report.aiTriage?.priority || (isCriticalP1 ? "critical" : "moderate"))}">${triageText}</span><span class="popup-status ${escapeHtml(report.status || "pending")}">${escapeHtml(statusText)}</span></div><p>${escapeHtml(report.description)}</p><strong>ระดับน้ำ: ${escapeHtml(report.level)}</strong>${noteHtml}</div>`,
           )
           .addTo(layer);
         reportMarkersByIdRef.current[report.id] = marker;
@@ -487,7 +521,7 @@ export default function FloodMap({
     const weatherText =
       userLocation.temperature !== null && userLocation.temperature !== undefined
         ? `อุณหภูมิ ${userLocation.temperature}°C · ฝน ${userLocation.rainMm ?? 0} มม.`
-        : "กำลังซิงค์สภาพอากาศจริง";
+        : "กำลังอัปเดตข้อมูลสภาพอากาศ";
 
     const marker = L.marker([userLocation.lat, userLocation.lng], {
       icon: gpsIcon,
@@ -562,7 +596,7 @@ export default function FloodMap({
           className={`map-mode-btn ${mapMode === "rain" ? "active" : ""}`}
           onClick={() => setMapMode("rain")}
         >
-          <CloudRain /> <span>เรดาร์ & ฝนตกจริง</span>
+          <CloudRain /> <span>เรดาร์ & ปริมาณฝน</span>
         </button>
         <button
           type="button"
@@ -581,6 +615,15 @@ export default function FloodMap({
           title="กรองแสดงเฉพาะหมุดเหตุการณ์วิกฤตเร่งด่วน (P1 Critical)"
         >
           <Siren /> <span>เฉพาะเคส P1</span>
+        </button>
+        <button
+          type="button"
+          className={`map-mode-btn ${isSatellite ? "satellite-active" : ""}`}
+          onClick={() => setIsSatellite((prev) => !prev)}
+          aria-pressed={isSatellite}
+          title="สลับแผนที่ภาพถ่ายดาวเทียมความละเอียดสูง (Satellite Hybrid Layer)"
+        >
+          <Satellite /> <span>ดาวเทียม</span>
         </button>
       </div>
 
@@ -693,7 +736,7 @@ export default function FloodMap({
           onClick={() => onReportAt(defaultReportCoords)}
           aria-label="แจ้งเหตุน้ำท่วม ณ จุดนี้"
         >
-          <Plus /> แจ้งเหตุน้ำท่วม ณ พิกัดจริง
+          <Plus /> แจ้งเหตุน้ำท่วม ณ พิกัดปัจจุบัน
         </button>
       )}
     </section>

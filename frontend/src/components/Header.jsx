@@ -18,8 +18,8 @@ export default function Header({
   const liveTickerTitle = userLocation?.lat
     ? `📍 พิกัดปัจจุบัน: ${userLocation.address || `${userLocation.lat.toFixed(4)}, ${userLocation.lng.toFixed(4)}`}`
     : selectedProvince
-      ? `ข้อมูลจริง Open-Meteo · ${selectedProvince.name} (${selectedProvince.district})`
-      : "กำลังซิงค์ข้อมูลสภาพอากาศจริงจาก Open-Meteo API...";
+      ? `สภาพอากาศล่าสุด · ${selectedProvince.name} (${selectedProvince.district})`
+      : "กำลังอัปเดตข้อมูลสภาพอากาศและระดับน้ำ...";
 
   const liveRain = userLocation?.lat
     ? `${userLocation.rainMm ?? 0} มม.${userLocation.temperature !== null ? ` · ${userLocation.temperature}°C` : ""}`
@@ -41,7 +41,7 @@ export default function Header({
       <div className="weather-ticker">
         <span className="live-dot" />
         <div>
-          <small>ข้อมูลสภาพอากาศและพิกัดจริง (Open-Meteo & GPS)</small>
+          <small>ระบบติดตามสภาพอากาศและสถานการณ์น้ำแบบเรียลไทม์</small>
           <b>{liveTickerTitle}</b>
         </div>
         <span className="rain-chip"><CloudRain /> {liveRain}</span>

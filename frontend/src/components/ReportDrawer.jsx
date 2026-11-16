@@ -149,14 +149,14 @@ export default function ReportDrawer({ open, coordinate, provinces, userLocation
                     <b>ล็อกพื้นที่ตาม GPS: จ.{province}</b>
                     <span className="geofence-badge">GPS VERIFIED</span>
                   </div>
-                  <small>ระบบป้องกันรายงานเท็จ อนุญาตให้ส่งรายงานเฉพาะจังหวัดที่ท่านอยู่จริง (ไม่อนุญาตให้เลือกจังหวัดอื่น)</small>
+                  <small>ยืนยันตำแหน่งในพื้นที่เรียบร้อย สามารถระบุอำเภอ/จุดเกิดเหตุและส่งรายงานได้ทันที</small>
                 </div>
               </div>
             ) : (
               <div className="geofence-warning-banner">
                 <div className="geofence-warning-text">
                   <b>⚠️ ยังไม่พบการยืนยันพิกัด GPS ในพื้นที่</b>
-                  <small>เพื่อป้องกันข้อมูลเท็จและการมั่วเหตุน้ำท่วม ระบบจำเป็นต้องตรวจจับพิกัดจริงของคุณก่อนรับรายงาน</small>
+                  <small>กรุณาเปิดตำแหน่ง GPS ของอุปกรณ์เพื่อยืนยันพื้นที่เกิดเหตุก่อนส่งรายงาน</small>
                 </div>
                 {onLocate && (
                   <button type="button" className="chip-button primary" onClick={onLocate}>

@@ -81,9 +81,24 @@ export default function NotificationModal({
                 <Bell /> เปิดสิทธิ์แจ้งเตือนบนอุปกรณ์นี้
               </button>
             )}
-            <button type="button" className={`chip-button ${soundEnabled ? "active" : ""}`} onClick={onToggleSound}>
+            <button
+              type="button"
+              className={`chip-button ${soundEnabled ? "active" : ""}`}
+              onClick={() => {
+                if (!soundEnabled) playAlertSound("warning");
+                onToggleSound?.();
+              }}
+            >
               {soundEnabled ? <Volume2 /> : <VolumeX />}
               {soundEnabled ? "เสียงเตือนภัย: เปิดอยู่" : "เสียงเตือนภัย: ปิด"}
+            </button>
+            <button
+              type="button"
+              className="chip-button"
+              onClick={() => playAlertSound("warning")}
+              title="ลองฟังเสียงแจ้งเตือนสไตล์ iPhone (ระดับความดังสูงสุด)"
+            >
+              <Volume2 /> ฟังเสียงแจ้งเตือน
             </button>
           </div>
         </div>

@@ -299,10 +299,10 @@ export default function App() {
           else setNews({ updatedAt: new Date().toISOString(), items: [] });
         }
 
-        if (!silent) toast("ซิงค์ข้อมูลจริงสำเร็จ", "อัปเดตสภาพอากาศ Open-Meteo และฐานข้อมูลล่าสุดแล้ว", "success");
+        if (!silent) toast("อัปเดตข้อมูลสำเร็จ", "ซิงค์ข้อมูลสภาพอากาศและรายการรายงานล่าสุดเรียบร้อยแล้ว", "success");
       } catch (error) {
         setConnected(false);
-        toast("เชื่อมต่อ API ไม่ได้", `${error.message} — ตรวจสอบว่า backend กำลังทำงาน`, "error");
+        toast("ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้", "กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองใหม่อีกครั้ง", "error");
       }
     },
     [toast],
@@ -346,15 +346,15 @@ export default function App() {
       const updated = await api.refreshNews().catch(() => null);
       if (updated?.items?.length) {
         setNews(updated);
-        toast("ดึงข่าวจริงสำเร็จ", `พบข่าวสารสถานการณ์น้ำ ${updated.items.length} รายการ`, "success");
+        toast("อัปเดตข่าวสารสำเร็จ", `พบข่าวสารสถานการณ์น้ำ ${updated.items.length} รายการ`, "success");
       } else {
         const liveClientNews = await fetchLiveThailandFloodNewsClient(provincesRef.current);
         if (liveClientNews?.items?.length) {
           setNews(liveClientNews);
-          toast("ดึงข่าวจริงจาก Live RSS สำเร็จ", `พบข่าวสารล่าสุด ${liveClientNews.items.length} รายการ`, "success");
+          toast("อัปเดตข่าวสารสำเร็จ", `พบข่าวสารล่าสุด ${liveClientNews.items.length} รายการ`, "success");
         } else {
           setNews({ updatedAt: new Date().toISOString(), items: [] });
-          toast("ไม่พบข่าวใหม่ในขณะนี้", "ระบบแสดงเฉพาะข่าวจริงจากฟีดข่าวเท่านั้น", "info");
+          toast("ยังไม่มีข่าวสารใหม่ในขณะนี้", "ระบบจะอัปเดตอัตโนมัติเมื่อมีรายงานข่าวสถานการณ์น้ำเพิ่มเติม", "info");
         }
       }
     } catch (error) {
@@ -647,7 +647,7 @@ export default function App() {
       setReports((items) => items.map((item) => (item.id === id ? updated : item)));
       setMyReports((items) => items.map((item) => (item.id === id ? updated : item)));
       if (Number(updated.upvotes || 0) > prevVotes) {
-        toast("ยืนยันเหตุการณ์จริงแล้ว", "เพิ่มความเชื่อมั่นของเหตุการณ์นี้ต่อศูนย์บัญชาการเรียบร้อย", "success");
+        toast("ร่วมยืนยันเหตุการณ์แล้ว", "เพิ่มความเชื่อมั่นของเหตุการณ์นี้ต่อศูนย์บัญชาการเรียบร้อย", "success");
       } else {
         toast("ยืนยันไปแล้ว", "คุณได้ร่วมยืนยันเหตุการณ์นี้ไปแล้วก่อนหน้านี้", "info");
       }
@@ -792,8 +792,8 @@ export default function App() {
       {!provinces.length && (
         <div className="loading-screen">
           <span />
-          <b>กำลังดึงข้อมูลจริงจาก Open-Meteo API และศูนย์ข้อมูลน้ำ...</b>
-          <small>รัน `npm run dev` ที่ root ของโปรเจกต์</small>
+          <b>กำลังโหลดข้อมูลสภาพอากาศและสถานการณ์น้ำทั่วประเทศ...</b>
+          <small>กรุณารอสักครู่ ระบบกำลังเชื่อมต่อฐานข้อมูลกลาง</small>
         </div>
       )}
 
@@ -830,7 +830,7 @@ export default function App() {
             type="button"
             onClick={() => {
               loadData(false);
-              toast("ซิงค์ข้อมูลจริง", "ดึงข้อมูลตรวจวัดและรายงานล่าสุดเรียบร้อย", "success");
+              toast("อัปเดตข้อมูลล่าสุด", "ดึงข้อมูลตรวจวัดและรายงานล่าสุดเรียบร้อย", "success");
             }}
           >
             <RefreshCw />

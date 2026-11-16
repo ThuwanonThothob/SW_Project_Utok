@@ -13,7 +13,7 @@ export default function BroadcastModal({ open, provinces, onClose, onSubmit, bus
   }
 
   return <div className="modal-layer"><button className="overlay" onClick={onClose} aria-label="ปิด" /><section className="modal broadcast-modal">
-    <button className="modal-close" onClick={onClose}><X /></button><span className="modal-icon orange"><RadioTower /></span><span className="eyebrow">Emergency broadcast</span><h2>สร้างประกาศเตือนภัย</h2><p>ประกาศจะถูกส่งไปยัง Citizen portal ผ่าน real-time event</p>
+    <button className="modal-close" onClick={onClose}><X /></button><span className="modal-icon orange"><RadioTower /></span><span className="eyebrow">Emergency broadcast</span><h2>สร้างประกาศเตือนภัย</h2><p>ประกาศแจ้งเตือนจะถูกส่งไปยังประชาชนในพื้นที่เป้าหมายพร้อมสัญญาณเสียงแบบเรียลไทม์ทันที</p>
     <form onSubmit={submit} className="form-stack">
       <label><span>ระดับประกาศ</span><select value={form.level} onChange={update("level")}><option value="warning">เฝ้าระวัง</option><option value="red">เตือนภัยสูง</option><option value="evacuation">อพยพ</option></select></label>
       <label><span>พื้นที่เป้าหมาย</span><select value={form.province} onChange={update("province")}><option>ทั่วประเทศ</option>{provinces.map((item) => <option key={item.id}>{item.name}</option>)}</select></label>

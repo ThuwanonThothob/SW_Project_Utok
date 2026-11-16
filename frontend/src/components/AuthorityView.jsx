@@ -139,10 +139,10 @@ export default function AuthorityView({
   );
 
   const metrics = [
-    { label: "รายงานจริงทั้งหมด", value: reports.length, detail: "จากผู้ใช้งานจริง", icon: Inbox, tone: "cyan" },
+    { label: "รายงานเหตุทั้งหมด", value: reports.length, detail: "จากประชาชนในพื้นที่", icon: Inbox, tone: "cyan" },
     { label: "รอตรวจสอบ", value: reports.filter((item) => item.status === "pending").length, detail: "ต้องดำเนินการ", icon: Clock3, tone: "amber" },
     { label: "เคสวิกฤต AI (P1/ด่วน)", value: criticalCount, detail: "AI คัดกรองเร่งด่วน", icon: Siren, tone: "red" },
-    { label: "พื้นที่เสี่ยงสูงจริง", value: provinces.filter((item) => item.risk === "high").length, detail: "คำนวณจากฝนจริง", icon: MapPinned, tone: "violet" },
+    { label: "จังหวัดเสี่ยงสูง", value: provinces.filter((item) => item.risk === "high").length, detail: "วิเคราะห์จากปริมาณฝนสะสม", icon: MapPinned, tone: "violet" },
     { label: "ครอบคลุมทั่วประเทศ", value: provinces.length, detail: `${regions.length} ภูมิภาค`, icon: Globe2, tone: "green" },
   ];
 
@@ -197,9 +197,9 @@ export default function AuthorityView({
     <main className={`authority-view ${viewMode === "map" ? "gis-mode" : "dashboard-mode"}`}>
       <section className="authority-hero">
         <div>
-          <span className="eyebrow">ศูนย์บัญชาการสถานการณ์น้ำ · ข้อมูลจริงจาก Open-Meteo & ผู้ใช้งาน</span>
+          <span className="eyebrow">ศูนย์บัญชาการและบริหารจัดการอุทกภัย (Command Center)</span>
           <h1>ภาพรวมสถานการณ์และการคัดกรองอัจฉริยะ</h1>
-          <p>ติดตามความเสี่ยงจริง {provinces.length}/77 จังหวัด · ระบบคัดกรองเคสวิกฤตและจัดการเชิงพื้นที่</p>
+          <p>ติดตามระดับความเสี่ยง {provinces.length}/77 จังหวัด · ระบบคัดกรองเคสวิกฤตและบริหารจัดการเชิงพื้นที่</p>
         </div>
         <div className="hero-action-cluster">
           <div className="authority-view-switch" role="tablist" aria-label="สลับโหมดการทำงาน">
@@ -225,7 +225,7 @@ export default function AuthorityView({
 
           <div className="hero-buttons">
             <button className="secondary-button" onClick={onRefresh}>
-              <RefreshCw /> ซิงค์ข้อมูลจริง
+              <RefreshCw /> อัปเดตข้อมูลล่าสุด
             </button>
             <button className="secondary-button" onClick={onOpenNotifications}>
               <BellRing /> ศูนย์แจ้งเตือนภัย
@@ -267,7 +267,7 @@ export default function AuthorityView({
                 <Clock3 /> <b>{reports.filter((r) => r.status === "pending").length}</b> รอตรวจ
               </div>
               <div className="gis-stat-pill all">
-                <Inbox /> <b>{reports.length}</b> รายงานจริง
+                <Inbox /> <b>{reports.length}</b> รายงานทั้งหมด
               </div>
             </div>
 
@@ -460,7 +460,7 @@ export default function AuthorityView({
 
               {!filtered.length && (
                 <p className="empty-state">
-                  ไม่พบรายงานตามตัวกรองที่เลือก — เมื่อประชาชนแจ้งเข้ามา รายงานจริงจะปรากฏที่นี่แบบ Real-time
+                  ไม่พบรายงานตามตัวกรองที่เลือก — รายงานใหม่จากพื้นที่จะแสดงที่นี่แบบเรียลไทม์
                 </p>
               )}
             </div>
@@ -672,7 +672,7 @@ export default function AuthorityView({
                 </table>
                 {!filtered.length && (
                   <p className="empty-state">
-                    ยังไม่มีรายงานเหตุน้ำท่วมในระบบ — เมื่อประชาชนส่งรายงานจริงเข้ามา รายการจะปรากฏที่นี่แบบ Real-time
+                    ยังไม่มีรายงานเหตุน้ำท่วมในขณะนี้ — รายงานใหม่จากพื้นที่จะแสดงที่นี่แบบเรียลไทม์
                   </p>
                 )}
               </div>
@@ -682,7 +682,7 @@ export default function AuthorityView({
               <section className="data-card province-card">
                 <div className="card-head">
                   <div>
-                    <span className="eyebrow">ข้อมูลจริงรายจังหวัด (Open-Meteo)</span>
+                    <span className="eyebrow">การประเมินความเสี่ยงรายจังหวัด</span>
                     <h2>ระดับความเสี่ยงรายจังหวัด</h2>
                   </div>
                   <span className="province-count">
@@ -715,7 +715,7 @@ export default function AuthorityView({
                       <div>
                         <b>{province.name}</b>
                         <small>
-                          {province.region} · ฝนจริง {province.rain ?? 0} มม. · คะแนน {province.score ?? 0}% ·{" "}
+                          {province.region} · ปริมาณฝน {province.rain ?? 0} มม. · ความเสี่ยง {province.score ?? 0}% ·{" "}
                           {province.affected || 0} รายงาน
                         </small>
                       </div>
@@ -740,7 +740,7 @@ export default function AuthorityView({
                 <div className="card-head">
                   <div>
                     <span className="eyebrow">Live RSS Feed</span>
-                    <h2>ข่าวสารน้ำท่วมจริง</h2>
+                    <h2>ข่าวสารสถานการณ์อุทกภัย</h2>
                   </div>
                   <button type="button" className="chip-button" onClick={onRefreshNews} disabled={newsBusy}>
                     <RefreshCw className={newsBusy ? "spin" : ""} /> {newsBusy ? "กำลังดึง..." : "ดึงข่าวล่าสุด"}
@@ -751,7 +751,7 @@ export default function AuthorityView({
                     <article key={item.id} className={`news-item ${item.severity || "info"}`}>
                       <div className="news-item-top">
                         <span className={`news-badge ${item.severity || "info"}`}>
-                          {item.severity === "high" ? "ข่าวสำคัญ" : "ข่าวจริง"}
+                          {item.severity === "high" ? "เฝ้าระวังสูง" : "ข่าวสถานการณ์น้ำ"}
                         </span>
                         <small>
                           {item.province} · {item.source}
@@ -760,7 +760,7 @@ export default function AuthorityView({
                       <b>{item.title}</b>
                       {item.url && (
                         <a href={item.url} target="_blank" rel="noreferrer" className="news-link">
-                          เปิดแหล่งข่าวจริง <ExternalLink />
+                          อ่านข่าวต้นฉบับ <ExternalLink />
                         </a>
                       )}
                     </article>
@@ -772,8 +772,8 @@ export default function AuthorityView({
               <section className="data-card">
                 <div className="card-head">
                   <div>
-                    <span className="eyebrow">ประกาศที่ออกโดยเจ้าหน้าที่จริง</span>
-                    <h2>Broadcast feed</h2>
+                    <span className="eyebrow">ประวัติการออกประกาศแจ้งเตือนภัย</span>
+                    <h2>ประกาศเตือนภัยล่าสุด</h2>
                   </div>
                   <span className="live-label">LIVE</span>
                 </div>

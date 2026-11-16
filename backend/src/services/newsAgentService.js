@@ -47,7 +47,7 @@ function classifyNewsIntelligence(title = "") {
       ? `AI วิเคราะห์พบสัญญาณเตือนภัยระดับสูงในพื้นที่ ${province}`
       : severity === "medium"
         ? `AI ตรวจพบแนวโน้มฝนตกสะสมและระดับน้ำเปลี่ยนแปลงในพื้นที่ ${province}`
-        : `ข่าวสารสถานการณ์น้ำจริงจากแหล่งข่าวในพื้นที่ ${province}`;
+        : `รายงานข่าวสถานการณ์น้ำในพื้นที่ ${province}`;
 
   return { severity, province, aiSummary };
 }
@@ -71,7 +71,7 @@ function parseRssItems(xmlText = "") {
     items.push({
       id: `news-live-${items.length + 1}-${Date.now().toString().slice(-4)}`,
       title: cleanTitle,
-      source: decodeXmlEntities(rawSource) || "สำนักข่าวจริง (Google News RSS)",
+      source: decodeXmlEntities(rawSource) || "สำนักข่าวประเทศไทย (Google News)",
       url: decodeXmlEntities(rawLink),
       province,
       severity,
@@ -112,8 +112,8 @@ export async function getFloodNews({ forceRefresh = false } = {}) {
 
   const highCount = liveItems.filter((item) => item.severity === "high").length;
   const headlineSummary = fetchedLive
-    ? `ดึงข้อมูลข่าวสารสถานการณ์น้ำจริงจาก Google News RSS สำเร็จ ${liveItems.length} รายการ (พบสัญญาณเฝ้าระวังสูง ${highCount} รายการ)`
-    : "กำลังรอเชื่อมต่อเครือข่ายข่าวสารสด (ไม่แสดงข้อมูลจำลอง)";
+    ? `อัปเดตข่าวสารสถานการณ์น้ำล่าสุด ${liveItems.length} รายการ (เฝ้าระวังสูง ${highCount} รายการ)`
+    : "กำลังรออัปเดตข้อมูลข่าวสารสถานการณ์น้ำจากสำนักข่าว";
 
   cachedNewsPayload = {
     agent: {

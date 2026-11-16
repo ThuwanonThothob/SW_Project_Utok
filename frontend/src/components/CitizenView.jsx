@@ -137,10 +137,10 @@ export default function CitizenView({
   const province = selectedProvince || provinces[0];
   const advice =
     province?.risk === "high"
-      ? "คำแนะนำจากข้อมูลจริง: พื้นที่มีฝนสะสมหรือรายงานน้ำท่วมสูง ควรเตรียมย้ายสิ่งของขึ้นที่สูงและติดตามประกาศเตือนภัย"
+      ? "ข้อแนะนำประจำพื้นที่: มีฝนสะสมหรือรายงานน้ำท่วมสูง ควรเตรียมย้ายสิ่งของขึ้นที่สูงและติดตามประกาศเตือนภัย"
       : province?.risk === "medium"
-        ? "คำแนะนำจากข้อมูลจริง: มีฝนตกในพื้นที่หรือโอกาสเกิดฝนฟ้าคะนอง ควรติดตามระดับน้ำและสภาพจราจร"
-        : "คำแนะนำจากข้อมูลจริง: ปริมาณฝนปัจจุบันอยู่ในเกณฑ์ปกติ (ข้อมูลสดจาก Open-Meteo API)";
+        ? "ข้อแนะนำประจำพื้นที่: มีโอกาสเกิดฝนตกหนักในพื้นที่ ควรติดตามระดับน้ำและตรวจสอบเส้นทางสัญจร"
+        : "ข้อแนะนำประจำพื้นที่: ปริมาณฝนและระดับน้ำปัจจุบันอยู่ในเกณฑ์ปกติ";
 
   const activeReports = reports.filter((report) => report.status !== "rejected");
   const displayedReports = feedTab === "mine" ? myReports : activeReports.slice(0, 8);
@@ -152,7 +152,7 @@ export default function CitizenView({
         <div className={`alert-ribbon ${latestAlert.level}`}>
           <TriangleAlert />
           <div className="alert-ribbon-content">
-            <small>ประกาศเตือนภัยจริงจากศูนย์บัญชาการ · {latestAlert.province}</small>
+            <small>ประกาศแจ้งเตือนภัยฉุกเฉิน · {latestAlert.province}</small>
             <b>{latestAlert.headline}</b>
           </div>
           <p>{latestAlert.advisory}</p>
@@ -171,7 +171,7 @@ export default function CitizenView({
         <aside className={`control-panel ${sidebarOpen ? "open" : "closed"}`}>
           <div className="sidebar-top-strip">
             <span className="sidebar-badge-label">
-              <Layers /> แผงข้อมูลสถานการณ์จริง
+              <Layers /> แผงข้อมูลสถานการณ์น้ำ
             </span>
             <button
               type="button"
@@ -208,8 +208,8 @@ export default function CitizenView({
             <button className="member-cta" onClick={onMemberLogin}>
               <LogIn />
               <span>
-                <b>เข้าสู่ระบบหรือสมัครสมาชิกจริง</b>
-                <small>สมัครด้วยอีเมลจริงของคุณเพื่อแจ้งเหตุน้ำท่วมและติดตามประวัติรายงาน</small>
+                <b>เข้าสู่ระบบ / สมัครสมาชิก</b>
+                <small>เข้าสู่ระบบเพื่อแจ้งเหตุน้ำท่วมและติดตามสถานะการช่วยเหลือ</small>
               </span>
               <ArrowRight />
             </button>
@@ -235,29 +235,29 @@ export default function CitizenView({
                 <div className="live-gps-address">
                   <b>{userLocation.address || "พิกัด GPS ปัจจุบันของคุณ"}</b>
                   <small>
-                    พิกัดจริง: {userLocation.lat.toFixed(5)}, {userLocation.lng.toFixed(5)} (ความแม่นยำ ±
+                    พิกัด GPS: {userLocation.lat.toFixed(5)}, {userLocation.lng.toFixed(5)} (ความแม่นยำ ±
                     {userLocation.accuracy || 15} ม.)
                   </small>
                   {userLocation.provinceName && (
                     <div className="geofence-citizen-pill">
-                      <ShieldCheck /> สิทธิ์การแจ้งเหตุ: <b>เปิดเฉพาะใน จ.{userLocation.provinceName} (ป้องกันรายงานเท็จ)</b>
+                      <ShieldCheck /> พื้นที่ยืนยันพิกัด: <b>จ.{userLocation.provinceName} (พร้อมแจ้งเหตุในพื้นที่)</b>
                     </div>
                   )}
                 </div>
                 <div className="live-gps-metrics">
                   <div>
                     <Thermometer />
-                    <small>อุณหภูมิจริง</small>
+                    <small>อุณหภูมิปัจจุบัน</small>
                     <b>{userLocation.temperature !== null ? `${userLocation.temperature} °C` : "รอซิงค์"}</b>
                   </div>
                   <div>
                     <CloudRain />
-                    <small>ฝนตรวจวัดสด / โอกาสฝน</small>
+                    <small>ปริมาณฝน / โอกาสเกิดฝน</small>
                     <b>{userLocation.rainMm !== null ? `${userLocation.rainMm} มม.` : "0 มม."} (โอกาส {userLocation.rainProbability ?? 0}%)</b>
                   </div>
                   <div>
                     <Mountain />
-                    <small>ความสูงพื้นที่จริง</small>
+                    <small>ความสูงภูมิประเทศ</small>
                     <b>{userLocation.elevation !== null ? `${userLocation.elevation} ม.` : "-"}</b>
                   </div>
                   <div>
@@ -278,7 +278,7 @@ export default function CitizenView({
               <div className="live-gps-empty">
                 <p>
                   {userLocation?.error ||
-                    "ระบบกำลังขอสิทธิ์เข้าถึงตำแหน่ง GPS ปัจจุบันของคุณเพื่อแสดงสภาพอากาศ ปริมาณฝน และความเสี่ยงน้ำท่วมจริง ณ จุดที่คุณยืนอยู่"}
+                    "กรุณาอนุญาตการเข้าถึงตำแหน่ง GPS เพื่อตรวจสอบสภาพอากาศ ปริมาณฝน และระดับความเสี่ยงน้ำท่วมในพื้นที่ของคุณ"}
                 </p>
                 <div className="gps-fallback-group">
                   <button type="button" className="primary-button" onClick={() => onLocate(false)}>
@@ -318,9 +318,9 @@ export default function CitizenView({
 
           <div className="panel-title">
             <div>
-              <span className="eyebrow">ข้อมูลจริงจาก Open-Meteo API · ครบ {provinces.length} จังหวัด</span>
+              <span className="eyebrow">ระบบเฝ้าระวังอุทกภัย · ครบ {provinces.length} จังหวัดทั่วประเทศ</span>
               <h1>
-                เช็กความเสี่ยงจริง
+                ระดับความเสี่ยงอุทกภัย
                 <br />
                 <em>รายจังหวัด</em>
               </h1>
@@ -399,13 +399,13 @@ export default function CitizenView({
                       <span
                         className="rb-seg reports"
                         style={{ width: `${Math.min(100, bd.reports)}%` }}
-                        title={`รายงานเหตุจริง +${bd.reports}%`}
+                        title={`รายงานในพื้นที่ +${bd.reports}%`}
                       />
                     </div>
                     <div className="risk-breakdown-legend">
                       <span><i className="rb-dot rain" /> 🌧️ ฝน/โอกาสตก <b>+{bd.rain}%</b></span>
                       <span><i className="rb-dot terrain" /> ⛰️ พื้นที่ลุ่มต่ำ <b>+{bd.terrain}%</b></span>
-                      <span><i className="rb-dot reports" /> 📋 รายงานจริง <b>+{bd.reports}%</b></span>
+                      <span><i className="rb-dot reports" /> 📋 รายงานในพื้นที่ <b>+{bd.reports}%</b></span>
                     </div>
                   </div>
                 );
@@ -475,8 +475,8 @@ export default function CitizenView({
 
           <div className="section-title">
             <div>
-              <span className="eyebrow">Real User Reports Only · ไม่มีข้อมูลจำลอง</span>
-              <h2>รายงานสถานการณ์จากผู้ใช้งานจริง</h2>
+              <span className="eyebrow">Field Incident Reports · รายงานจากพื้นที่</span>
+              <h2>รายงานสถานการณ์น้ำท่วมในพื้นที่</h2>
             </div>
             <button
               onClick={() =>
@@ -495,7 +495,7 @@ export default function CitizenView({
 
           <div className="feed-tabs" role="tablist">
             <button type="button" className={feedTab === "all" ? "active" : ""} onClick={() => setFeedTab("all")}>
-              เหตุการณ์ที่แจ้งจริง ({activeReports.length})
+              รายงานทั้งหมด ({activeReports.length})
             </button>
             <button
               type="button"
@@ -586,9 +586,9 @@ export default function CitizenView({
                           type="button"
                           className="upvote-chip-btn"
                           onClick={() => onUpvoteReport(report.id)}
-                          title="ยืนยันว่าพบเหตุการณ์น้ำท่วมในพื้นที่จริง"
+                          title="ร่วมยืนยันสถานการณ์น้ำท่วมในจุดนี้"
                         >
-                          <ThumbsUp /> ยืนยันเหตุจริง ({report.upvotes || 0})
+                          <ThumbsUp /> ร่วมยืนยัน ({report.upvotes || 0})
                         </button>
                       )}
                       <button
@@ -626,8 +626,8 @@ export default function CitizenView({
             {!displayedReports.length && (
               <p className="empty-state">
                 {feedTab === "mine"
-                  ? "คุณยังไม่มีประวัติการส่งรายงาน — กดปุ่ม 'แจ้งเหตุน้ำท่วม' เพื่อส่งข้อมูลจริงจากตำแหน่งของคุณ"
-                  : "ยังไม่มีรายงานเหตุน้ำท่วมที่ส่งเข้ามาในขณะนี้ — ระบบแสดงเฉพาะข้อมูลที่ผู้ใช้แจ้งเข้ามาจริงเท่านั้น"}
+                  ? "คุณยังไม่มีประวัติการแจ้งเหตุ — กดปุ่ม 'แจ้งเหตุใหม่' เพื่อรายงานสถานการณ์ในพื้นที่ของคุณ"
+                  : "ยังไม่มีรายงานเหตุน้ำท่วมในขณะนี้"}
               </p>
             )}
           </div>
@@ -635,13 +635,13 @@ export default function CitizenView({
           <section className="news-agent-panel">
             <div className="section-title">
               <div>
-                <span className="eyebrow">Live RSS Feed · ข่าวจริงเท่านั้น</span>
+                <span className="eyebrow">Flood Situation News · เกาะติดสถานการณ์น้ำ</span>
                 <h2>
                   <Newspaper className="inline-icon" /> ข่าวสารสถานการณ์น้ำประเทศไทย
                 </h2>
               </div>
               <button type="button" onClick={onRefreshNews} disabled={newsBusy}>
-                <RefreshCw className={newsBusy ? "spin" : ""} /> {newsBusy ? "กำลังดึงข่าว..." : "ดึงข่าวจริงล่าสุด"}
+                <RefreshCw className={newsBusy ? "spin" : ""} /> {newsBusy ? "กำลังอัปเดต..." : "อัปเดตข่าวล่าสุด"}
               </button>
             </div>
             <div className="news-agent-list">
@@ -649,7 +649,7 @@ export default function CitizenView({
                 <article key={item.id} className={`news-item ${item.severity || "info"}`}>
                   <div className="news-item-top">
                     <span className={`news-badge ${item.severity || "info"}`}>
-                      {item.severity === "high" ? "ข่าวสำคัญ" : "ข่าวจริง"}
+                      {item.severity === "high" ? "เฝ้าระวังสูง" : "ข่าวสถานการณ์น้ำ"}
                     </span>
                     <small>
                       {item.province} · {item.source}
@@ -659,14 +659,14 @@ export default function CitizenView({
                   {(item.aiSummary || item.summary) && <p>{item.aiSummary || item.summary}</p>}
                   {item.url && (
                     <a href={item.url} target="_blank" rel="noreferrer" className="news-link">
-                      อ่านข่าวต้นฉบับจริง <ExternalLink />
+                      อ่านข่าวต้นฉบับ <ExternalLink />
                     </a>
                   )}
                 </article>
               ))}
               {!newsItems.length && (
                 <p className="empty-state">
-                  ไม่พบรายการข่าวจากฟีดสดในขณะนี้ — ระบบตัดข่าวจำลองออกทั้งหมดและแสดงเฉพาะข่าวจากแหล่งข่าวจริงเท่านั้น
+                  ยังไม่มีรายการข่าวอัปเดตในขณะนี้ สามารถกดปุ่ม "อัปเดตข่าวล่าสุด" เพื่อตรวจสอบอีกครั้ง
                 </p>
               )}
             </div>
@@ -707,7 +707,7 @@ export default function CitizenView({
             <button className="modal-close" onClick={() => setPreviewReport(null)} aria-label="ปิด">
               <X />
             </button>
-            <span className="eyebrow">หลักฐานภาพถ่ายจากพื้นที่จริง · {previewReport.id}</span>
+            <span className="eyebrow">ภาพถ่ายประกอบรายงาน · {previewReport.id}</span>
             <h2>
               {previewReport.province} · {previewReport.district}
             </h2>
