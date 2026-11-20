@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <radialGradient id="sqBg" cx="50%" cy="38%" r="62%">
+      <stop offset="0%" stop-color="#0E2F4F" />
+      <stop offset="55%" stop-color="#07182B" />
+      <stop offset="100%" stop-color="#030A14" />
+    </radialGradient>
+    <radialGradient id="halo" cx="50%" cy="42%" r="40%">
+      <stop offset="0%" stop-color="#22D3EE" stop-opacity="0.35" />
+      <stop offset="55%" stop-color="#0284C7" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#0284C7" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="dropFill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0E4A6D" />
+      <stop offset="60%" stop-color="#08243E" />
+      <stop offset="100%" stop-color="#041322" />
+    </linearGradient>
+    <linearGradient id="dropStroke" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#67E8F9" />
+      <stop offset="50%" stop-color="#38BDF8" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+    <linearGradient id="alertRibbon" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="50%" stop-color="#F97316" />
+      <stop offset="100%" stop-color="#EF4444" />
+    </linearGradient>
+    <clipPath id="dropClip">
+      <path d="M512 136 C512 136, 706 364, 706 508 C706 618, 619 704, 512 704 C405 704, 318 618, 318 508 C318 364, 512 136, 512 136 Z" />
+    </clipPath>
+  </defs>
+
+  <!-- Squircle Container -->
+  <rect x="48" y="48" width="928" height="928" rx="220" fill="url(#sqBg)" />
+  <rect x="48" y="48" width="928" height="928" rx="220" fill="url(#halo)" />
+  <rect x="64" y="64" width="896" height="896" rx="206" fill="none" stroke="#38BDF8" stroke-opacity="0.28" stroke-width="4" />
+
+  <!-- Outer GIS Orbital Rings -->
+  <circle cx="512" cy="436" r="324" fill="none" stroke="#38BDF8" stroke-opacity="0.22" stroke-width="3" stroke-dasharray="28 18" />
+  <circle cx="512" cy="436" r="286" fill="none" stroke="#22D3EE" stroke-opacity="0.30" stroke-width="2.5" />
+  <path d="M214 316 A324 324 0 0 1 810 316" fill="none" stroke="#67E8F9" stroke-opacity="0.55" stroke-width="5" stroke-linecap="round" />
+
+  <!-- Compass Tick Marks -->
+  <g stroke="#38BDF8" stroke-opacity="0.55" stroke-width="4" stroke-linecap="round">
+    <line x1="512" y1="96" x2="512" y2="124" />
+    <line x1="172" y1="436" x2="200" y2="436" />
+    <line x1="824" y1="436" x2="852" y2="436" />
+    <line x1="272" y1="196" x2="292" y2="216" />
+    <line x1="752" y1="196" x2="732" y2="216" />
+  </g>
+
+  <!-- Main Water Droplet Body -->
+  <path d="M512 136 C512 136, 706 364, 706 508 C706 618, 619 704, 512 704 C405 704, 318 618, 318 508 C318 364, 512 136, 512 136 Z" fill="url(#dropFill)" />
+
+  <!-- Inside Droplet: 3 Flood Waves -->
+  <g clip-path="url(#dropClip)">
+    <!-- Layered Wave Ribbons -->
+    <path d="M290 486 Q364 448, 438 486 T586 486 T734 486 L734 730 L290 730 Z" fill="#06B6D4" fill-opacity="0.88" />
+    <path d="M290 546 Q364 508, 438 546 T586 546 T734 546 L734 730 L290 730 Z" fill="#0284C7" fill-opacity="0.92" />
+    <path d="M290 608 Q364 570, 438 608 T586 608 T734 608 L734 730 L290 730 Z" fill="url(#alertRibbon)" />
+  </g>
+
+  <!-- Glowing Droplet Border -->
+  <path d="M512 136 C512 136, 706 364, 706 508 C706 618, 619 704, 512 704 C405 704, 318 618, 318 508 C318 364, 512 136, 512 136 Z" fill="none" stroke="url(#dropStroke)" stroke-width="12" stroke-linejoin="round" />
+
+  <!-- Typography -->
+  <text x="512" y="832" text-anchor="middle" font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-size="92" font-weight="800" letter-spacing="14" fill="#FFFFFF">UTOK</text>
+  <text x="512" y="886" text-anchor="middle" font-family="'SF Pro Display', 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="7" fill="#38BDF8">THAIFLOOD WATCH • AI</text>
+</svg>

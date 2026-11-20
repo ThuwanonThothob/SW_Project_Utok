@@ -1,4 +1,4 @@
-import { Bell, CloudRain, LocateFixed, LogOut, ShieldAlert, ShieldCheck, Smartphone, Waves, Wifi, WifiOff } from "lucide-react";
+import { Bell, CloudRain, LocateFixed, LogOut, ShieldAlert, ShieldCheck, Smartphone, Wifi, WifiOff } from "lucide-react";
 import SWULogo from "./SWULogo.jsx";
 
 export default function Header({
@@ -30,7 +30,9 @@ export default function Header({
   return (
     <header className="topbar">
       <a className="brand" href="#top" aria-label="UTOK อุทก หน้าแรก">
-        <span className="brand-mark"><Waves /></span>
+        <span className="brand-mark">
+          <img src="/icon-192.svg" alt="UTOK Logo" className="brand-logo-img" />
+        </span>
         <span className="brand-title">
           <b>UTOK</b>
           <small>อุทก · FLOOD WATCH</small>

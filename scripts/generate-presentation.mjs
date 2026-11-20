@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const outputPath = path.resolve(__dirname, "../UTOK_Presentation.pptx");
 const logoPath = path.resolve(__dirname, "../frontend/public/swu-eng-logo.jpg");
+const utokLogoPath = path.resolve(__dirname, "../frontend/public/utok-logo.png");
 
 const pptx = new PptxGenJS();
 pptx.layout = "LAYOUT_16x9";
@@ -135,13 +136,14 @@ function addHeader(slide, title, category, slideNum) {
 
   // Main Project Name & Logo
   try {
-    s1.addImage({ path: logoPath, x: 7.2, y: 1.1, w: 1.6, h: 1.6 });
+    s1.addImage({ path: utokLogoPath, x: 5.5, y: 1.1, w: 1.55, h: 1.55 });
+    s1.addImage({ path: logoPath, x: 7.2, y: 1.1, w: 1.55, h: 1.55 });
   } catch (e) {}
 
   s1.addText("UTOK (อุทก)", {
     x: 1.2,
     y: 1.55,
-    w: 5.8,
+    w: 4.1,
     h: 0.7,
     fontSize: 34,
     fontFace: FONT_TH,
